@@ -1,0 +1,37 @@
+{
+	"folders":
+	[
+		{
+			"path": "/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem"
+		}
+	],
+  "build_systems":
+  [
+    {
+      "name": "FEMGPU_build",
+      "cmd": ["msbuild"],
+      "working_dir":
+        "C:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\proj",
+      "file_regex": "^  (.*)\\(([0-9]*),([0-9]*)",
+      "shell": true,
+      "selector": "source.msbuild",
+      "windows":
+      {
+        "path": "%PATH%;%WINDIR%\\Microsoft.NET\\Framework\\v4.0.30319;%WINDIR%\\Microsoft.NET\\Framework\\v3.5;%WINDIR%\\Microsoft.NET\\Framework\\v2.0.50727"
+      }
+    },
+    {
+      "name": "FEMGPU_TEST_build",
+      "cmd": ["msbuild"],
+      "working_dir":
+        "C:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\proj\\GPU_FEM_test",
+      "file_regex": "^  (.*)\\(([0-9]*),([0-9]*)",
+      "shell": true,
+      "selector": "source.msbuild",
+      "windows":
+      {
+        "path": "%PATH%;%WINDIR%\\Microsoft.NET\\Framework\\v4.0.30319;%WINDIR%\\Microsoft.NET\\Framework\\v3.5;%WINDIR%\\Microsoft.NET\\Framework\\v2.0.50727"
+      }
+    }
+  ]
+}
