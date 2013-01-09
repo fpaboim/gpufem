@@ -1,0 +1,12 @@
+.svn/
+proj/
+modelo*/
+color*/
+vc9/
+vc10/
+*.bak
+~*.*
+*.mtl
+*.cml
+*.top
+*.mgr
