@@ -28,6 +28,7 @@ Ideas!:
 interface
 + Check clearing matrix really necessary?
 + Init GlblKaux as zero? in GPU?
++ Entregar dia 7
 
 BUGS:
 =====
@@ -64,6 +65,3 @@ Copyright © 2012 Advanced Micro Devices, Inc. All rights reserved.
 on the chip. A stride that results in a channel conflict on a machine with eight
 channels might result in a bank conflict on a machine with four."
 
-
-
-ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA0BdpfuWhkmzSSLpM64KpCutAM6olnxsqpv6ZjF2PcYDUbtaoWYDyd998CvbRpy3US2tt8hkmYMABMq9Qydb6ZQvKiF6kUPqEkIv4KLKrBu7LyPVEuEiTnd3n3yvYeEdSo+ghFEgEXv7XuUdbrAj9d24uUy+35iOWJY3pyU8n2lG7qb3H87ssqJeDr8yKMOAYXOj1e1C2ak/7TnkM5/Q+VPl76W4JZn0eutzopWz3bQ077Iz0yNPqB6XNFu0c/Zk03Uv00UIldED/nhuPUPILBdFE5BtdwCrWpK0Q5ZnCUljtn1xCC0ZwwmQ2HtJVf9bWoK0NPi1ANbk/Ky2U8opw3w== fr4n@hotmail.com

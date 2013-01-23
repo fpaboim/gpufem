@@ -47,7 +47,7 @@ StiffAlgoGpuOmp::StiffAlgoGpuOmp(FemData* femdata) {
 }
 
 /******************************************************************************/
-//                            CPU FEM Operations                              //
+//                            GPU FEM Operations                              //
 /******************************************************************************/
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -175,10 +175,9 @@ double StiffAlgoGpuOmp::CalcGlobalStiffness() {
                       stiffmat,
                       global_Kaux);
   }
-
   double end_time = omp_get_wtime();  // TIMESTAMP
-
   double totaltime = end_time - perfstart_time;
+
   if (verbose) {
     // Prints OpenCL Performance Timings
     printf("    o-Data Read Time:%.3fms\n", alloc_time-start_time);

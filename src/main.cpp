@@ -65,7 +65,8 @@ int RunAnalysis(std::vector<std::string> files,
                 const bool printstiff,
                 const bool solve,
                 const bool view,
-                std::string outfile);
+                std::string outfile,
+                const bool appendmode);
 
 
 // main
@@ -104,12 +105,13 @@ int main(int ac, char** av) {
   // End Session
   cout << "\n**** EXITING.. ****" << endl;
   IupClose();
-  std::getchar(); // keep console window open until Return keystroke
+
+  //std::getchar(); // keep console window open until Return keystroke
 
   return 1;
 }
 
-// lua_RunAnalysis: C function to be registered and called by Lua code
+// LuaRegisterCFunctions: C function to be registered and called by Lua code
 ////////////////////////////////////////////////////////////////////////////////
 int LuaRegisterCFunctions(lua_State* L) {
   static const struct luaL_Reg FEMlib [] = {
@@ -138,7 +140,7 @@ static int lua_GetMaxThreads(lua_State* L) {
 ////////////////////////////////////////////////////////////////////////////////
 static int lua_RunAnalysis(lua_State* L) {
   int narg = lua_gettop(L);
-  assert(narg == 9);
+  assert(narg == 10);
   using namespace std;
 
   fem_float Emod  = 100.0f;
@@ -215,6 +217,12 @@ static int lua_RunAnalysis(lua_State* L) {
     lua_error(L);
   }
   std::string outfile = lua_tostring(L, arg); arg++;
+  // Output file append or overwrite mode
+  if (!lua_isboolean(L, arg)) {
+    lua_pushstring(L, "Error getting view results");
+    lua_error(L);
+  }
+  bool appendmode = (lua_toboolean(L, arg) == 1); arg++;
 
   RunAnalysis(files,
               matfmt,
@@ -228,7 +236,8 @@ static int lua_RunAnalysis(lua_State* L) {
               printstiff,
               solve,
               view,
-              outfile);
+              outfile,
+              appendmode);
 
   // function returns to lua 0 results
 
@@ -249,21 +258,28 @@ int RunAnalysis(std::vector<std::string> files,
                 const bool printstiff,
                 const bool solve,
                 const bool view,
-                std::string outfile) {
+                std::string outfile,
+                const bool appendmode) {
   omp_set_num_threads(numCPUthreads);
-  omp_set_dynamic(1);
+  omp_set_dynamic(0);
   bool usennz = false;
+  bool writesol = false;
   printf("**OMP Number of Threads: %i**\n", omp_get_max_threads());
 
   FileIO* Filehandler = new FileIO();
-  Filehandler->OpenOutputFile(outfile);
+  Filehandler->OpenOutputFile(outfile, appendmode);
+  Filehandler->writeMatFormat(sprseformat);
 
   // Loops over all input files doing FEM calculations
   for (int threads = 1; threads <= 8; threads *= 2) {
     Filehandler->writeString("Threads:");
     Filehandler->writeNumTab(threads);
     Filehandler->writeNewLine();
-    Filehandler->writeOutputHeader();
+    if (writesol)
+      Filehandler->writeSolOutputHeader();
+    else
+      Filehandler->writeAsmOutputHeader();
+
     omp_set_num_threads(threads);
     std::vector<std::string>::iterator vecitr;
     for (vecitr = files.begin(); vecitr != files.end(); ++vecitr) {
@@ -311,7 +327,12 @@ int RunAnalysis(std::vector<std::string> files,
 
       // Gets global stiffness matrix using selected device
       FEM_test->SetUseColoring(usecolor);
-      double tstiff = FEM_test->CalcStiffnessMat();
+      FEM_test->SetDeviceMode(FEM::CPU);
+      femdata->GetStiffnessMatrix()->Clear();
+      double tstiffcpu = FEM_test->CalcStiffnessMat();
+      FEM_test->SetDeviceMode(FEM::GPUOMP);
+      femdata->GetStiffnessMatrix()->Clear();
+      double tstiffgpu = FEM_test->CalcStiffnessMat();
 
       // Print Stiffness Matrix to default output
       if (printstiff) {
@@ -326,10 +347,10 @@ int RunAnalysis(std::vector<std::string> files,
 
       // Solves linear system for displacements
       //////////////////////////////////////////////////////////////////////////////
-      double tsolve = omp_get_wtime();
+      double tsolvecpu = omp_get_wtime();
+      double tsolvegpu = 0;
       if (solve) {
         printf("..Solving for displacements:\n");
-        tsolve = omp_get_wtime();
 
         CPU_CG(femdata->GetStiffnessMatrix(),
           femdata->GetDisplVector(),
@@ -338,13 +359,16 @@ int RunAnalysis(std::vector<std::string> files,
           3000,
           0.001f,
           false);
-        //       femdata->GetStiffnessMatrix()->SolveCgGpu(femdata->GetDisplVector(),
-        //         femdata->GetForceVector(),
-        //         3000,
-        //         0.001f,
-        //         1);
+        tsolvecpu = omp_get_wtime() - tsolvecpu;
+        tsolvegpu = omp_get_wtime();
 
-        tsolve = omp_get_wtime() - tsolve;
+        femdata->GetStiffnessMatrix()->SolveCgGpu(femdata->GetDisplVector(),
+          femdata->GetForceVector(),
+          3000,
+          0.001f,
+          1);
+
+        tsolvegpu = omp_get_wtime() - tsolvegpu;
         // printVectorf(femdata->GetDisplVector(), ndof);
       }
 
@@ -352,11 +376,11 @@ int RunAnalysis(std::vector<std::string> files,
       float matsizeMB =
         (float) femdata->GetStiffnessMatrix()->GetMatSize() / (1024 * 1024);
       printf("\n# MATRIX SIZE: %.2fMB\n", matsizeMB);
-      printf("# Execution Time (seconds): %.2f\n", tstiff);
+      //printf("# Execution Time (seconds): %.2f\n", tstiff);
 
       if (solve) {
-        printf("# Solver Time: %3.4f -> %.2f%% of Stiffness Time\n",
-          tsolve, (tsolve/tstiff)*100);
+        //printf("# Solver Time: %3.4f -> %.2f%% of Stiffness Time\n",
+        //  tsolve, (tsolve/tstiff)*100);
       }
       printf("\n********************************************\n");
 
@@ -366,13 +390,29 @@ int RunAnalysis(std::vector<std::string> files,
         femVis.BuildMesh(femdata);
       }
 
-      // Write to output file
-      Filehandler->writeNumTab(femdata->GetNumDof());
-      Filehandler->writeNumTab(tstiff);
-      Filehandler->writeNumTab(femdata->GetNumElem());
-      Filehandler->writeNumTab(femdata->GetNumNodes());
-      Filehandler->writeNumTab(matsizeMB);
-      Filehandler->writeNewLine();
+      if (writesol) {
+        // Write to output file
+        Filehandler->writeNumTab(femdata->GetNumDof());
+        Filehandler->writeNumTab(femdata->GetNumNodes());
+        Filehandler->writeNumTab(femdata->GetNumElem());
+        Filehandler->writeNumTab(matsizeMB);
+        Filehandler->writeNumTab(tstiffcpu);
+        Filehandler->writeNumTab(tstiffgpu);
+        Filehandler->writeNumTab(tsolvecpu);
+  //       Filehandler->writeNumTab(tsolvegpu);
+        Filehandler->writeNewLine();
+      } else {
+        // Write to output file
+        Filehandler->writeNumTab(femdata->GetNumDof());
+        Filehandler->writeNumTab(femdata->GetNumNodes());
+        Filehandler->writeNumTab(femdata->GetNumElem());
+        Filehandler->writeNumTab(matsizeMB);
+        Filehandler->writeNumTab(tstiffcpu);
+        Filehandler->writeNumTab(tstiffgpu);
+        Filehandler->writeNumTab(tsolvecpu);
+  //       Filehandler->writeNumTab(tsolvegpu);
+        Filehandler->writeNewLine();
+      }
 
       delete(FEM_test);
     }

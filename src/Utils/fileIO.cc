@@ -57,6 +57,7 @@ FileIO::FileIO() {
   m_inputfilename  = "";
   m_outputfilename = "";
   m_outputfile     = NULL;
+  m_outappend      = true;
   m_verbose        = false;
 }
 
@@ -78,7 +79,6 @@ int FileIO::ReadNF(string neutralfile_name) {
 
   if (m_inputfilename != "") {
     FreeFileMembers();
-    CloseOutputFile();
   }
 
   cout<< "\n**Reading Neutral File:" << neutralfile_name << endl;
@@ -402,23 +402,33 @@ int FileIO::extractNodeSupports(ifstream &inputStream) {
 
 // Closes Output File
 ////////////////////////////////////////////////////////////////////////////////
-int FileIO::OpenOutputFile(std::string out_filename) {
+int FileIO::OpenOutputFile(std::string out_filename, bool appendmode) {
   m_outputfilename = out_filename;
+  m_outappend      = appendmode;
 
   if (m_outputfile)
     CloseOutputFile();
 
-  int err = fopen_s(&m_outputfile, m_outputfilename.c_str() , "w");
+  int err = 1;
+  if (m_outappend)
+    err = fopen_s(&m_outputfile, m_outputfilename.c_str() , "a");
+  else
+    err = fopen_s(&m_outputfile, m_outputfilename.c_str() , "w");
   if (err != 0)
     return 0;
 
   // Write creation time
-  time_t t = time(0);
-  struct tm* datestruct = localtime(&t);
-  writeString("FEMGPU Output File\n");
-  writeString("Date: ");
-  writeString(asctime(datestruct));
-  writeNewLine();
+  if (!appendmode) {
+    time_t t = time(0);
+    struct tm* datestruct = localtime(&t);
+    writeString("FEMGPU Output File\n");
+    writeString("Date: ");
+    writeString(asctime(datestruct));
+    writeNewLine();
+  } else {
+    writeString("###########################################################");
+    writeNewLine();
+  }
 
   return 1;
 }
@@ -444,12 +454,35 @@ int FileIO::outIsOK() {
 
 // Writes tab delimited information to be exported
 ////////////////////////////////////////////////////////////////////////////////
-int FileIO::writeOutputHeader() {
+int FileIO::writeAsmOutputHeader() {
   writeStringTab("DOF");
-  writeStringTab("TIME");
-  writeStringTab("ELEM");
   writeStringTab("NODES");
+  writeStringTab("ELEM");
   writeStringTab("SIZE");
+  writeStringTab("AsmCPU");
+  writeStringTab("AsmGPU");
+  writeStringTab("SolCPU");
+  writeNewLine();
+
+  return 1;
+}
+
+// Writes tab delimited information to be exported
+////////////////////////////////////////////////////////////////////////////////
+int FileIO::writeSolOutputHeader() {
+  writeStringTab("DOF");
+  writeStringTab("NODES");
+  writeStringTab("ELEM");
+  writeStringTab("SIZE");
+  writeStringTab("AsmCPU");
+  writeStringTab("AsmGPU");
+  writeStringTab("SolCPU");
+  writeStringTab("SolNaive");
+  writeStringTab("SolNaiveUR");
+  writeStringTab("SolBlk");
+  writeStringTab("SolBlkUR");
+  writeStringTab("SolShr");
+  writeStringTab("SolShrUR");
   writeNewLine();
 
   return 1;
@@ -506,7 +539,7 @@ int FileIO::writeStringTab(string str) {
 int FileIO::writeNumTab(fem_float num) {
   if (!outIsOK())
     return 0;
-  fprintf(m_outputfile, "%.2f\t", num);
+  fprintf(m_outputfile, "%.3f\t", num);
 
   return 1;
 }
@@ -516,7 +549,7 @@ int FileIO::writeNumTab(fem_float num) {
 int FileIO::writeNumTab(double num) {
   if (!outIsOK())
     return 0;
-  fprintf(m_outputfile, "%.2f\t", num);
+  fprintf(m_outputfile, "%.3f\t", num);
 
   return 1;
 }
@@ -537,6 +570,30 @@ int FileIO::writeNewLine() {
   if (!outIsOK())
     return 0;
   fprintf(m_outputfile, "\n");
+
+  return 1;
+}
+
+// Writes strigified version of sparse matrix format to output file
+////////////////////////////////////////////////////////////////////////////////
+int FileIO::writeMatFormat(SPRmatrix::SPRformat format) {
+  if (!outIsOK())
+    return 0;
+
+  switch(format) {
+    case SPRmatrix::DEN:
+      fprintf(m_outputfile, "Matrix Format: DEN\n"); break;
+    case SPRmatrix::CSR:
+      fprintf(m_outputfile, "Matrix Format: CSR\n"); break;
+    case SPRmatrix::DIA:
+      fprintf(m_outputfile, "Matrix Format: DIA\n"); break;
+    case SPRmatrix::ELL:
+      fprintf(m_outputfile, "Matrix Format: ELL\n"); break;
+    case SPRmatrix::EIG:
+      fprintf(m_outputfile, "Matrix Format: EIG\n"); break;
+    default:
+      fprintf(m_outputfile, "Matrix Format: UNKNOWN(ERROR)\n");
+  }
 
   return 1;
 }

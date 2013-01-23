@@ -67,6 +67,13 @@ function BuildMaindlg()
                        DIALOGTYPE = "Open",
                        EXTFILTER = "Text file| *.txt"
                      }
+  local outappendlbl    = iup.label{TITLE = "Write mode:"}
+  local outappendyestgl = iup.toggle{TITLE = "Append"}
+  local outappendnotgl  = iup.toggle{TITLE = "Overwrite"}
+  local outappendrdo = iup.radio {
+    iup.hbox {outappendyestgl, outappendnotgl};
+    VALUE = outappendyestgl
+  }
 
   -- Bottom buttons frame data
   ------------------------------------------------------------------------
@@ -79,68 +86,71 @@ function BuildMaindlg()
   -- Options frame
   ------------------------------------------------------------------------
   local optionsfrm = iup.frame {
-                       iup.vbox {
-                         iup.hbox{matformatlbl, matformatlst},
-                         opencltgl,
-                         openmptgl,
-                         iup.hbox{threadslbl, threadslst},
-                         iup.hbox {
-                           gaussptslbl,
-                           iup.radio {
-                             iup.vbox {
-                               gausspts2tgl,
-                               gausspts3tgl
-                             }
-                           };
-                           ALIGNMENT = "ATOP"
-                         },
-                         colortgl,
-                         solvetgl,
-                         viewtgl
-                       };
-                       TITLE  = "Options",
-                       MARGIN = "4x4"
-                     }
+    iup.vbox {
+      iup.hbox{matformatlbl, matformatlst},
+      opencltgl,
+      openmptgl,
+      iup.hbox{threadslbl, threadslst},
+      iup.hbox {
+        gaussptslbl,
+        iup.radio {
+          iup.vbox {
+            gausspts2tgl,
+            gausspts3tgl
+          }
+        };
+        ALIGNMENT = "ATOP"
+      },
+      colortgl,
+      solvetgl,
+      viewtgl
+    };
+    TITLE  = "Options",
+    MARGIN = "4x4"
+  }
 
   -- File input/output frame
   ------------------------------------------------------------------------
   local filesfrm = iup.frame {
-                     iup.vbox {
-                       iup.hbox{filelbl, fileinlst, addbtn, delbtn, filebtn},
-                       iup.hbox{fileoutlbl, fileouttxt, fileoutbtn}
-                     };
-                     TITLE  = "I/O",
-                     MARGIN = "4x4"
-                   }
+    iup.vbox {
+      iup.hbox{filelbl, fileinlst, addbtn, delbtn, filebtn},
+      iup.hbox{fileoutlbl, fileouttxt, fileoutbtn},
+      iup.hbox {
+        outappendlbl, outappendrdo
+      },
+    };
+    TITLE  = "I/O",
+    MARGIN = "4x4"
+  }
   -- Bottom buttons frame
   ------------------------------------------------------------------------
   local buttonfrm = iup.frame {
-                      iup.hbox{iup.fill{}, runbtn, quitbtn, iup.fill{};};
-                      MARGIN = "4x4"
-                    }
+    iup.hbox{iup.fill{}, runbtn, quitbtn, iup.fill{};};
+    MARGIN = "4x4"
+  }
 
   -- Box for holding all components
   ------------------------------------------------------------------------
   local mainbox = iup.vbox {
-                    iup.hbox{optionsfrm, filesfrm},
-                    iup.hbox{buttonfrm};
-                    NMARGIN = "4x4"
-                  }
+    iup.hbox{optionsfrm, filesfrm},
+    iup.hbox{buttonfrm};
+    NMARGIN = "4x4"
+  }
 
   -- main dialog construction
   local maindlg   = iup.dialog {
-                      mainbox;
-                      FONT         = "Consolas::9",
-                      NMARGIN      = "3x3",
-                      GAP          = "2x2",
-                      BGCOLOR      = "224 223 227",
-                      FGCOLOR      = "0 0 0",
-                      MAXBOX       = "YES",
-                      MINBOX       = "YES",
-                      RESIZE       = "NO",
-                      TITLE        = "FEM GPU",
-                      defaultenter =  runbtn
-                    }
+    mainbox;
+    FONT         = "Consolas::9",
+    NMARGIN      = "3x3",
+    GAP          = "2x2",
+    BGCOLOR      = "224 223 227",
+    FGCOLOR      = "0 0 0",
+    MAXBOX       = "YES",
+    MINBOX       = "YES",
+    RESIZE       = "NO",
+    TITLE        = "FEM GPU",
+    defaultenter =  runbtn
+  }
 
 
   --********************************************************************--
@@ -215,12 +225,17 @@ function BuildMaindlg()
     fileoutdlg:popup()
     if (fileoutdlg.STATUS == "-1") then return end
     if (fileoutdlg.STATUS ==  "0") then
-      local overwrite = iup.Alarm("File already exists!",
-                                  "Overwrite existing file?",
-                                  "OK",
-                                  "Cancel")
+      local outfilemode = iup.Alarm("File already exists!",
+                                    "Append to existing file?",
+                                    "Append",
+                                    "Overwrite",
+                                    "Cancel")
       -- 2 is option to cancel overwriting
-      if (overwrite == 2) then
+      if (outfilemode == 1) then
+        outappendrdo.value = outappendyestgl
+      elseif (outfilemode == 2) then
+        outappendrdo.value = outappendnotgl
+      elseif (outfilemode == 3) then
         return
       end
     end
@@ -238,14 +253,21 @@ function BuildMaindlg()
     local matfmt   = tonumber(matformatlst.value)
     local ocl      = GetToggleVal(opencltgl.value)
     local nthreads = tonumber(threadslst.value)
-    if (openmptgl.value == "OFF") then nthreads = 1 end
+    if (openmptgl.value == "OFF") then
+      nthreads = 1
+    end
     local gausspts = nil
-    if (gausspts2tgl.value == "ON") then gausspts = 2 else gausspts = 3 end
-    local omp      = GetToggleVal(openmptgl.value)
-    local color    = GetToggleVal(colortgl.value)
-    local solve    = GetToggleVal(solvetgl.value)
-    local view     = GetToggleVal(viewtgl.value)
-    local outfile  = fileouttxt.value
+    if (gausspts2tgl.value == "ON") then
+      gausspts = 2
+    else
+      gausspts = 3
+    end
+    local omp        = GetToggleVal(openmptgl.value)
+    local color      = GetToggleVal(colortgl.value)
+    local solve      = GetToggleVal(solvetgl.value)
+    local view       = GetToggleVal(viewtgl.value)
+    local outfile    = fileouttxt.value
+    local appendmode = GetToggleVal(outappendyestgl.value)
 
     FEMlib.RunAnalysis(files,
                        matfmt,
@@ -255,7 +277,8 @@ function BuildMaindlg()
                        color,
                        solve,
                        view,
-                       outfile)
+                       outfile,
+                       appendmode)
   end
 
   --Quit Button Callback

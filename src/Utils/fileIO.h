@@ -50,9 +50,10 @@ public:
 
   int ReadNF(std::string neutralfile_name);
   // Output handling
-  int OpenOutputFile(std::string out_filename);
+  int OpenOutputFile(std::string out_filename, bool appendmode);
   int CloseOutputFile();
-  int writeOutputHeader();
+  int writeAsmOutputHeader();
+  int writeSolOutputHeader();
   int writeNFInfo();
   int writeString(const char* str);
   int writeString(std::string str);
@@ -62,6 +63,7 @@ public:
   int writeNumTab(double num);
   int writeNumTab(int num);
   int writeNewLine();
+  int writeMatFormat(SPRmatrix::SPRformat format);
   int writeMatrix(SPRmatrix* matrix, int m, int n);
   int writeMatrixNonzeros(SPRmatrix* matrix, int m, int n);
   int writeMatrix2(fem_float* matrix, int m, int n);
@@ -119,6 +121,7 @@ private:
   int         m_numelem;
   int*        m_elemconnect;
 
+  bool        m_outappend;
   bool        m_verbose;
 
   // File Member Vars - filenames do not include directory

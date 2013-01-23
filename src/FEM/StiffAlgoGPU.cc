@@ -47,13 +47,14 @@ StiffAlgoGPU::StiffAlgoGPU(FemData* femdata) {
 }
 
 /******************************************************************************/
-//                            CPU FEM Operations                              //
+//                            GPU FEM Operations                              //
 /******************************************************************************/
 
 ////////////////////////////////////////////////////////////////////////////////
 // Calculates the Global Sparse Stiffness Matrix K
 ////////////////////////////////////////////////////////////////////////////////
 double StiffAlgoGPU::CalcGlobalStiffness() {
+  bool verbose = false;
   double start_time = omp_get_wtime();  // TIMESTAMP
 
   int modeldim                     = m_femdata->GetModelDim();
@@ -149,22 +150,27 @@ double StiffAlgoGPU::CalcGlobalStiffness() {
   // Read results back to globalK array
   OCL.enqueueReadBuffer(GlbK_mem, GlblKDataBufSz, global_Kaux, CL_TRUE);
 
-  double enqueue_time = omp_get_wtime();  // TIMESTAMP
+  double enqueue_time = omp_get_wtime();
+
   double end_time = omp_get_wtime();  // TIMESTAMP
   double totaltime = end_time - perfstart_time;
-  // Prints OpenCL Performance Timings
-  printf("+Total GPU Time:%.3fms (x- marks included times)\n", totaltime);
-  printf("    o-Data Read Time:%.3fms\n", alloc_time-start_time);
-  printf("    o-Sparse Matrix Creation/Clearing Time:%.3fms\n",
-         opencl_time-alloc_time);
-  printf("    o-Kernel Creation Time:%.3fms\n", perfstart_time-opencl_time);
-  printf("    x-Kaux Allocation Time:%.3fms\n", memalloc_time-perfstart_time);
-  printf("    x-WriteBuffer Alloc/Enqueue Time + GaussPts:%.3fms\n",
-         writebuff_time-memalloc_time);
-  printf("    x-Kernel Set Time:%.3fms\n", kernel_time-writebuff_time);
-  printf("    x-Enqueue Time:%.3fms\n", enqueue_time-kernel_time);
-  printf("    x-Kernel Execution Time:%.3fms\n", enqueue_time-perfstart_time);
-  printf("    x-Assembly Time:%.3fms\n", end_time-enqueue_time);
+
+  if (verbose) {
+    // Prints OpenCL Performance Timings
+    printf("    o-Data Read Time:%.3fms\n", alloc_time-start_time);
+    printf("    o-Sparse Matrix Creation/Clearing Time:%.3fms\n",
+      opencl_time-alloc_time);
+    printf("    o-Kernel Creation Time:%.3fms\n", perfstart_time-opencl_time);
+    printf("    x-Kaux Allocation Time:%.3fms\n", memalloc_time-perfstart_time);
+    printf("    x-WriteBuffer Alloc/Enqueue Time + GaussPts:%.3fms\n",
+      writebuff_time-memalloc_time);
+    printf("    x-Kernel Set Time:%.3fms\n", kernel_time-writebuff_time);
+    printf("    x-Enqueue Time:%.3fms\n", enqueue_time-kernel_time);
+    printf("    x-Kernel Execution Time:%.3fms\n", enqueue_time-perfstart_time);
+    printf("    x-Assembly Time:%.3fms\n", end_time-enqueue_time);
+    printf("------------------------------------------------\n");
+    printf("+Total GPU Time:%.3fms (x- marks included times)\n", totaltime);
+  }
 
   free(global_Kaux);
 

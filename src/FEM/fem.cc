@@ -152,8 +152,12 @@ void FEM::SetDeviceMode(DeviceMode newdevicemode) {
   // Selects stiffness calculation algorithm
   switch (newdevicemode) {
   case CPU:
-    m_stiffnessalgo = new StiffAlgoCPU(m_femdata);
+    m_stiffnessalgo = new StiffAlgoCPU(m_femdata); break;
+  case GPU:
+    m_stiffnessalgo = new StiffAlgoGPU(m_femdata); break;
   case GPUOMP:
-    m_stiffnessalgo = new StiffAlgoGpuOmp(m_femdata);
+    m_stiffnessalgo = new StiffAlgoGpuOmp(m_femdata); break;
+  default:
+    m_stiffnessalgo = new StiffAlgoCPU(m_femdata); 
   }
 }

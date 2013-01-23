@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"outapp",
+				"outappendlbl"
+			],
+			[
+				"el",
+				"elmconnsz"
+			],
+			[
+				"Realloca",
+				"ReallocateForBandsize"
+			],
+			[
 				"numele",
 				"numelem"
 			],
@@ -100,58 +112,34 @@
 	"buffers":
 	[
 		{
-			"file": "src/Test/main.cpp",
+			"file": "src/main.cpp",
 			"settings":
 			{
-				"buffer_size": 2082,
+				"buffer_size": 14170,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "src/Test/FemTest.cpp",
+			"file": "src/FEM/StiffAlgoGPU.cc",
 			"settings":
 			{
-				"buffer_size": 6056,
+				"buffer_size": 9039,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "src/Test/SPRSearchTest.cpp",
+			"file": "src/Lua/maindlg.lua",
 			"settings":
 			{
-				"buffer_size": 6366,
+				"buffer_size": 11043,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "src/FEM/femColor.cc",
+			"file": "src/Utils/fileIO.cc",
 			"settings":
 			{
-				"buffer_size": 7785,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/FEM/femColor.h",
-			"settings":
-			{
-				"buffer_size": 3071,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/SPRmatrix/ELLmatrix.cc",
-			"settings":
-			{
-				"buffer_size": 18873,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/Test/SPRmatrixTest.cpp",
-			"settings":
-			{
-				"buffer_size": 14042,
+				"buffer_size": 24538,
 				"line_ending": "Windows"
 			}
 		},
@@ -159,31 +147,7 @@
 			"file": "src/FEM/StiffAlgoGpuOmp.cc",
 			"settings":
 			{
-				"buffer_size": 16331,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/FEM/StiffAlgoCPU.cc",
-			"settings":
-			{
-				"buffer_size": 14812,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/main.cpp",
-			"settings":
-			{
-				"buffer_size": 12639,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "gpufem_notes.md",
-			"settings":
-			{
-				"buffer_size": 3669,
+				"buffer_size": 16330,
 				"line_ending": "Windows"
 			}
 		},
@@ -193,6 +157,22 @@
 			{
 				"buffer_size": 2086,
 				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "gpufem_notes.md",
+			"settings":
+			{
+				"buffer_size": 5552,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "test_models/Brk8/brk8_2_col.txt",
+			"settings":
+			{
+				"buffer_size": 4104,
+				"line_ending": "Windows"
 			}
 		}
 	],
@@ -288,35 +268,52 @@
 	},
 	"file_history":
 	[
+		"/C/Users/fpaboim/Desktop/outtest_brk8.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/SPRmatrixTest.cpp",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/OCLwrapper.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/ELLmatrix.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Utils/fileIO.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/main.cpp",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/brk8_3.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/output.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/brk8.txt",
+		"/C/Users/fpaboim/.vsvimrc",
+		"/C/Users/fpaboim/.vimrc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/Report/output.txt",
+		"/C/Programming/libs/trilinos-10.8.5-Source/packages/mesquite/src/QualityImprover/OptSolvers/ConjugateGradient.cpp",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/ELLmatrix.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/_testmodels/Q4.nf",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/femColor.h",
+		"/C/Programming/libs/metis-5.0.2/libmetis/mesh.c",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/femColor.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/SPRSearchTest.cpp",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/FemTest.cpp",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoCPU.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGpuOmp.cc",
 		"/C/Programming/libs/metis-4.0.3/Lib/Makefile",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/2Q4.nf",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/FemData.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Metis4/mesh.h",
 		"/C/Programming/libs/metis-4.0.3/Lib/mesh.c",
-		"/C/Programming/libs/metis-5.0.2/libmetis/mesh.c",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/OCLwrapper.cc",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/femColor.h",
 		"/C/Users/fpaboim/Downloads/manual.ps",
 		"/C/Programming/libs/metis-4.0.3/Makefile",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/fem.h",
 		"/C/Programming/libs/metis-4.0.3/INSTALL",
 		"/C/Programming/libs/metis-4.0.3/Makefile.in",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/gpufem_notes.md",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGpuOmp.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGPU.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/OclTest.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/fem.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/MeshColoringTest.cpp",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/User/Default (Windows).sublime-keymap",
 		"/C/Users/fpaboim/Desktop/notes.md",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoCPU.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/libs/gtest/include/gtest/gtest.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Utils/fileIO.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Utils/fileIO.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/FemDataTest.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Utils/util.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/AxyGPUTest.cpp",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/_testmodels/Q4.nf",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Microbench/Microbench.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/main.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/libs/eigen3.0.5/doc/examples/Tutorial_ReductionsVisitorsBroadcasting_reductions_bool.cpp",
@@ -330,14 +327,9 @@
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/Vintage Numbers/README.md",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/User/SmartMarkdown.sublime-settings",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/libs/metis/include/metis.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/ELLmatrix.cc",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Vis/Vis.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/ELLmatrix.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Microbench/Microbench.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/clKernels/LAopsEll.cl",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/SPRmatrixTest.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Vis/Vis.cc",
 		"/C/Users/fpaboim/Downloads/sparse/cusp/detail/device/generalized_spmv/ell.h",
 		"/C/Users/fpaboim/Downloads/eBooks/Literature/ePub eBooks/booklist.txt",
@@ -365,7 +357,6 @@
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/LAopsTest.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/EIGmatrix.cc",
 		"/C/Programming/cpplint/cpplint.py",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/femColor.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/FemData.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgo.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgo.h",
@@ -387,7 +378,6 @@
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/DIAmatrix.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/EIGmatrix.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/FileIOTest.cpp",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/main.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/OclTest.cpp~",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/CSRmatrix2.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/ELLgpu_test_validation.m",
@@ -405,17 +395,7 @@
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q4/placa64_Q4.nf",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/proj/GPU_FEM_test/GPU_FEM_test.vcproj",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Utils/util.h",
-		"/C/Programming/Tecgraf/mvgeo/mtool/proj/vs9/mtool.vcproj",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/User/msbuild.sublime-settings",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/proj/GPU_FEM_Sparse.vcxproj",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/proj/GPU_FEM_Sparse.vcproj",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/gpu_fem.sublime-build",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/User/C.sublime-settings",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/MSBuild/MSBuild.sublime-settings",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/User/Lisp.sublime-settings",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/MSBuild/README.md",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/RunMultipleCommands/runmultiplecommands.py",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/Vintage/vintage_motions.py"
+		"/C/Programming/Tecgraf/mvgeo/mtool/proj/vs9/mtool.vcproj"
 	],
 	"find":
 	{
@@ -423,7 +403,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 89.0,
+		"height": 92.0,
 		"where_history":
 		[
 			"C:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\",
@@ -437,6 +417,19 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"format",
+			"runan",
+			"verbose",
+			"cpu",
+			"@Opencl",
+			"write",
+			"conn",
+			"ncomm",
+			"all",
+			"reall",
+			"growm",
+			"grow",
+			"set",
 			"assemble gpu omp",
 			"omp",
 			"open",
@@ -551,20 +544,7 @@
 			"_RE_PATTERN_INCLUDE_NEW_STYLE",
 			"IsInAlphabeticalOrder",
 			"readnf",
-			"malloc",
-			"extractNodes",
-			"m_nodalloads",
-			"FreeFileMembers",
-			"findElemString",
-			"ctrl",
-			"shift+j",
-			"ctrl",
-			"  ",
-			"ctrl+do",
-			"ctrl+",
-			"ctrl+down",
-			"findelem",
-			"iup"
+			"malloc"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -584,23 +564,23 @@
 	"groups":
 	[
 		{
-			"selected": 8,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "src/Test/main.cpp",
+					"file": "src/main.cpp",
 					"settings":
 					{
-						"buffer_size": 2082,
+						"buffer_size": 14170,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1796,
-								1796
+								9164,
+								9164
 							]
 						],
 						"settings":
@@ -609,111 +589,94 @@
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": -1,
-							"vintage_lines.lines": 53,
+							"vintage_lines.line": 284,
+							"vintage_lines.lines": 428,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 162.0,
+						"translation.y": 4410.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "src/Test/FemTest.cpp",
+					"file": "src/FEM/StiffAlgoGPU.cc",
 					"settings":
 					{
-						"buffer_size": 6056,
+						"buffer_size": 9039,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1241,
-								1241
+								4982,
+								4982
 							]
 						],
 						"settings":
 						{
 							"line_numbers": false,
 							"syntax": "Packages/C++/C++.tmLanguage",
-							"vintage_lines.line": -1,
-							"vintage_lines.lines": 181,
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 112,
+							"vintage_lines.lines": 219,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1494.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "src/Test/SPRSearchTest.cpp",
+					"file": "src/Lua/maindlg.lua",
 					"settings":
 					{
-						"buffer_size": 6366,
+						"buffer_size": 11043,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6273,
-								6273
+								8128,
+								8128
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/C++/C++.tmLanguage",
+							"line_numbers": false,
+							"syntax": "Packages/Lua Dev/Lua.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": -1
+							"vintage_lines.line": 234,
+							"vintage_lines.lines": 335,
+							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2556.0,
+						"translation.y": 4373.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "src/FEM/femColor.cc",
+					"file": "src/Utils/fileIO.cc",
 					"settings":
 					{
-						"buffer_size": 7785,
+						"buffer_size": 24538,
 						"regions":
 						{
-							"bookmark_e":
-							{
-								"flags": 144,
-								"regions":
-								[
-									[
-										8392,
-										8392
-									]
-								]
-							},
-							"bookmark_m":
-							{
-								"flags": 144,
-								"regions":
-								[
-									[
-										5523,
-										5523
-									]
-								]
-							}
 						},
 						"selection":
 						[
 							[
-								4565,
-								4565
+								17573,
+								17573
 							]
 						],
 						"settings":
@@ -722,157 +685,12 @@
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": -1,
-							"vintage_lines.lines": 233,
+							"vintage_lines.line": 587,
+							"vintage_lines.lines": 841,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1620.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "src/FEM/femColor.h",
-					"settings":
-					{
-						"buffer_size": 3071,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1526,
-								1526
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": -1
-						},
-						"translation.x": 0.0,
-						"translation.y": 256.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "src/SPRmatrix/ELLmatrix.cc",
-					"settings":
-					{
-						"buffer_size": 18873,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4542,
-								4542
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": -1
-						},
-						"translation.x": 0.0,
-						"translation.y": 1692.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "src/Test/SPRmatrixTest.cpp",
-					"settings":
-					{
-						"buffer_size": 14042,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2406,
-								2406
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": -1
-						},
-						"translation.x": 0.0,
-						"translation.y": 758.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "src/FEM/StiffAlgoGpuOmp.cc",
-					"settings":
-					{
-						"buffer_size": 16331,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6552,
-								6552
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": -1
-						},
-						"translation.x": 0.0,
-						"translation.y": 1712.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "src/FEM/StiffAlgoCPU.cc",
-					"settings":
-					{
-						"buffer_size": 14812,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								8261,
-								8261
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": -1
-						},
-						"translation.x": 0.0,
-						"translation.y": 3132.0,
+						"translation.y": 10205.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -880,23 +698,23 @@
 			]
 		},
 		{
-			"selected": 0,
+			"selected": 3,
 			"sheets":
 			[
 				{
-					"buffer": 9,
-					"file": "src/main.cpp",
+					"buffer": 4,
+					"file": "src/FEM/StiffAlgoGpuOmp.cc",
 					"settings":
 					{
-						"buffer_size": 12639,
+						"buffer_size": 16330,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								9318,
-								9318
+								7531,
+								7531
 							]
 						],
 						"settings":
@@ -905,45 +723,18 @@
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": -1,
-							"vintage_lines.lines": 383,
+							"vintage_lines.line": 177,
+							"vintage_lines.lines": 356,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 4900.0,
+						"translation.y": 2329.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 10,
-					"file": "gpufem_notes.md",
-					"settings":
-					{
-						"buffer_size": 3669,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1759,
-								1759
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Markdown/Markdown.tmLanguage",
-							"vintage_lines.line": -1
-						},
-						"translation.x": 0.0,
-						"translation.y": 432.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 11,
+					"buffer": 5,
 					"file": "/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/VintageLines/create_icons.cpp",
 					"settings":
 					{
@@ -954,8 +745,8 @@
 						"selection":
 						[
 							[
-								533,
-								533
+								530,
+								530
 							]
 						],
 						"settings":
@@ -964,8 +755,68 @@
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": -1,
+							"vintage_lines.line": 22,
 							"vintage_lines.lines": 74,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "gpufem_notes.md",
+					"settings":
+					{
+						"buffer_size": 5552,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4073,
+								4073
+							]
+						],
+						"settings":
+						{
+							"line_numbers": false,
+							"syntax": "Packages/Markdown/Markdown.tmLanguage",
+							"vintage_lines.line": 0,
+							"vintage_lines.lines": 66,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1210.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "test_models/Brk8/brk8_2_col.txt",
+					"settings":
+					{
+						"buffer_size": 4104,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								453,
+								453
+							]
+						],
+						"settings":
+						{
+							"line_numbers": false,
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"vintage_lines.line": 15,
+							"vintage_lines.lines": 116,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
@@ -1038,12 +889,44 @@
 		"selected_items":
 		[
 			[
-				"stiffalgo",
-				"src/FEM/StiffAlgoCPU.cc"
+				"fileio.cc",
+				"src/Utils/fileIO.cc"
+			],
+			[
+				"fileo",
+				"src/Utils/fileIO.cc"
 			],
 			[
 				"gpuomp",
 				"src/FEM/StiffAlgoGpuOmp.cc"
+			],
+			[
+				"file",
+				"src/Utils/fileIO.cc"
+			],
+			[
+				"stiffgpu",
+				"src/FEM/StiffAlgoGPU.cc"
+			],
+			[
+				".nf",
+				"test_models/_testmodels/Q4.nf"
+			],
+			[
+				"sprma",
+				"src/SPRmatrix/SPRmatrix.cc"
+			],
+			[
+				"ellma.h",
+				"src/SPRmatrix/ELLmatrix.h"
+			],
+			[
+				"spr.h",
+				"src/SPRmatrix/SPRmatrix.h"
+			],
+			[
+				"stiffalgo",
+				"src/FEM/StiffAlgoCPU.cc"
 			],
 			[
 				"sprt",
@@ -1096,10 +979,6 @@
 			[
 				"ocltest",
 				"src/Test/OclTest.cpp"
-			],
-			[
-				"stiffgpu",
-				"src/FEM/StiffAlgoGPU.cc"
 			],
 			[
 				"stiffgpuom",
@@ -1192,10 +1071,6 @@
 			[
 				"laops.cl",
 				"src/OpenCL/clKernels/LAopsEll.cl"
-			],
-			[
-				"sprma",
-				"src/SPRmatrix/SPRmatrix.cc"
 			],
 			[
 				"ell.cl",
