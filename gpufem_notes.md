@@ -10,17 +10,32 @@ The SpMVStag function provides staggered access to the matrix entries like the n
 ## Blocked Shared SpMV
 The blocked implementation is similar to the shared implementation with the difference that workgroups span multiple rows. The added benefit of loading more data into local memory and possible implementation utilizing image buffers which take advantage of memory locality is the reasoning to implement a block-based strategy. Although the bottelneck is global memory access, some gain can also be made here utilizing parallel reductons. In newer graphics cards where the available local memory becomes larger, this added benefit tends to increase.
 
-
 ## Loop Unrolled Versions
 Loop unrolling allows the compiler to more easily identify vectorizable code. This allows the compiler to extract instruction level parallelism out of code which is seemingly parallel.
-
 
 ## CG Outline
 The conjugate gradient method is one of the most widely employed iterative methods for solving large systems of linear equations. The matrix must be positive definite. Iterative methods are especially suited for solving linear systems of sparse matrices, since traditional factorization methods would destroy matrix sparsity (and the whole purpose of using a sparse matrix in a first place). The foremost reference regarding the conjugate gradient method used for this section is Shewchuk's seminal, aptly named paper "An Introduction to the Conjugate Gradient Method Without Agonizing Pain". For a more detailed explanation I would urge the reader to refer to this reference, and most material exposed in this section should pertain to particularities of implementation and also regarding the finite element method.
 
+Precond(asphalt): A rule of thumb is that M must resemble the original matrix, K, to obtain eigenvalues that cluster around 1. Obviously, M = K would be the best choice, but this choice is equivalent to solving the original system! A more common choice is the diagonal of K, known as diagonal scaling or Incomplete Cholesky factorization using a drop tolerance to control the fill-in.
 
-TODO:
-=====
+PCG widely used because: easy to implement, PCG iterations are cheap and the storage demands are modest and fixed. Cons: performance depends on the conditioning and/or spectrum of the matrix.
+
+From [A. Van der Sluis and H.A. Van der Vorst, The rate of convergence of conjugate gradients] the smallest eigenvalues correspond to the slow converging components of the solution. The number of rigid body modes of any unconstrained volume equals the number of zero-valued eigenvalues of its corresponding stiffness matrix.
+
+Diagonal scaling may improve the matrix characteristics that are most important to convergence because the scaled matrix is still symmetric and positive definite, and the condition number of A is minimizes [Forsythe and Strauss, 1955]
+
+Preconditioners, in reducing the number of iterations also minimize potential roundoff errors, particularly important when using float precision.
+
+[Reid] Showed that for large sparse matrices that are reasonably well conditioned, the conjugate gradient method is a very powerful iterative scheme that yields good approximate solutions in far fewer than n steps.
+
+Excellent historic perspective on iterative methods [survey preconditioning]
+
+recent hardware trends towards computing hedge against future of non-normal rendering, raytracing, voxel cone whatever, etc.
+
+blue cranes - STILL
+
+## Lists
+### TODO
 + Add differences in memory initialization (dynamic/static) regardin host and kernel executions.
 Ideas!:
 + No transfer by zeroing only at the gpu?
@@ -30,15 +45,15 @@ interface
 + Init GlblKaux as zero? in GPU?
 + Entregar dia 7
 
-BUGS:
-=====
+### BUGS
 + Fix batch metis(?) memory bug
 
-IDEEZ:
-=====
+### IDEEZ
 + FEM class initialization: femdata in init?
++ 2.4 finite element history
++ More clarity in assembly in OpenMP
 
-## References to add:
+### References to add
 * Chris Jang from GATLAS:
 ATI is often criticized very heavily for immaturity in the software stack
 supporting their GPGPU product line. However, my (limited) experience thus

@@ -25,7 +25,6 @@ __kernel void SpMVCoal(__global  float* matData,     // INPUT MATRIX DATA
   uint locidx  = get_local_id(0);
   uint locidy  = get_local_id(1);
   uint loclenx = get_local_size(0);
-  uint locleny = get_local_size(1);
 
   // Zero out local memory
   auxShared[loclenx * locidy + locidx] = 0;
@@ -84,23 +83,23 @@ __kernel void SpMVCoalUR(__global  float* matData,     // INPUT MATRIX DATA
     int4 index, col;
     float4 aval, xval;
 
-    index.x  = i * slabsize + gloidy + (matDim * locidx);
-    index.y  = (i + 1) * slabsize + gloidy + (matDim * locidx);
-    index.z  = (i + 2) * slabsize + gloidy + (matDim * locidx);
-    index.w  = (i + 3) * slabsize + gloidy + (matDim * locidx);
-    col.x    = colIdx[index.x];
-    col.y    = colIdx[index.y];
-    col.z    = colIdx[index.z];
-    col.w    = colIdx[index.w];
-    aval.x = matData[index.x];
-    aval.y = matData[index.y];
-    aval.z = matData[index.z];
-    aval.w = matData[index.w];
-    xval.x = vector_x[col.x];
-    xval.y = vector_x[col.y];
-    xval.z = vector_x[col.z];
-    xval.w = vector_x[col.w];
-    sum4  += aval * xval;
+    index.x = i * slabsize + gloidy + (matDim * locidx);
+    index.y = (i + 1) * slabsize + gloidy + (matDim * locidx);
+    index.z = (i + 2) * slabsize + gloidy + (matDim * locidx);
+    index.w = (i + 3) * slabsize + gloidy + (matDim * locidx);
+    col.x   = colIdx[index.x];
+    col.y   = colIdx[index.y];
+    col.z   = colIdx[index.z];
+    col.w   = colIdx[index.w];
+    aval.x  = matData[index.x];
+    aval.y  = matData[index.y];
+    aval.z  = matData[index.z];
+    aval.w  = matData[index.w];
+    xval.x  = vector_x[col.x];
+    xval.y  = vector_x[col.y];
+    xval.z  = vector_x[col.z];
+    xval.w  = vector_x[col.w];
+    sum4    += aval * xval;
   }
   auxShared[locidy * loclenx + locidx] = sum4.x + sum4.y + sum4.z + sum4.w;
 
@@ -237,12 +236,12 @@ __kernel void SpMVStag(__global  float* matData,     // INPUT MATRIX DATA
                        __global  float* vector_x,    // INPUT
                        __global  float* vector_y,    // OUTPUT
                        __local   float* auxShared) { // LOCAL SHARED BUFFER
-  uint grpid  = get_group_id(0);
-  uint locid  = get_local_id(0);
-  uint loclen = get_local_size(0);
-  uint numblocks = ELLwidth / loclen;
+  uint grpid       = get_group_id(0);
+  uint locid       = get_local_id(0);
+  uint loclen      = get_local_size(0);
+  uint numblocks   = ELLwidth / loclen;
   uint blockstride = loclen * matDim;
-  uint slaboffset = grpid + (locid * matDim);
+  uint slaboffset  = grpid + (locid * matDim);
 
   if (grpid < matDim) {
     auxShared[locid] = 0;

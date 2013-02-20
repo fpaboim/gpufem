@@ -1,0 +1,10 @@
+clear;
+clc;
+
+A = delsq(numgrid('S',16));
+b = ones(size(A,1),1);
+[x0,fl0,rr0,it0,rv0] = pcg(A,b,1e-8,100);
+it0
+
+L = ichol(A);
+[x1,fl1,rr1,it1,rv1] = pcg(A,b,1e-8,100,L,L');

@@ -224,6 +224,53 @@ static int lua_RunAnalysis(lua_State* L) {
   }
   bool appendmode = (lua_toboolean(L, arg) == 1); arg++;
 
+//   RunAnalysis(files,
+//               matfmt,
+//               devicemode,
+//               nthreads,
+//               gausspts,
+//               Emod,
+//               Nu,
+//               color,
+//               makenodal,
+//               printstiff,
+//               solve,
+//               view,
+//               outfile,
+//               appendmode);
+  matfmt = SPRmatrix::CSR;
+  RunAnalysis(files,
+              matfmt,
+              devicemode,
+              nthreads,
+              gausspts,
+              Emod,
+              Nu,
+              color,
+              makenodal,
+              printstiff,
+              solve,
+              view,
+              outfile,
+              appendmode);
+  if (appendmode == false)
+    appendmode = true;
+  matfmt = SPRmatrix::ELL;
+  RunAnalysis(files,
+              matfmt,
+              devicemode,
+              nthreads,
+              gausspts,
+              Emod,
+              Nu,
+              color,
+              makenodal,
+              printstiff,
+              solve,
+              view,
+              outfile,
+              appendmode);
+  matfmt = SPRmatrix::EIG;
   RunAnalysis(files,
               matfmt,
               devicemode,
@@ -268,6 +315,14 @@ int RunAnalysis(std::vector<std::string> files,
 
   FileIO* Filehandler = new FileIO();
   Filehandler->OpenOutputFile(outfile, appendmode);
+  if (appendmode == false) {
+    Filehandler->writeString("Gps:");
+    Filehandler->writeNumTab(gausspts);
+    Filehandler->writeString("Coloring:");
+    Filehandler->writeNumTab((int)usecolor);
+    Filehandler->writeNewLine();
+    Filehandler->writeNewLine();
+  }
   Filehandler->writeMatFormat(sprseformat);
 
   // Loops over all input files doing FEM calculations
