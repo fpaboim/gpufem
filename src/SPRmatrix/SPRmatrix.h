@@ -101,6 +101,7 @@ public:
   void              VerboseErrors(bool isverbose) {
                       m_verboseerrors = isverbose;
                     };
+  int               GetAllocTrigger(){ return m_prealloctrigger;};
 
 protected:
   int               InputIsOK(fem_float val, int row, int col);
@@ -111,6 +112,7 @@ protected:
   SPRformat   m_matformat;  /* sparse matrix storage format */
   OclStrategy m_optimizationstrat;  /* sparse matrix storage format */
   bool        m_verboseerrors;
+  bool        m_prealloctrigger;
 };
 
 #endif

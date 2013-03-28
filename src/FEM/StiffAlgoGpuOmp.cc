@@ -269,7 +269,7 @@ void StiffAlgoGpuOmp::AssembleGPUColoring(int elemdofs,
       for (size_t color = 0; color < nColors; ++color) {
         int nColorElems = (int)colorelem[color].size();
         // Loops over current color doing stiffness calculation in parallel
-#pragma omp parallel for ordered private(gblDOFi, gblDOFj, elemStride)
+#pragma omp parallel for private(gblDOFi, gblDOFj, elemStride)
         for (int elemPos = 0; elemPos < nColorElems; ++elemPos) {
           int elem = colorelem[color][elemPos];
           elemStride = elem * elemdofs;
@@ -277,10 +277,15 @@ void StiffAlgoGpuOmp::AssembleGPUColoring(int elemdofs,
             gblDOFi = (elemconnect[nelemnodes*elem+i]-1)*2;
             for (int j = 0; j < nelemnodes; ++j) {
               gblDOFj = (elemconnect[nelemnodes*elem+j]-1)*2;
-              stiffmat->AddElem(gblDOFi  , gblDOFj  , auxstiffmat[elemStride + (rowStride*(2*i  )) + (2*j)  ]);
-              stiffmat->AddElem(gblDOFi+1, gblDOFj  , auxstiffmat[elemStride + (rowStride*(2*i+1)) + (2*j)  ]);
-              stiffmat->AddElem(gblDOFi  , gblDOFj+1, auxstiffmat[elemStride + (rowStride*(2*i  )) + (2*j)+1]);
-              stiffmat->AddElem(gblDOFi+1, gblDOFj+1, auxstiffmat[elemStride + (rowStride*(2*i+1)) + (2*j)+1]);
+              if (stiffmat->GetAllocTrigger())
+              {
+                #pragma omp critical (memalloc)
+                {
+                AssembleMatrix2D(stiffmat, gblDOFi, gblDOFj, auxstiffmat, elemStride, rowStride, i, j);
+                }
+              } else {
+                AssembleMatrix2D(stiffmat, gblDOFi, gblDOFj, auxstiffmat, elemStride, rowStride, i, j);
+              }
             }
           }
         }
@@ -297,15 +302,16 @@ void StiffAlgoGpuOmp::AssembleGPUColoring(int elemdofs,
             gblDOFi = (elemconnect[nelemnodes*elem+i]-1)*3;
             for (int j = 0; j < nelemnodes; ++j) {
               gblDOFj = (elemconnect[nelemnodes*elem+j]-1)*3;
-              stiffmat->AddElem(gblDOFi  , gblDOFj  , auxstiffmat[elemStride + (rowStride*(3*i  )) + (3*j)  ]);
-              stiffmat->AddElem(gblDOFi+1, gblDOFj  , auxstiffmat[elemStride + (rowStride*(3*i+1)) + (3*j)  ]);
-              stiffmat->AddElem(gblDOFi+2, gblDOFj  , auxstiffmat[elemStride + (rowStride*(3*i+2)) + (3*j)  ]);
-              stiffmat->AddElem(gblDOFi  , gblDOFj+1, auxstiffmat[elemStride + (rowStride*(3*i  )) + (3*j)+1]);
-              stiffmat->AddElem(gblDOFi+1, gblDOFj+1, auxstiffmat[elemStride + (rowStride*(3*i+1)) + (3*j)+1]);
-              stiffmat->AddElem(gblDOFi+2, gblDOFj+1, auxstiffmat[elemStride + (rowStride*(3*i+2)) + (3*j)+1]);
-              stiffmat->AddElem(gblDOFi  , gblDOFj+2, auxstiffmat[elemStride + (rowStride*(3*i  )) + (3*j)+2]);
-              stiffmat->AddElem(gblDOFi+1, gblDOFj+2, auxstiffmat[elemStride + (rowStride*(3*i+1)) + (3*j)+2]);
-              stiffmat->AddElem(gblDOFi+2, gblDOFj+2, auxstiffmat[elemStride + (rowStride*(3*i+2)) + (3*j)+2]);
+              if (stiffmat->GetAllocTrigger())
+              {
+                #pragma omp critical (memalloc)
+                {
+                AssembleMatrix3D(stiffmat, gblDOFi, gblDOFj, auxstiffmat, elemStride, rowStride, i, j);
+                }
+              } else {
+                AssembleMatrix3D(stiffmat, gblDOFi, gblDOFj, auxstiffmat, elemStride, rowStride, i, j);
+              }
+
             }
           }
         }

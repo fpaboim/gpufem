@@ -98,8 +98,13 @@ void ELLmatrix2::InsertElem(int rownnz, int pos, const fem_float val,
   m_colidx[pos]  = col;
   // increments number of nonzeros and checks if matrix needs to be grown
   m_rownnz[row]++;
+  if (m_rownnz[row] == m_maxrowlen - 1) {
+    m_prealloctrigger = true;
+    return;
+  }
   if (m_rownnz[row] == m_maxrowlen) {
     GrowMatrix();
+    m_prealloctrigger = false;
   }
 }
 

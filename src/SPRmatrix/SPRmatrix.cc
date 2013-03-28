@@ -49,6 +49,7 @@ SPRmatrix::SPRmatrix() {
   m_matformat         = DEN;
   m_optimizationstrat = UNDEF;
   m_verboseerrors     = true;
+  m_prealloctrigger   = false;
 }
 
 // Destructor

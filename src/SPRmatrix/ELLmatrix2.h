@@ -50,7 +50,6 @@ class ELLmatrix2 : public SPRmatrix {
                             int  nrownnz, int  rowlen);
   static int   LinSearchRow(int* intvector, int  val, int  row,
                             int  nrownnz, int  rowlen);
-
  private:
   void         InsertElem(int rownnz, int pos, const fem_float val,
                           const int col, const int row);

@@ -78,10 +78,7 @@ void ELLmatrix::SetElem(const int row, const int col, const fem_float val) {
     m_matdata[pos] = val;
   } else {  // Else inserts element into matrix
     // If matrix is full grows matrix size
-    #pragma omp critical (memalloc)
-    {
-      InsertElem(rownnz, pos, val, col, row);
-    }
+    InsertElem(rownnz, pos, val, col, row);
   }
 }
 
@@ -96,13 +93,10 @@ void ELLmatrix::AddElem(const int row, const int col, const fem_float val) {
   int pos = BinSearchIntStep(m_colidx, col, rownnz, row, m_matdim);
 
   // In case element exists adds to the element
-  #pragma omp critical (memalloc)
-  {
-    if (m_colidx[pos] == col) {
-      m_matdata[pos] += val;
-    } else { // Else inserts element into matrix
-      InsertElem(rownnz, pos, val, col, row);
-    }
+  if (m_colidx[pos] == col) {
+    m_matdata[pos] += val;
+  } else { // Else inserts element into matrix
+    InsertElem(rownnz, pos, val, col, row);
   }
 }
 
@@ -119,9 +113,14 @@ void ELLmatrix::InsertElem(int rownnz, int pos, const fem_float val,
   m_matdata[pos] = val;
   m_colidx[pos]  = col;
   // increments number of nonzeros and checks if matrix needs to be grown
-  m_rownnz[row]++;
+  rownnz = m_rownnz[row];
+  if (m_rownnz[row] == (m_maxrowlen - 1)) {
+    m_prealloctrigger = true;
+    return;
+  }
   if (m_rownnz[row] == m_maxrowlen) {
     GrowMatrix();
+    m_prealloctrigger = false;
   }
 }
 
