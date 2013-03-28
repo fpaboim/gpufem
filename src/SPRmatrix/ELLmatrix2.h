@@ -25,39 +25,39 @@ class ELLmatrix2 : public SPRmatrix {
   ELLmatrix2(int matdim);
   ~ELLmatrix2();
 
-  void         SetElem(const int row, const int col, const fem_float val);
-  void         AddElem(const int row, const int col, const fem_float val);
-  fem_float    GetElem(const int row, const int col);
-  size_t       GetMatSize();
-  int          GetNNZ();
-  void         SetNNZInfo(int nnz, int band);
-  void         Ax_y(fem_float* x, fem_float* y);
-  void         AxyGPU(fem_float* x, fem_float* y, size_t local_worksize);
-  void         SolveCgGpu(fem_float* vector_X,
+  void       SetElem(const int row, const int col, const fem_float val);
+  void       AddElem(const int row, const int col, const fem_float val);
+  fem_float  GetElem(const int row, const int col);
+  size_t     GetMatSize();
+  int        GetNNZ();
+  void       SetNNZInfo(int nnz, int band);
+  void       Ax_y(fem_float* x, fem_float* y);
+  void       AxyGPU(fem_float* x, fem_float* y, size_t local_worksize);
+  void       SolveCgGpu(fem_float* vector_X,
                           fem_float* vector_B,
                           int n_iterations,
                           fem_float epsilon,
                           size_t local_work_size);
-  void         SolveCgGpu2(fem_float* vector_X,
+  void       SolveCgGpu2(fem_float* vector_X,
                            fem_float* vector_B,
                            int n_iterations,
                            fem_float epsilon,
                            size_t local_work_size);
-  void         Clear();
-  void         Teardown();
+  void       Clear();
+  void       Teardown();
 
-  static int   BinSearchRow(int* intvector, int  val, int  row,
-                            int  nrownnz, int  rowlen);
-  static int   LinSearchRow(int* intvector, int  val, int  row,
-                            int  nrownnz, int  rowlen);
+  static int BinSearchRow(int* intvector, int  val, int  row, int  nrownnz,
+                          int  rowlen);
+  static int LinSearchRow(int* intvector, int  val, int  row, int  nrownnz,
+                          int  rowlen);
  private:
-  void         InsertElem(int rownnz, int pos, const fem_float val,
-                          const int col, const int row);
-  void         SyncForAllocation();
-  void         GrowMatrix();
-  int          AllocateMatrix(const int matdim);
-  int          ReallocateForBandsize(const int matdim);
-  int          CheckBounds(const int row, const int col);
+  void       InsertElem(int rownnz, int pos, const fem_float val, const int col,
+                        const int row);
+  void       SyncForAllocation();
+  void       GrowMatrix();
+  int        AllocateMatrix(const int matdim);
+  int        ReallocateForBandsize(const int matdim);
+  int        CheckBounds(const int row, const int col);
 
   //-------------------------------------------
   // member variables

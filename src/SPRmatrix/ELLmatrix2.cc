@@ -20,7 +20,7 @@
 //-----------------------------------------------------------------------
 ELLmatrix2::ELLmatrix2(int matdim) {
   m_matdim        = matdim;
-  m_maxrowlen     = 64;
+  m_maxrowlen     = 32;
   m_growthfactor  = 2;
   m_matdata       = NULL;
   m_colidx        = NULL;
@@ -98,7 +98,7 @@ void ELLmatrix2::InsertElem(int rownnz, int pos, const fem_float val,
   m_colidx[pos]  = col;
   // increments number of nonzeros and checks if matrix needs to be grown
   m_rownnz[row]++;
-  if (m_rownnz[row] == m_maxrowlen - 1) {
+  if (m_rownnz[row] == m_maxrowlen - 3) {
     m_prealloctrigger = true;
     return;
   }

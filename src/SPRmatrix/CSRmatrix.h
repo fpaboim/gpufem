@@ -63,9 +63,9 @@ private:
   //-------------------------------------------
   typedef struct ROWdata {
     fem_float* val;
-    int* col;
-    int  nNZ;
-    int  maxSz;
+    int*       col;
+    int        nNZ;
+    int        maxSz;
   } ROWdata;
 
   // CSR Matrix Format Data Structure
