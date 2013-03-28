@@ -1,26 +1,3 @@
-// Copyright 2012, Francisco Aboim (fpaboim@tecgraf.puc-rio.br)
-// All Rights Reserved
-//
-// This Program is licensed under the MIT License as follows:
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-
 ////////////////////////////////////////////////////////////////////////////////
 // Sparsely Sparse Matrix Library - ELLpack Sparse Matrix Implementation
 // Author: Francisco Aboim
@@ -28,7 +5,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // Headers
-#include "SPRmatrix/ELLmatrix.h"
+#include "SPRmatrix/ELLmatrix2.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,10 +18,10 @@
 #include "LAops/LAops.h"
 
 //-----------------------------------------------------------------------
-ELLmatrix::ELLmatrix(int matdim) {
+ELLmatrix2::ELLmatrix2(int matdim) {
   m_matdim        = matdim;
   m_maxrowlen     = 64;
-  m_growstep      = 64;
+  m_growthfactor  = 2;
   m_matdata       = NULL;
   m_colidx        = NULL;
   m_rownnz        = NULL;
@@ -54,7 +31,7 @@ ELLmatrix::ELLmatrix(int matdim) {
 }
 
 //-----------------------------------------------------------------------
-ELLmatrix::~ELLmatrix() {
+ELLmatrix2::~ELLmatrix2() {
   Teardown();
 }
 //-----------------------------------------------------------------------
@@ -65,56 +42,57 @@ ELLmatrix::~ELLmatrix() {
 
 // SetElem: sets sparse matrix element to val
 ////////////////////////////////////////////////////////////////////////////////
-void ELLmatrix::SetElem(const int row, const int col, const fem_float val) {
+void ELLmatrix2::SetElem(const int row, const int col, const fem_float val) {
   if (!InputIsOK(val, row, col))
     return;
 
   int rownnz = m_rownnz[row];
   // Strided binary search for insertion position
-  int pos = BinSearchIntStep(m_colidx, col, rownnz, row, m_matdim);
+  int pos = LinSearchRow(m_colidx, col, row, rownnz, m_maxrowlen);
 
+  if (pos == -1) { // key not found
+    InsertElem(rownnz, (row * m_maxrowlen + rownnz), val, col, row);
+    return;
+  }
   // In case element exists sets the element
   if (m_colidx[pos] == col) {
     m_matdata[pos] = val;
   } else {  // Else inserts element into matrix
-    // If matrix is full grows matrix size
-    #pragma omp critical (memalloc)
-    {
-      InsertElem(rownnz, pos, val, col, row);
-    }
+    InsertElem(rownnz, pos, val, col, row);
   }
 }
 
 // AddElem: adds number to sparse matrix
 ////////////////////////////////////////////////////////////////////////////////
-void ELLmatrix::AddElem(const int row, const int col, const fem_float val) {
+void ELLmatrix2::AddElem(const int row, const int col, const fem_float val) {
   if (!InputIsOK(val, row, col))
     return;
 
   int rownnz = m_rownnz[row];
   // Strided binary search for insertion position
-  int pos = BinSearchIntStep(m_colidx, col, rownnz, row, m_matdim);
+  int pos = LinSearchRow(m_colidx, col, row, rownnz, m_maxrowlen);
 
+  if (pos == -1) { // key not found
+    InsertElem(rownnz, (row * m_maxrowlen + rownnz), val, col, row);
+    return;
+  }
   // In case element exists adds to the element
-  #pragma omp critical (memalloc)
-  {
-    if (m_colidx[pos] == col) {
-      m_matdata[pos] += val;
-    } else { // Else inserts element into matrix
-      InsertElem(rownnz, pos, val, col, row);
-    }
+  if (m_colidx[pos] == col) {
+    m_matdata[pos] += val;
+  } else { // Else inserts element into matrix
+    InsertElem(rownnz, pos, val, col, row);
   }
 }
 
 // GetElem: gets number from sparse matrix
 ////////////////////////////////////////////////////////////////////////////////
-void ELLmatrix::InsertElem(int rownnz, int pos, const fem_float val,
+void ELLmatrix2::InsertElem(int rownnz, int pos, const fem_float val,
                            const int col, const int row ) {
   // Moves data forward before insert
-  int zeropos = row + (rownnz * m_matdim);
-  for (int i = zeropos; i > pos; i = i - m_matdim) {
-    m_matdata[i] = m_matdata[i-m_matdim];
-    m_colidx[i]  = m_colidx[i-m_matdim];
+  int zeropos = (row * m_maxrowlen) + rownnz;
+  for (int i = zeropos; i > pos; i--) {
+    m_matdata[i] = m_matdata[i-1];
+    m_colidx[i]  = m_colidx[i-1];
   }
   m_matdata[pos] = val;
   m_colidx[pos]  = col;
@@ -127,19 +105,11 @@ void ELLmatrix::InsertElem(int rownnz, int pos, const fem_float val,
 
 // GetElem: gets number from sparse matrix
 ////////////////////////////////////////////////////////////////////////////////
-fem_float ELLmatrix::GetElem(const int row, const int col) {
+fem_float ELLmatrix2::GetElem(const int row, const int col) {
   if (!BoundsOK(row, col))
     return 0;
-
-  // Linear Search
-  int pos = -1;
-  for (int i = row; i < (m_maxrowlen * m_matdim); i = i + m_matdim) {
-    if (m_colidx[i] == col) {
-      pos = i;
-      break;
-    }
-  }
-
+  int rownnz = m_rownnz[row];
+  int pos = LinSearchRow(m_colidx, col, row, rownnz, m_maxrowlen);
   if (pos == -1)
     return 0;
 
@@ -148,7 +118,7 @@ fem_float ELLmatrix::GetElem(const int row, const int col) {
 
 // GetMatSize: considers size of matrix data and column index arrays
 ////////////////////////////////////////////////////////////////////////////////
-size_t ELLmatrix::GetMatSize() {
+size_t ELLmatrix2::GetMatSize() {
   size_t datasize = sizeof(fem_float) * m_matdim * m_maxrowlen;
   size_t idxsize  = sizeof(int) * m_matdim * m_maxrowlen;
 
@@ -157,11 +127,10 @@ size_t ELLmatrix::GetMatSize() {
 
 // GetNNZ: gets number of non-zero entries in matrix
 ////////////////////////////////////////////////////////////////////////////////
-int ELLmatrix::GetNNZ() {
+int ELLmatrix2::GetNNZ() {
   int nnz = 0;
-  int totalentries = (m_matdim * m_maxrowlen);
-  for (int i = 0; i < totalentries; ++i) {
-    if (m_matdata[i] != 0) ++nnz;
+  for (int i = 0; i < m_matdim; ++i) {
+    nnz += m_rownnz[i];
   }
 
   return nnz;
@@ -169,8 +138,8 @@ int ELLmatrix::GetNNZ() {
 
 // SetNNZ: Sets the number of non-zero entries in matrix
 ////////////////////////////////////////////////////////////////////////////////
-void ELLmatrix::SetNNZInfo(int nnz, int band) {
-  if (nnz < 0 || band < 0)
+void ELLmatrix2::SetNNZInfo(int nnz, int band) {
+  if (nnz < 0 || band < 0 || (band < m_maxrowlen))
     return;
 
   ReallocateForBandsize(band);
@@ -179,12 +148,12 @@ void ELLmatrix::SetNNZInfo(int nnz, int band) {
 // Ax_y: does matrix vector multiply and stores result in y (which should be
 // allocated by calling function)
 ////////////////////////////////////////////////////////////////////////////////
-void ELLmatrix::Ax_y(fem_float* x, fem_float* y) {
+void ELLmatrix2::Ax_y(fem_float* x, fem_float* y) {
   #pragma omp parallel for
   for (int i = 0; i < m_matdim; ++i) {
     y[i] = 0;
     for (int j = 0; j < m_rownnz[i]; ++j) {
-      int idx = i + (j * m_matdim);
+      int idx = (i * m_maxrowlen) + j;
       y[i] += m_matdata[idx] * x[m_colidx[idx]];
     }
   }
@@ -193,7 +162,7 @@ void ELLmatrix::Ax_y(fem_float* x, fem_float* y) {
 // Ax_y: does matrix vector multiply and stores result in y (which should be
 // allocated by calling function)
 ////////////////////////////////////////////////////////////////////////////////
-void ELLmatrix::AxyGPU(fem_float* x, fem_float* y, size_t local_worksize) {
+void ELLmatrix2::AxyGPU(fem_float* x, fem_float* y, size_t local_worksize) {
   bool printkerneltime = false;
   OCL.setDir("C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//src//OpenCL//clKernels//");
   //OCL.setDir(".\\..\\src\\OpenCL\\clKernels\\");
@@ -294,7 +263,7 @@ void ELLmatrix::AxyGPU(fem_float* x, fem_float* y, size_t local_worksize) {
 // GPU_CG: Solve is controlled by host with partial work (mainly LA Ops
 // done by the GPU - for CG see Shewchuk
 ////////////////////////////////////////////////////////////////////////////////
-void ELLmatrix::SolveCgGpu(fem_float* vector_X,
+void ELLmatrix2::SolveCgGpu(fem_float* vector_X,
                            fem_float* vector_B,
                            int n_iterations,
                            fem_float epsilon,
@@ -302,9 +271,9 @@ void ELLmatrix::SolveCgGpu(fem_float* vector_X,
   size_t localszX = 8;
   size_t VEC_buffer_size, MAT_buffer_size, IDX_buffer_size;
   cl_mem  MatA_mem, IdxA_mem, NnzA_mem, VecD_mem, VecQ_mem;
-  fem_float* vector_D = (fem_float*)_aligned_malloc(m_matdim * sizeof(fem_float), 16);
-  fem_float* vector_R = (fem_float*)_aligned_malloc(m_matdim * sizeof(fem_float), 16);
-  fem_float* vector_Q = (fem_float*)_aligned_malloc(m_matdim * sizeof(fem_float), 16);
+  fem_float* vector_D = (fem_float*)malloc(m_matdim * sizeof(fem_float));
+  fem_float* vector_R = (fem_float*)malloc(m_matdim * sizeof(fem_float));
+  fem_float* vector_Q = (fem_float*)malloc(m_matdim * sizeof(fem_float));
   // Initializes Vectors
   int i;
   //#pragma omp parallel for private (i)
@@ -456,14 +425,14 @@ void ELLmatrix::SolveCgGpu(fem_float* vector_X,
   OCL.releaseMem(NnzA_mem);
   OCL.releaseMem(VecD_mem);
   OCL.releaseMem(VecQ_mem);
-  _aligned_free(vector_D);
-  _aligned_free(vector_Q);
-  _aligned_free(vector_R);
+  free(vector_D);
+  free(vector_Q);
+  free(vector_R);
 }
 
 // Clear: resets the matrix data but otherwise keeps matrix information
 ////////////////////////////////////////////////////////////////////////////////
-void ELLmatrix::Clear() {
+void ELLmatrix2::Clear() {
   // Frees mallocd value and column info
   Teardown();
   AllocateMatrix(m_matdim);
@@ -471,103 +440,111 @@ void ELLmatrix::Clear() {
 
 // Teardown: frees memory used by matrix
 ////////////////////////////////////////////////////////////////////////////////
-void ELLmatrix::Teardown() {
+void ELLmatrix2::Teardown() {
   // Frees mallocd value array and column info array
   if (m_colidx) {
-    _aligned_free(m_colidx);
+    free(m_colidx);
     m_colidx = NULL;
   }
   if (m_matdata) {
-    _aligned_free(m_matdata);
+    free(m_matdata);
     m_matdata = NULL;
   }
   if (m_rownnz) {
-    _aligned_free(m_rownnz);
+    free(m_rownnz);
     m_rownnz = NULL;
   }
-  m_maxrowlen = 32;
+  m_maxrowlen = 64;
 }
 
 // GrowMatrix: Reallocates matrix data for added nonzeros
 ////////////////////////////////////////////////////////////////////////////////
-inline void ELLmatrix::GrowMatrix() {
-  m_maxrowlen += m_growstep;
-  m_matdata =
-    (fem_float*)_aligned_realloc(m_matdata,
-                                 m_maxrowlen * m_matdim * sizeof(fem_float),
-                                 16);
-  m_colidx  =
-    (int*)_aligned_realloc(m_colidx,
-                           m_maxrowlen * m_matdim * sizeof(int),
-                           16);
-  // Sets new matrix data to zero
-  for (int i = (m_maxrowlen - m_growstep) * m_matdim;
-    i < (m_maxrowlen * m_matdim);
-    i++) {
-      m_matdata[i] = 0;
+inline void ELLmatrix2::GrowMatrix() {
+  int lastrowlen = m_maxrowlen;
+  m_maxrowlen *= m_growthfactor;
+  m_matdata = (fem_float*)realloc(m_matdata,
+                                  m_maxrowlen * m_matdim * sizeof(fem_float));
+  m_colidx  = (int*) realloc(m_colidx, m_maxrowlen * m_matdim * sizeof(int));
+  // Moves Memory: (to, from, blocksize)
+  size_t datablksize   = sizeof(fem_float) * lastrowlen;
+  size_t colidxblksize = sizeof(int) * lastrowlen;
+  for (int i = (m_matdim - 1); i > 0; i--) {
+    memmove(&m_matdata[i * m_maxrowlen], &m_matdata[i * lastrowlen],
+            datablksize);
+    memmove(&m_colidx[i * m_maxrowlen], &m_colidx[i * lastrowlen],
+            colidxblksize);
   }
 }
 
 // AllocateMatrix: allocated memory for the matrix
 ////////////////////////////////////////////////////////////////////////////////
-int ELLmatrix::AllocateMatrix(const int matdim) {
-  m_matdata = (fem_float*)_aligned_malloc(
-                            m_maxrowlen * matdim * sizeof(fem_float),
-                            16
-                          );
-  m_colidx  = (int*)_aligned_malloc(m_maxrowlen * matdim * sizeof(int), 16);
-  m_rownnz  = (int*)_aligned_malloc(matdim * sizeof(int), 16);
-
-  for (int i = 0; i < matdim; ++i) {
-    m_rownnz[i] = 0;
-    for (int j = 0; j < m_maxrowlen; j++)
-      m_matdata[i+matdim*j] = 0;
-  }
+int ELLmatrix2::AllocateMatrix(const int matdim) {
+  if (m_matdata != NULL)
+    return 0;
+  m_matdata = (fem_float*) malloc(m_maxrowlen * matdim * sizeof(fem_float));
+  if (m_colidx != NULL)
+    return 0;
+  m_colidx  = (int*) malloc(m_maxrowlen * matdim * sizeof(int));
+  if (m_rownnz != NULL)
+    return 0;
+  m_rownnz  = (int*) calloc(matdim, sizeof(int));
 
   return 1;
 }
 
 // ReallocateForBandsize: Uses band information to preallocate whole matrix
 ////////////////////////////////////////////////////////////////////////////////
-int ELLmatrix::ReallocateForBandsize(const int band) {
+int ELLmatrix2::ReallocateForBandsize(const int band) {
+  int lastrowlen = m_maxrowlen;
   #pragma omp critical (memalloc)
   {
     m_maxrowlen = band;
-
-    m_matdata = (fem_float*)_aligned_realloc(m_matdata,
-      m_maxrowlen * m_matdim * sizeof(fem_float),
-      16);
-    m_colidx  = (int*)_aligned_realloc(m_colidx,
-      m_maxrowlen * m_matdim * sizeof(int),
-      16);
-  }
-
-  #pragma omp parallel for
-  for (int i = 0; i < m_matdim; ++i) {
-    m_rownnz[i] = 0;
-    for (int j = 0; j < m_maxrowlen; j++)
-      m_matdata[i + (m_matdim * j)] = 0;
+    m_matdata = (fem_float*) realloc(m_matdata,
+      m_maxrowlen * m_matdim * sizeof(fem_float));
+    m_colidx  = (int*) realloc(m_colidx, m_maxrowlen * m_matdim * sizeof(int));
   }
 
   return 1;
 }
 
-// BinSearchInt: performs binary search over vector with stepped values, length
-// is of stepped search and NOT of whole intvector
+// BinSearchInt: performs binary search to find insertion point
 ////////////////////////////////////////////////////////////////////////////////
-int ELLmatrix::BinSearchIntStep(int* intvector,
-                                int  val,
-                                int  steppedlen,
-                                int  startpos,
-                                int  step) {
-  int min = 0, max = steppedlen;
+int ELLmatrix2::BinSearchRow(int* intvector,
+                             int  val,
+                             int  row,
+                             int  nrownnz,
+                             int  rowlen) {
+  int min = 0, max = nrownnz;
+  int startpos = row * rowlen;
   const int* rebasedvector = &intvector[startpos];
   while (min < max) {
     int middle = (min + max) >> 1;
-    if (val > rebasedvector[middle * step])
+    if (val > rebasedvector[middle])
       min = middle + 1;
     else
       max = middle;
   }
-  return startpos + (min * step);
+  if (val <= rebasedvector[min]) {
+    return startpos + min;
+  } else {
+    return -1; // not found in array (larger then all values)
+  }
+}
+
+// LinSearchRow: Linearly searches for insertion point
+////////////////////////////////////////////////////////////////////////////////
+int ELLmatrix2::LinSearchRow(int* intvector,
+                             int  val,
+                             int  row,
+                             int  nrownnz,
+                             int  rowlen) {
+  int startpos = row * rowlen;
+  int maxpos   = startpos + nrownnz;
+  for (int i = startpos; i < maxpos; i++) {
+    if (intvector[i] >= val) {
+      return i;
+    }
+  }
+
+  return -1; // not found in array (larger then all values)
 }

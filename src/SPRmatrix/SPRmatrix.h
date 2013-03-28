@@ -35,12 +35,14 @@ class SPRmatrix
 public:
   // Sparse Matrix Type Enum
   typedef enum SPRformat {
+    NIL = 0,
     DEN = 1,
     DIA = 2,
     CSR = 3,
     ELL = 4,
-    EIG = 5,
-    BCR = 6,
+    EL2 = 5,
+    EIG = 6,
+    BCR = 7,
   } SPRformat;
 
   // Optimization strategy used in opencl kernels

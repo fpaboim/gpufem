@@ -4,6 +4,46 @@
 		"selected_items":
 		[
 			[
+				"Runasmb",
+				"RunAsmBatchAnalysis"
+			],
+			[
+				"size",
+				"size_t"
+			],
+			[
+				"m_maxwork",
+				"m_maxworkdim"
+			],
+			[
+				"m_maxwo",
+				"m_maxworkdim"
+			],
+			[
+				"getD",
+				"getDeviceInfo"
+			],
+			[
+				"stiffal",
+				"stiffalgoexisted"
+			],
+			[
+				"devi",
+				"deviceType"
+			],
+			[
+				"De",
+				"DeviceMode"
+			],
+			[
+				"outfileW",
+				"outfileWriteHeader"
+			],
+			[
+				"outFile",
+				"outfileInit"
+			],
+			[
 				"outapp",
 				"outappendlbl"
 			],
@@ -112,60 +152,29 @@
 	"buffers":
 	[
 		{
-			"file": "src/main.cpp",
+			"file": "src/Test/AxyGPUTest.cpp",
 			"settings":
 			{
-				"buffer_size": 15562,
+				"buffer_size": 11757,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "src/FEM/StiffAlgoGPU.cc",
+			"file": "src/SPRmatrix/ELLmatrix.cc",
 			"settings":
 			{
-				"buffer_size": 9039,
+				"buffer_size": 19928,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/VintageLines/create_icons.cpp",
+			"contents": "Searching 73 files for \"memalloc\"\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\FEM\\StiffAlgoGPU.cc:\n   89      allocVector(nelemdof * nelemdof * numelem, true);\n   90  \n   91:   double memalloc_time = omp_get_wtime();  // TIMESTAMP\n   92  \n   93    // Allocate memory on the device to hold our data and store the results into\n   ..\n  155        opencl_time-alloc_time);\n  156      printf(\"    o-Kernel Creation Time:%.3fms\\n\", perfstart_time-opencl_time);\n  157:     printf(\"    x-Kaux Allocation Time:%.3fms\\n\", memalloc_time-perfstart_time);\n  158      printf(\"    x-WriteBuffer Alloc/Enqueue Time + GaussPts:%.3fms\\n\",\n  159:       writebuff_time-memalloc_time);\n  160      printf(\"    x-Kernel Set Time:%.3fms\\n\", kernel_time-writebuff_time);\n  161      printf(\"    x-Enqueue Time:%.3fms\\n\", enqueue_time-kernel_time);\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\FEM\\StiffAlgoGpuOmp.cc:\n   89      allocVector(nelemdof * nelemdof * numelem, true);\n   90  \n   91:   double memalloc_time = omp_get_wtime();  // TIMESTAMP\n   92  \n   93    // Allocate memory on the device to hold our data and store the results into\n   ..\n  178        opencl_time-alloc_time);\n  179      printf(\"    o-Kernel Creation Time:%.3fms\\n\", perfstart_time-opencl_time);\n  180:     printf(\"    x-Kaux Allocation Time:%.3fms\\n\", memalloc_time-perfstart_time);\n  181      printf(\"    x-WriteBuffer Alloc/Enqueue Time + GaussPts:%.3fms\\n\",\n  182:       writebuff_time-memalloc_time);\n  183      printf(\"    x-Kernel Set Time:%.3fms\\n\", kernel_time-writebuff_time);\n  184      printf(\"    x-Enqueue Time:%.3fms\\n\", enqueue_time-kernel_time);\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\SPRmatrix\\ELLmatrix.cc:\n   79    } else {  // Else inserts element into matrix\n   80      // If matrix is full grows matrix size\n   81:     #pragma omp critical (memalloc)\n   82      {\n   83        InsertElem(rownnz, pos, val, col, row);\n   ..\n  100      m_matdata[pos] += val;\n  101    } else { // Else inserts element into matrix\n  102:     #pragma omp critical (memalloc)\n  103      {\n  104        InsertElem(rownnz, pos, val, col, row);\n  ...\n  531  ////////////////////////////////////////////////////////////////////////////////\n  532  int ELLmatrix::ReallocateForBandsize(const int band) {\n  533:   #pragma omp critical (memalloc)\n  534    {\n  535      m_maxrowlen = band;\n\n9 matches across 3 files\n",
 			"settings":
 			{
-				"buffer_size": 2086,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "Report/matlab/runPreCGBench.m",
-			"settings":
-			{
-				"buffer_size": 901,
+				"buffer_size": 2444,
 				"line_ending": "Windows",
-				"name": "function [u, niter, flag] = solveCG(A, f, s, tol,"
-			}
-		},
-		{
-			"file": "Report/matlab/runcg.m",
-			"settings":
-			{
-				"buffer_size": 354,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "Report/matlab/CG.m",
-			"settings":
-			{
-				"buffer_size": 996,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/OpenCL/clKernels/gpuCG.cl",
-			"settings":
-			{
-				"buffer_size": 11031,
-				"line_ending": "Unix"
+				"name": "Find Results",
+				"scratch": true
 			}
 		},
 		{
@@ -177,26 +186,82 @@
 			}
 		},
 		{
+			"file": "src/interface.cpp",
+			"settings":
+			{
+				"buffer_size": 21004,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "test_models/Q8/_Q8_nocol_test.txt",
+			"settings":
+			{
+				"buffer_size": 7008,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "test_models/Q8/_Q8_col_test.txt",
+			"settings":
+			{
+				"buffer_size": 4228,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/FEM/StiffAlgoGpuOmp.cc",
+			"settings":
+			{
+				"buffer_size": 15624,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/FEM/StiffAlgoCPU.cc",
+			"settings":
+			{
+				"buffer_size": 14324,
+				"line_ending": "Windows"
+			}
+		},
+		{
 			"file": "gpufem_notes.md",
 			"settings":
 			{
-				"buffer_size": 7361,
+				"buffer_size": 7451,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/C/Users/fpaboim/Desktop/notes.md",
+			"file": "src/FEM/fem.h",
 			"settings":
 			{
-				"buffer_size": 624,
+				"buffer_size": 3185,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "Report/matlab/preCG.m",
+			"file": "src/Test/main.cpp",
 			"settings":
 			{
-				"buffer_size": 1006,
+				"buffer_size": 2102,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "test_models/Q8/Q8_2_nocol.txt",
+			"settings":
+			{
+				"buffer_size": 4339,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "test_models/Q8/Q8_3_nocol.txt",
+			"settings":
+			{
+				"buffer_size": 4337,
 				"line_ending": "Windows"
 			}
 		},
@@ -316,7 +381,7 @@
 				"View: Toggle Minimap"
 			]
 		],
-		"width": 704.0
+		"width": 407.0
 	},
 	"console":
 	{
@@ -333,6 +398,44 @@
 	},
 	"file_history":
 	[
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/OCLwrapper.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGPU.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoCPU.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/proj/GPU_FEM_Sparse.vcxproj",
+		"/C/Program Files (x86)/AMD APP/include/CL/cl.h",
+		"/C/Program Files (x86)/AMD APP/include/CL/opencl.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/_Q8_2_nocol_test.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Utils/fileIO.cc",
+		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/User/Default (Windows).sublime-keymap",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/interface.cpp",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/fem.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGpuOmp.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGPU.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgo.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/OCLwrapper.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/FemTest.cpp",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/main.cpp",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGpuOmp.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/interface.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoCPU.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgo.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/Report/matlab/CG.m",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/Report/matlab/runcg.m",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/Report/matlab/preCG.m",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/Q8_2_col.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/Q8_3_col.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/clKernels/LAopsEll.cl",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/clKernels/gpuCG.cl",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/Report/matlab/runPreCGBench.m",
+		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/VintageLines/create_icons.cpp",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.h",
+		"/C/Users/fpaboim/Desktop/notes.md",
+		"/C/Programming/ReferenceCode/OS_bobble_v1.1.fla",
+		"/C/Programming/ReferenceCode/OS_zelda_v1.3.fla",
+		"/C/Programming/CatMother/script/test/test.lua",
+		"/C/Programming/CatMother/fsm/Test/test.lua",
+		"/C/Programming/CatMother/deadjustice/docs/deadjustice.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/misulatool100win/src/main_dialog.lua",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/Q8_3_nocol.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/Q8_2_nocol.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk20/brk20_3_nocol.txt",
@@ -350,27 +453,20 @@
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/brk8_2_nocol.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/brk8_3_col.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/brk8_2_col.txt",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/Report/matlab/runcg.m",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Lua/maindlg.lua",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Utils/fileIO.cc",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGpuOmp.cc",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/clKernels/LAopsEll.cl",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/Report/matlab/conjugate_grad.m",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/Matlab/Matlab.tmLanguage",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/Objective-C/Objective-C.tmLanguage",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/User/Default (Windows).sublime-keymap",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/Default/Default (Windows).sublime-keymap",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/gpufem_notes.md",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/User/MarkdownPreview.sublime-settings",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/Markdown Preview/sample.md",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/Markdown Preview/MarkdownPreview.sublime-settings",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/SmartMarkdown/SmartMarkdown.sublime-settings",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/clKernels/gpuCG.cl",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/libs/eigen3.0.5/Eigen/src/Sparse/MappedSparseMatrix.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/libs/eigen3.0.5/Eigen/src/Sparse/DynamicSparseMatrix.h",
 		"/C/Users/fpaboim/Desktop/outtest_brk8.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/SPRmatrixTest.cpp",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/OCLwrapper.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/ELLmatrix.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/main.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/brk8_3.txt",
@@ -386,10 +482,7 @@
 		"/C/Programming/libs/metis-5.0.2/libmetis/mesh.c",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/femColor.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/SPRSearchTest.cpp",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/FemTest.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.cc",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoCPU.cc",
 		"/C/Programming/libs/metis-4.0.3/Lib/Makefile",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/2Q4.nf",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/FemData.cc",
@@ -400,18 +493,14 @@
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/fem.h",
 		"/C/Programming/libs/metis-4.0.3/INSTALL",
 		"/C/Programming/libs/metis-4.0.3/Makefile.in",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGPU.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/OclTest.cpp",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/fem.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/MeshColoringTest.cpp",
-		"/C/Users/fpaboim/Desktop/notes.md",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/libs/gtest/include/gtest/gtest.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Utils/fileIO.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/FemDataTest.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Utils/util.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/AxyGPUTest.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Microbench/Microbench.cpp",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/main.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/libs/eigen3.0.5/doc/examples/Tutorial_ReductionsVisitorsBroadcasting_reductions_bool.cpp",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/VintageLines/vintageLines.py",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/VintageLines/README.md",
@@ -436,31 +525,7 @@
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/Markdown/Markdown.tmLanguage",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/SublimeBlockCursor/SublimeBlockCursor.py",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/gpufem_notes.txt",
-		"/C/Users/fpaboim/Documents/My Dropbox/Sublime/Packages/SublimeBlockCursor/SublimeBlockCursor.py",
-		"/C/Users/fpaboim/Documents/My Dropbox/Sublime/Packages/User/focuslostcommands.py",
-		"/C/Users/fpaboim/Documents/My Dropbox/Sublime/Packages/User/focuslostcommands.pyc",
-		"/C/Users/fpaboim/Documents/My Dropbox/Sublime/dropsub.sh",
-		"/C/Users/fpaboim/Downloads/sparse/spmv/kernels/spmv_ell_device.cu.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/clKernels/LAopsEll_1.cl",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/clKernels/LAopsEll.cl~",
-		"/C/Users/fpaboim/Downloads/sparse/cusp/ell_matrix.h",
-		"/C/Users/fpaboim/Downloads/sparse/cusp/detail/ell_matrix.inl",
-		"/C/Users/fpaboim/Downloads/eBooks/Papers/Sparse Matrices/Code/OpenNL3.2.1/src/plugins/cnc/cnc_sparse_matrix_ell.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/LAopsTest.cpp",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/EIGmatrix.cc",
-		"/C/Programming/cpplint/cpplint.py",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/FemData.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgo.cc",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgo.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoCPU.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGPU.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGpuOmp.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/LAops/LAops.cc",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/LAops/LAops.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/LAops/SprSolver.cc",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/LAops/SprSolver.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Lua/LuaWrap.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Lua/LuaWrap.cpp"
+		"/C/Users/fpaboim/Documents/My Dropbox/Sublime/Packages/SublimeBlockCursor/SublimeBlockCursor.py"
 	],
 	"find":
 	{
@@ -468,7 +533,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 92.0,
 		"where_history":
 		[
 			"C:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\",
@@ -482,6 +547,46 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"memalloc",
+			"coloring",
+			"Total exe",
+			"matbuff",
+			"mattbuf",
+			"prop",
+			"porps",
+			"DONE",
+			"Nu",
+			"color",
+			"Nu",
+			"Emod",
+			"gausspts",
+			"nthreads",
+			"devicemode",
+			"matfmt",
+			"setocl",
+			"setLocalwork",
+			"localsi",
+			"local",
+			"locals",
+			"band",
+			"local",
+			"size",
+			"printf",
+			"computeuni",
+			"setting colo",
+			"m_femdata",
+			"setdevi",
+			"m_femdata",
+			"stiffness",
+			"m_femda",
+			"solveDis",
+			"outfilew",
+			"file",
+			"stiff",
+			"numCPU",
+			"writesol",
+			"enum ",
+			"vis",
 			"locleny",
 			"SPMVCoalUR",
 			"apple",
@@ -569,47 +674,7 @@
 			"\n    ",
 			"- b2717519\n- Fa241182\n",
 			"split",
-			"select_lines",
-			"VPN",
-			"err",
-			"xvec",
-			"femdata->GetStiffnessMatrix()",
-			"femdata",
-			"benchcggp",
-			"block",
-			"benchaxygpu",
-			"solvecgg",
-			"(",
-			"i",
-			"rubik",
-			"Ax_y",
-			"BenchCG",
-			"fem_float",
-			"omp",
-			"openmp",
-			"lid",
-			"setDir",
-			"AxyGPU",
-			"float",
-			"0",
-			"SparseMV",
-			"AxyNaive",
-			"axyg",
-			"error",
-			"(t2*1000)",
-			"0.00001f",
-			"0",
-			"0.00001f",
-			"Axy",
-			"bench",
-			"adde",
-			"2012",
-			"2011",
-			"Ax_yGPU",
-			"SparseMV",
-			"build",
-			"command",
-			"build"
+			"select_lines"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -629,15 +694,15 @@
 	"groups":
 	[
 		{
-			"selected": 7,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "src/main.cpp",
+					"file": "src/Test/AxyGPUTest.cpp",
 					"settings":
 					{
-						"buffer_size": 15562,
+						"buffer_size": 11757,
 						"regions":
 						{
 						},
@@ -650,213 +715,263 @@
 						],
 						"settings":
 						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
 							"line_numbers": false,
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
 							"vintage_lines.line": 0,
-							"vintage_lines.lines": 483,
+							"vintage_lines.lines": 358,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 791.0,
+						"translation.y": 2609.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "src/FEM/StiffAlgoGPU.cc",
+					"file": "src/SPRmatrix/ELLmatrix.cc",
 					"settings":
 					{
-						"buffer_size": 9039,
+						"buffer_size": 19928,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2337,
-								2337
+								3708,
+								3708
 							]
 						],
 						"settings":
 						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
 							"line_numbers": false,
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 55,
-							"vintage_lines.lines": 219,
+							"vintage_lines.line": 101,
+							"vintage_lines.lines": 573,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 990.0,
+						"translation.y": 1439.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/VintageLines/create_icons.cpp",
 					"settings":
 					{
-						"buffer_size": 2086,
+						"buffer_size": 2444,
 						"regions":
 						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										211,
+										219
+									],
+									[
+										539,
+										547
+									],
+									[
+										676,
+										684
+									],
+									[
+										1029,
+										1037
+									],
+									[
+										1357,
+										1365
+									],
+									[
+										1494,
+										1502
+									],
+									[
+										1900,
+										1908
+									],
+									[
+										2103,
+										2111
+									],
+									[
+										2366,
+										2374
+									]
+								],
+								"scope": ""
+							}
 						},
 						"selection":
 						[
 							[
-								522,
-								522
+								1903,
+								1903
 							]
 						],
 						"settings":
 						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"detect_indentation": false,
 							"line_numbers": false,
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 22,
-							"vintage_lines.lines": 74,
+							"output_tag": 1,
+							"result_base_dir": "",
+							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
+							"translate_tabs_to_spaces": false,
+							"vintage_lines.line": 35,
+							"vintage_lines.lines": 52,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 486.0,
+						"translation.y": 270.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "Report/matlab/runPreCGBench.m",
-					"settings":
-					{
-						"buffer_size": 901,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								326,
-								326
-							]
-						],
-						"settings":
-						{
-							"auto_name": "function [u, niter, flag] = solveCG(A, f, s, tol,",
-							"line_numbers": false,
-							"syntax": "Packages/Matlab/Matlab.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 17,
-							"vintage_lines.lines": 47,
-							"vintage_lines.mode": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "Report/matlab/runcg.m",
-					"settings":
-					{
-						"buffer_size": 354,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								160,
-								160
-							]
-						],
-						"settings":
-						{
-							"line_numbers": false,
-							"syntax": "Packages/Matlab/Matlab.tmLanguage",
-							"vintage_lines.line": 15,
-							"vintage_lines.lines": 29,
-							"vintage_lines.mode": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "Report/matlab/CG.m",
-					"settings":
-					{
-						"buffer_size": 996,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								592,
-								592
-							]
-						],
-						"settings":
-						{
-							"line_numbers": false,
-							"syntax": "Packages/Matlab/Matlab.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 14,
-							"vintage_lines.lines": 33,
-							"vintage_lines.mode": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "src/OpenCL/clKernels/gpuCG.cl",
-					"settings":
-					{
-						"buffer_size": 11031,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"line_numbers": false,
-							"syntax": "Packages/C++/C.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 0,
-							"vintage_lines.lines": 266,
-							"vintage_lines.mode": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4536.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
 					"file": "src/OpenCL/clKernels/LAopsEll.cl",
 					"settings":
 					{
@@ -867,22 +982,436 @@
 						"selection":
 						[
 							[
-								3887,
-								3887
+								0,
+								0
 							]
 						],
 						"settings":
 						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
 							"line_numbers": false,
 							"syntax": "Packages/C++/C.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 96,
+							"vintage_lines.line": 0,
 							"vintage_lines.lines": 333,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1134.0,
+						"translation.y": 4590.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/interface.cpp",
+					"settings":
+					{
+						"buffer_size": 21004,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 0,
+							"vintage_lines.lines": 573,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 7685.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "test_models/Q8/_Q8_nocol_test.txt",
+					"settings":
+					{
+						"buffer_size": 7008,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								657,
+								657
+							]
+						],
+						"settings":
+						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"vintage_lines.line": 23,
+							"vintage_lines.lines": 233,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "test_models/Q8/_Q8_col_test.txt",
+					"settings":
+					{
+						"buffer_size": 4228,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								66,
+								66
+							]
+						],
+						"settings":
+						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"vintage_lines.line": 2,
+							"vintage_lines.lines": 161,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "src/FEM/StiffAlgoGpuOmp.cc",
+					"settings":
+					{
+						"buffer_size": 15624,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13374,
+								13374
+							]
+						],
+						"settings":
+						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 293,
+							"vintage_lines.lines": 346,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 39.0,
+						"translation.y": 4752.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "src/FEM/StiffAlgoCPU.cc",
+					"settings":
+					{
+						"buffer_size": 14324,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5927,
+								5927
+							]
+						],
+						"settings":
+						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 138,
+							"vintage_lines.lines": 332,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1851.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -894,43 +1423,11 @@
 			"sheets":
 			[
 				{
-					"buffer": 8,
+					"buffer": 9,
 					"file": "gpufem_notes.md",
 					"settings":
 					{
-						"buffer_size": 7361,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5879,
-								5879
-							]
-						],
-						"settings":
-						{
-							"line_numbers": false,
-							"spell_check": true,
-							"syntax": "Packages/Markdown/Markdown.tmLanguage",
-							"vintage_lines.line": 53,
-							"vintage_lines.lines": 82,
-							"vintage_lines.mode": true,
-							"wrap_width": 0
-						},
-						"translation.x": 0.0,
-						"translation.y": 1512.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "/C/Users/fpaboim/Desktop/notes.md",
-					"settings":
-					{
-						"buffer_size": 624,
+						"buffer_size": 7451,
 						"regions":
 						{
 						},
@@ -943,11 +1440,56 @@
 						],
 						"settings":
 						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
 							"line_numbers": false,
+							"spell_check": true,
 							"syntax": "Packages/Markdown/Markdown.tmLanguage",
 							"vintage_lines.line": 0,
-							"vintage_lines.lines": 33,
-							"vintage_lines.mode": true
+							"vintage_lines.lines": 83,
+							"vintage_lines.mode": true,
+							"wrap_width": 0
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -957,57 +1499,186 @@
 				},
 				{
 					"buffer": 10,
-					"file": "Report/matlab/preCG.m",
+					"file": "src/FEM/fem.h",
 					"settings":
 					{
-						"buffer_size": 1006,
+						"buffer_size": 3185,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								843,
-								843
+								2869,
+								2869
 							]
 						],
 						"settings":
 						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
 							"line_numbers": false,
-							"syntax": "Packages/Matlab/Matlab.tmLanguage",
+							"syntax": "Packages/C++/C++.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 26,
-							"vintage_lines.lines": 33,
+							"vintage_lines.line": 75,
+							"vintage_lines.lines": 86,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 719.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 11,
-					"file": "test_models/Q8/Q8_2_col.txt",
+					"file": "src/Test/main.cpp",
 					"settings":
 					{
-						"buffer_size": 4340,
+						"buffer_size": 2102,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								140,
-								140
+								0,
+								0
 							]
 						],
 						"settings":
 						{
+							"bh_regions":
+							[
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 0,
+							"vintage_lines.lines": 54,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 216.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "test_models/Q8/Q8_2_nocol.txt",
+					"settings":
+					{
+						"buffer_size": 4339,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2271,
+								2271
+							]
+						],
+						"settings":
+						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
 							"line_numbers": false,
 							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"vintage_lines.line": 7,
+							"vintage_lines.line": 64,
 							"vintage_lines.lines": 118,
 							"vintage_lines.mode": true
 						},
@@ -1018,7 +1689,153 @@
 					"type": "text"
 				},
 				{
-					"buffer": 12,
+					"buffer": 13,
+					"file": "test_models/Q8/Q8_3_nocol.txt",
+					"settings":
+					{
+						"buffer_size": 4337,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"vintage_lines.line": 0,
+							"vintage_lines.lines": 118,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 14,
+					"file": "test_models/Q8/Q8_2_col.txt",
+					"settings":
+					{
+						"buffer_size": 4340,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								464,
+								464
+							]
+						],
+						"settings":
+						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"vintage_lines.line": 16,
+							"vintage_lines.lines": 118,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 54.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 15,
 					"file": "test_models/Q8/Q8_3_col.txt",
 					"settings":
 					{
@@ -1030,11 +1847,54 @@
 						[
 							[
 								0,
-								4340
+								0
 							]
 						],
 						"settings":
 						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
 							"line_numbers": false,
 							"syntax": "Packages/Text/Plain text.tmLanguage",
 							"vintage_lines.line": 0,
@@ -1078,7 +1938,7 @@
 		"cols":
 		[
 			0.0,
-			0.51672979798,
+			0.5,
 			1.0
 		],
 		"rows":
@@ -1111,6 +1971,94 @@
 		"selected_items":
 		[
 			[
+				"stiffcpu",
+				"src/FEM/StiffAlgoCPU.cc"
+			],
+			[
+				"gpuomp",
+				"src/FEM/StiffAlgoGpuOmp.cc"
+			],
+			[
+				"stiffalgogpu",
+				"src/FEM/StiffAlgoGPU.cc"
+			],
+			[
+				"_q",
+				"test_models/Q8/_Q8_nocol_test.txt"
+			],
+			[
+				"inter",
+				"src/interface.cpp"
+			],
+			[
+				"q8_2",
+				"test_models/Q8/Q8_2_nocol.txt"
+			],
+			[
+				"_",
+				"test_models/Q8/_Q8_2_nocol_test.txt"
+			],
+			[
+				"ell.cl",
+				"src/OpenCL/clKernels/LAopsEll.cl"
+			],
+			[
+				"test",
+				"src/Test/FemTest.cpp"
+			],
+			[
+				"openclw",
+				"src/OpenCL/OCLwrapper.h"
+			],
+			[
+				"ocl",
+				"src/OpenCL/OCLwrapper.cc"
+			],
+			[
+				"ell",
+				"src/SPRmatrix/ELLmatrix.cc"
+			],
+			[
+				"stiffalgo.c",
+				"src/FEM/StiffAlgo.cc"
+			],
+			[
+				"siffalgpuo",
+				"src/FEM/StiffAlgoGpuOmp.cc"
+			],
+			[
+				"stiffalgogpuom",
+				"src/FEM/StiffAlgoGpuOmp.h"
+			],
+			[
+				"stiffalgocpu.h",
+				"src/FEM/StiffAlgoCPU.h"
+			],
+			[
+				"stiffal.h",
+				"src/FEM/StiffAlgo.h"
+			],
+			[
+				"stiffagpu.h",
+				"src/FEM/StiffAlgoGPU.h"
+			],
+			[
+				"fem.h",
+				"src/FEM/fem.h"
+			],
+			[
+				"fem.cc",
+				"src/FEM/fem.cc"
+			],
+			[
+				"stiffalgoc",
+				"src/FEM/StiffAlgoCPU.cc"
+			],
+			[
+				"stiffal",
+				"src/FEM/StiffAlgo.cc"
+			],
+			[
 				"cg.m",
 				"Report/matlab/runcg.m"
 			],
@@ -1133,10 +2081,6 @@
 			[
 				"fileo",
 				"src/Utils/fileIO.cc"
-			],
-			[
-				"gpuomp",
-				"src/FEM/StiffAlgoGpuOmp.cc"
 			],
 			[
 				"file",
@@ -1283,10 +2227,6 @@
 				"src/Test/AxyGPUTest.cpp"
 			],
 			[
-				"ocl",
-				"src/OpenCL/OCLwrapper.cc"
-			],
-			[
 				"clwra",
 				"src/OpenCL/OCLwrapper.cc"
 			],
@@ -1311,16 +2251,8 @@
 				"src/OpenCL/clKernels/LAopsEll.cl"
 			],
 			[
-				"ell.cl",
-				"src/OpenCL/clKernels/LAopsEll.cl"
-			],
-			[
 				"ellma.c",
 				"src/SPRmatrix/ELLmatrix.cc"
-			],
-			[
-				"ell",
-				"src/SPRmatrix/ELLmatrix.h"
 			],
 			[
 				"micro",
@@ -1365,6 +2297,6 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 160.0,
+	"side_bar_width": 293.0,
 	"status_bar_visible": true
 }

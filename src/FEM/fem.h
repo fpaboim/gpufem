@@ -55,7 +55,9 @@ public:
   // creates derived class object according to device type and returns pointer
   void       Init(bool assemble, DeviceMode devicemode);
   // Calls strategy to execute current stiffness calculation algorithm
-  double     CalcStiffnessMat() {return m_stiffnessalgo->CalcGlobalStiffness();};
+  double     CalcStiffnessMat() {
+    return m_stiffnessalgo->CalcGlobalStiffness(m_femdata);
+  };
   // Builds Force Vector
   fem_float* BuildForceVec(int nNodes, int nNodalLoads, fem_float** nodalLoad);
   // Applies Constraint to stiffness matrix by type: 1-Penalty, 2-Substitution

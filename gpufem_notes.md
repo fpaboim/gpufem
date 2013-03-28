@@ -43,15 +43,16 @@ Ideas!:
 interface
 + Check clearing matrix really necessary?
 + Init GlblKaux as zero? in GPU?
-+ Entregar dia 7
++ Amdahl's law and gustafson -> potential limits to paralellism / development of
+  new parallel algorithms
 
 ### BUGS
 + Fix batch metis(?) memory bug
 
 ### IDEEZ
 + FEM class initialization: femdata in init?
-+ 2.4 finite element history
 + More clarity in assembly in OpenMP
++ 2.4 finite element history
 
 ### References to add
 * Chris Jang from GATLAS:

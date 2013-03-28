@@ -44,7 +44,7 @@ class AxyGPUTest : public ::testing::TestWithParam<SPRmatrix::OclStrategy> {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_P(AxyGPUTest, Ell_diagonal_Ax_y_GPU) {
   CheckMemory check;
-  int matdim  = 16;
+  int matdim  = 2 * 1024;
   int localsz = 8;
   SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
   fem_float* xvec = (fem_float*)malloc(matdim * sizeof(fem_float));
@@ -155,23 +155,22 @@ TEST_P(AxyGPUTest, ELL_diag_band_Axy) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_P(AxyGPUTest, ELL_banded_4to64_localsize) {
   CheckMemory check;
-  int matdim  = 16 * 1024;
+  int matdim     = 2 * 1024;
   int minlocalsz = 4;
-  int maxlocalsz = 64;
-  int bandsz  = 128;
+  int maxlocalsz = 32;
+  int bandsz     = 16;
   SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
   fem_float* xvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yres = (fem_float*)malloc(matdim * sizeof(fem_float));
-
+  // Fill test matrix
   for (int i = 0; i < matdim; ++i) {
     int num = i + 1;
     for (int j = 0; j < bandsz; ++j)
       testmatrix->AddElem(i, j, 1);
-    xvec[i] = (float)2;
-    yres[i] = (float)2 * bandsz;
+    xvec[i] = (float)1;
+    yres[i] = (float)1 * bandsz;
   }
-
   // Test with all strategies
   testmatrix->SetOclStrategy(GetParam());
   for (int localsz = minlocalsz; localsz <= maxlocalsz; localsz *= 2) {
@@ -180,7 +179,6 @@ TEST_P(AxyGPUTest, ELL_banded_4to64_localsize) {
       ASSERT_NEAR(yvec[i], yres[i], 0.001);
     }
   }
-
   // Teardown
   free(xvec);
   free(yvec);

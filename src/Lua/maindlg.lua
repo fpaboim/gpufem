@@ -20,11 +20,12 @@ function BuildMaindlg()
   local gausspts3tgl = iup.toggle{TITLE = "3"}
   local matformatlbl = iup.label{TITLE = "Matrix Format:"}
   local matformatlst = iup.list {
-                         "Dense", "Diagonal", "CSR", "ELLPack", "Eigen";
+                         "Dense", "Diagonal", "CSR", "ELLPack", "ELLPack2",
+                         "Eigen";
                          DROPDOWN = "YES",
                          BGCOLOR = white,
                          VALUE = "1",
-                         VISIBLE_ITEMS = "6"
+                         VISIBLE_ITEMS = "7"
                        }
   local openmptgl  = iup.toggle{TITLE = "OpenMP"}
   local threadslbl = iup.label{TITLE = "  Number of Threads:", ACTIVE = "NO"}
@@ -34,6 +35,8 @@ function BuildMaindlg()
   local colortgl   = iup.toggle{TITLE = "Mesh Coloring"}
   local solvetgl   = iup.toggle{TITLE = "Solve"}
   local viewtgl    = iup.toggle{TITLE = "View"}
+  local asmbatchbtn= iup.button{TITLE = "Run Asm Batch"}
+  local solbatchbtn= iup.button{TITLE = "Run Solver Batch"}
 
   -- File Frame Data
   ------------------------------------------------------------------------
@@ -77,12 +80,13 @@ function BuildMaindlg()
 
   -- Bottom buttons frame data
   ------------------------------------------------------------------------
-  local runbtn    = iup.button{title = "  Run  ", SIZE = "80x14"}
-  local quitbtn   = iup.button{title = " Quit " , SIZE = "80x14"}
+  local runbtn    = iup.button{TITLE = "  Run  ", SIZE = "80x14"}
+  local quitbtn   = iup.button{TITLE = " Quit " , SIZE = "80x14"}
 
   --********************************************************************--
   ---                   Main Dialog GUI Construction                   ---
   --********************************************************************--
+  local separator = iup.label{TITLE="-------------------------"}
   -- Options frame
   ------------------------------------------------------------------------
   local optionsfrm = iup.frame {
@@ -103,7 +107,10 @@ function BuildMaindlg()
       },
       colortgl,
       solvetgl,
-      viewtgl
+      viewtgl,
+      iup.hbox{ iup.fill{}, separator, iup.fill{} },
+      asmbatchbtn,
+      solbatchbtn
     };
     TITLE  = "Options",
     MARGIN = "4x4"
@@ -243,9 +250,27 @@ function BuildMaindlg()
     fileouttxt.value = fileoutdlg.value
   end
 
+  -- Assembly Batch Button Callback
+  ------------------------------------------------------------------------
+  function asmbatchbtn:action()
+    RunAnalysis(2)
+  end
+
+  -- Solver Batch Button Callback
+  ------------------------------------------------------------------------
+  function solbatchbtn:action()
+    RunAnalysis(3)
+  end
+
   -- Run Button Callback
   ------------------------------------------------------------------------
   function runbtn:action()
+    RunAnalysis(1)
+  end
+
+  -- RunAnalysis - batchmode(1-Interface, 2-Asm batch, 3- Solver batch)
+  ------------------------------------------------------------------------
+  function RunAnalysis(batchmode)
     local files = {}
     for i = 1, tonumber(fileinlst.COUNT) do
       files[i] = fileinlst[tostring(i)]
@@ -278,7 +303,8 @@ function BuildMaindlg()
                        solve,
                        view,
                        outfile,
-                       appendmode)
+                       appendmode,
+                       batchmode)
   end
 
   --Quit Button Callback

@@ -39,11 +39,9 @@
 #include "Utils/fileIO.h"
 #include "SPRmatrix/SPRmatrix.h"
 
-/******************************************************************************/
-//                            CPU FEM Operations                              //
-/******************************************************************************/
 
 // Constructor and destructor
+////////////////////////////////////////////////////////////////////////////////
 FEM::FEM() {
   m_initialized = false;
   m_femdata = NULL;
@@ -57,26 +55,28 @@ FEM::~FEM() {
     delete m_stiffnessalgo; m_stiffnessalgo = NULL;
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Makes New Finite Element Analysis Object
 ////////////////////////////////////////////////////////////////////////////////
 void FEM::Init(bool assemble, DeviceMode devicemode) {
   if (!m_initialized) {
+    if (m_femdata) {
+      delete m_femdata; m_femdata = NULL;
+    }
     m_femdata = new FemData;
     m_initialized = true;
     // Selects stiffness calculation algorithm
     switch (devicemode) {
     case CPU:
-      m_stiffnessalgo = new StiffAlgoCPU(m_femdata);
+      m_stiffnessalgo = new StiffAlgoCPU();
       break;
     case GPUOMP:
-      m_stiffnessalgo = new StiffAlgoGpuOmp(m_femdata);
+      m_stiffnessalgo = new StiffAlgoGpuOmp();
       break;
     case GPU:
-      m_stiffnessalgo = new StiffAlgoGPU(m_femdata);
+      m_stiffnessalgo = new StiffAlgoGPU();
       break;
     default:  //default falls back to CPU
-      m_stiffnessalgo = new StiffAlgoCPU(m_femdata);
+      m_stiffnessalgo = new StiffAlgoCPU();
     }
     m_stiffnessalgo->SetMakeAssembly(assemble);
   } else {
@@ -85,8 +85,8 @@ void FEM::Init(bool assemble, DeviceMode devicemode) {
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Applies Constraints to Global Stiffness Matrix: 1-Penalty,  2-Substitution
+// ApplyConstraint: Applies Constraints to Stiffness Matrix where conmode is:
+// PEN(1) - Penalty,  SUB(2) - Substitution
 ////////////////////////////////////////////////////////////////////////////////
 void FEM :: ApplyConstraint(ConstraintMode conmode, int num_supports,
                             int** node_support) {
@@ -143,21 +143,30 @@ void FEM :: ApplyConstraint(ConstraintMode conmode, int num_supports,
 
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Applies Constraints to Global Stiffness Matrix: 1-Penalty,  2-Substitution
+// SetDeviceMode: Changes adopted stiffness calculation strategy in runtime
 ////////////////////////////////////////////////////////////////////////////////
 void FEM::SetDeviceMode(DeviceMode newdevicemode) {
-  if (m_stiffnessalgo != NULL)
+  bool assemble, usecoloring;
+  bool stiffalgoexisted = false;
+  if (m_stiffnessalgo != NULL) {
+    stiffalgoexisted = true;
+    assemble    = m_stiffnessalgo->GetMakeAssembly();
+    usecoloring = m_stiffnessalgo->GetParallelColoring();
     delete m_stiffnessalgo; m_stiffnessalgo = NULL;
+  }
   // Selects stiffness calculation algorithm
   switch (newdevicemode) {
   case CPU:
-    m_stiffnessalgo = new StiffAlgoCPU(m_femdata); break;
+    m_stiffnessalgo = new StiffAlgoCPU(); break;
   case GPU:
-    m_stiffnessalgo = new StiffAlgoGPU(m_femdata); break;
+    m_stiffnessalgo = new StiffAlgoGPU(); break;
   case GPUOMP:
-    m_stiffnessalgo = new StiffAlgoGpuOmp(m_femdata); break;
+    m_stiffnessalgo = new StiffAlgoGpuOmp(); break;
   default:
-    m_stiffnessalgo = new StiffAlgoCPU(m_femdata); 
+    m_stiffnessalgo = new StiffAlgoCPU();
+  }
+  if (stiffalgoexisted) {
+    m_stiffnessalgo->SetMakeAssembly(assemble);
+    m_stiffnessalgo->SetParallelColoring(usecoloring);
   }
 }

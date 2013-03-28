@@ -32,7 +32,7 @@
 
 // Constructor and destructor
 StiffAlgo::StiffAlgo() {
-  m_assemble = true;
+  m_assemble    = true;
   m_usecoloring = false;
 }
 

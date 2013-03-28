@@ -39,40 +39,33 @@
 #include "Utils/fileIO.h"
 #include "SPRmatrix/SPRmatrix.h"
 
-////////////////////////////////////////////////////////////////////////////////
 // Constructor Sets Basic Information to Make Code Less Error Prone
 ////////////////////////////////////////////////////////////////////////////////
-StiffAlgoGPU::StiffAlgoGPU(FemData* femdata) {
-  m_femdata = femdata;
+StiffAlgoGPU::StiffAlgoGPU() {
 }
 
-/******************************************************************************/
-//                            GPU FEM Operations                              //
-/******************************************************************************/
-
-////////////////////////////////////////////////////////////////////////////////
 // Calculates the Global Sparse Stiffness Matrix K
 ////////////////////////////////////////////////////////////////////////////////
-double StiffAlgoGPU::CalcGlobalStiffness() {
+double StiffAlgoGPU::CalcGlobalStiffness(FemData* femdata) {
   bool verbose = false;
   double start_time = omp_get_wtime();  // TIMESTAMP
 
-  int modeldim                     = m_femdata->GetModelDim();
-  int numdof                       = m_femdata->GetNumDof();
-  int nelemdof                     = m_femdata->GetElemDof();
-  int numelem                      = m_femdata->GetNumElem();
-  int numelemnodes                 = m_femdata->GetNumElemNodes();
-  int* elemconnect                 = m_femdata->GetElemConnect();
-  fem_float* nodecoords            = m_femdata->GetNodeCoords();
-  int ngpts                        = m_femdata->GetNumGaussPts();
-  int nloopgpts                    = m_femdata->GetNumGaussLoopPts();
-  fem_float* gausspts_vec          = m_femdata->GetGaussPtsVecGPU();
-  fem_float* gaussweights_vec      = m_femdata->GetGaussWeightVec();
-  fem_float elasticmod             = m_femdata->GetElasticModulus();
-  fem_float poissoncoef            = m_femdata->GetPoissonCoef();
-  SPRmatrix* stiffmat              = m_femdata->GetStiffnessMatrix();
-  SPRmatrix::SPRformat sprseformat = m_femdata->GetSparseFormat();
-  const ivecvec colorelem          = m_femdata->GetColorVector();
+  int modeldim                     = femdata->GetModelDim();
+  int numdof                       = femdata->GetNumDof();
+  int nelemdof                     = femdata->GetElemDof();
+  int numelem                      = femdata->GetNumElem();
+  int numelemnodes                 = femdata->GetNumElemNodes();
+  int* elemconnect                 = femdata->GetElemConnect();
+  fem_float* nodecoords            = femdata->GetNodeCoords();
+  int ngpts                        = femdata->GetNumGaussPts();
+  int nloopgpts                    = femdata->GetNumGaussLoopPts();
+  fem_float* gausspts_vec          = femdata->GetGaussPtsVecGPU();
+  fem_float* gaussweights_vec      = femdata->GetGaussWeightVec();
+  fem_float elasticmod             = femdata->GetElasticModulus();
+  fem_float poissoncoef            = femdata->GetPoissonCoef();
+  SPRmatrix* stiffmat              = femdata->GetStiffnessMatrix();
+  SPRmatrix::SPRformat sprseformat = femdata->GetSparseFormat();
+  const ivecvec colorelem          = femdata->GetColorVector();
 
   double alloc_time = omp_get_wtime();  // TIMESTAMP
 
@@ -169,7 +162,7 @@ double StiffAlgoGPU::CalcGlobalStiffness() {
     printf("    x-Kernel Execution Time:%.3fms\n", enqueue_time-perfstart_time);
     printf("    x-Assembly Time:%.3fms\n", end_time-enqueue_time);
     printf("------------------------------------------------\n");
-    printf("+Total GPU Time:%.3fms (x- marks included times)\n", totaltime);
+    printf("+ Total GPU Time:%.3fms (x- marks included times)\n", totaltime);
   }
 
   free(global_Kaux);
@@ -184,7 +177,6 @@ double StiffAlgoGPU::CalcGlobalStiffness() {
   return (totaltime);
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Loads OpenCL kernel and program
 ////////////////////////////////////////////////////////////////////////////////
 void StiffAlgoGPU::loadKernelAndProgram(int modeldim, int numelemnodes) {

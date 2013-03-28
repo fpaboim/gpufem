@@ -23,15 +23,14 @@
 
 // Headers
 #include <stdio.h>
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <assert.h>
 #include <sys/stat.h>
 
-#include "SDKFile.hpp"
-#include "SDKCommon.hpp"
-#include "CL/cl.h"
+#include "CL/opencl.h"
 
 #include "OCLwrapper.h"
 
@@ -41,17 +40,24 @@ OCLwrapper* OCLwrapper::m_oclwrap = NULL;
 // Constructor defaults to GPU and sets up environment
 ////////////////////////////////////////////////////////////////////////////////
 OCLwrapper::OCLwrapper() {
-  m_usecpu = false;
-  m_clcurrentdevice = NULL;
-  m_cldeviceCPU = NULL;
-  m_cldeviceGPU = NULL;
-  m_clerr = 0;
-  m_computeunits = 0;
-  m_exectime = 0;
-  m_clprogram[0] = NULL;
+  m_verbose          = false;
+  m_usecpu           = false;
+  m_clcurrentdevice  = NULL;
+  m_cldeviceCPU      = NULL;
+  m_cldeviceGPU      = NULL;
+  m_clerr            = 0;
+  m_computeunits     = 0;
+  m_maxworkdim       = 0;
+  m_maxworkgroupsize = 0;
+  m_localmemsize     = 0;
+  m_globalmemsize    = 0;
+  m_globalmaxmemsize = 0;
+  m_exectime         = 0;
+  m_clprogram[0]     = NULL;
   for (int i=0; i < 3; ++i) {
-    m_localworksize[i]  = 0;
-    m_globalworksize[i] = 0;
+    m_maxworkitemsizes[i] = 0;
+    m_localworksize[i]    = 0;
+    m_globalworksize[i]   = 0;
   }
   m_clsrcfilehandle = NULL;
 
@@ -73,7 +79,6 @@ OCLwrapper::OCLwrapper() {
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////
 OCLwrapper::~OCLwrapper() {
 }
 
@@ -83,16 +88,9 @@ OCLwrapper& OCLwrapper::instance() {
   return m_oclwrap ? *m_oclwrap : *(m_oclwrap = new OCLwrapper());
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Changes OpenCL device in use
 ////////////////////////////////////////////////////////////////////////////////
-void OCLwrapper::setDevice(Device devicetype) {
-  if (devicetype == CPU)
-    m_clcurrentdevice = m_cldeviceCPU;
-  else
-    m_clcurrentdevice = m_cldeviceGPU;
-
-  // Get some information about the returned device
+void OCLwrapper::getDeviceInfo() {
   cl_char vendor_name[1024] = {0};
   cl_char device_name[1024] = {0};
   m_clerr = clGetDeviceInfo(m_clcurrentdevice,
@@ -110,13 +108,64 @@ void OCLwrapper::setDevice(Device devicetype) {
                              sizeof(cl_uint),
                              &m_computeunits,
                              NULL);
-
+  m_clerr |= clGetDeviceInfo(m_clcurrentdevice,
+                             CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS,
+                             sizeof(cl_uint),
+                             &m_maxworkdim,
+                             NULL);
+  m_clerr |= clGetDeviceInfo(m_clcurrentdevice,
+                             CL_DEVICE_MAX_WORK_ITEM_SIZES,
+                             sizeof(m_maxworkitemsizes),
+                             &m_maxworkitemsizes,
+                             NULL);
+  m_clerr |= clGetDeviceInfo(m_clcurrentdevice,
+                             CL_DEVICE_MAX_WORK_GROUP_SIZE,
+                             sizeof(size_t),
+                             &m_maxworkgroupsize,
+                             NULL);
+  m_clerr |= clGetDeviceInfo(m_clcurrentdevice,
+                             CL_DEVICE_LOCAL_MEM_SIZE,
+                             sizeof(cl_ulong),
+                             &m_localmemsize,
+                             NULL);
+  m_clerr |= clGetDeviceInfo(m_clcurrentdevice,
+                             CL_DEVICE_LOCAL_MEM_SIZE,
+                             sizeof(cl_ulong),
+                             &m_localmemsize,
+                             NULL);
+  m_clerr |= clGetDeviceInfo(m_clcurrentdevice,
+                             CL_DEVICE_GLOBAL_MEM_SIZE,
+                             sizeof(cl_ulong),
+                             &m_globalmemsize,
+                             NULL);
+  m_clerr |= clGetDeviceInfo(m_clcurrentdevice,
+                             CL_DEVICE_MAX_MEM_ALLOC_SIZE,
+                             sizeof(cl_ulong),
+                             &m_globalmaxmemsize,
+                             NULL);
   assert(m_clerr == CL_SUCCESS);
-  printf("Connecting to %s:%s...\n", vendor_name, device_name);
-  printf("  Compute Units: %i\n", m_computeunits);
+  if (m_verbose) {
+    printf("Connecting to %s:%s...\n", vendor_name, device_name);
+    printf("->  Compute Units: %u\n", m_computeunits);
+    printf("->  Local Memsize: %lu Kbytes\n", m_localmemsize/1024);
+    printf("-> Global Memsize: %lu Mbytes\n", m_globalmemsize/(1024*1024));
+    printf("->  MaxGlbl Memsz: %lu Mbytes\n", m_globalmaxmemsize/(1024*1024));
+    printf("->    Max WI Dims: %u\n", m_maxworkdim);
+    printf("->    Max WG Size: %u\n", m_maxworkgroupsize);
+    printf("->   Max WI Sizes: %u\n", m_maxworkitemsizes[0]);
+    printf("->                 %u\n", m_maxworkitemsizes[1]);
+    printf("->                 %u\n", m_maxworkitemsizes[2]);
+  }
+}
 
-  // Now create a context to perform our calculation with the
-  // specified device
+// Changes OpenCL device in use
+////////////////////////////////////////////////////////////////////////////////
+void OCLwrapper::setDevice(Device devicetype) {
+  if (devicetype == CPU)
+    m_clcurrentdevice = m_cldeviceCPU;
+  else
+    m_clcurrentdevice = m_cldeviceGPU;
+  getDeviceInfo();
   m_clcontext = clCreateContext(NULL,
                                 1,
                                 &m_clcurrentdevice,
@@ -124,8 +173,6 @@ void OCLwrapper::setDevice(Device devicetype) {
                                 NULL,
                                 &m_clerr);
   assert(m_clerr == CL_SUCCESS);
-
-  // And also a command queue for the context
   cl_command_queue_properties prop = 0;
   prop |= CL_QUEUE_PROFILING_ENABLE;
   m_clcmdqueue = clCreateCommandQueue(m_clcontext,
@@ -134,7 +181,6 @@ void OCLwrapper::setDevice(Device devicetype) {
                                       NULL);
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Changes OpenCL device in use
 ////////////////////////////////////////////////////////////////////////////////
 OCLwrapper::Device OCLwrapper::getDevice() {
@@ -144,11 +190,9 @@ OCLwrapper::Device OCLwrapper::getDevice() {
   } else if (m_clcurrentdevice == m_cldeviceGPU) {
     devicetype = GPU;
   }
-
   return devicetype;
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Loads The OpenCL Source File
 ////////////////////////////////////////////////////////////////////////////////
 void OCLwrapper::setDir(std::string dir) {
@@ -157,14 +201,11 @@ void OCLwrapper::setDir(std::string dir) {
       == std::string::npos)
     dir.append("//");
   m_dir = dir;
-
   std::string includedir("-I ");
   includedir.append(dir);
   setBuildOptions(includedir);
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
 // Loads The OpenCL Source File
 ////////////////////////////////////////////////////////////////////////////////
 int OCLwrapper::loadSource(std::string sourcefilename) {
@@ -175,7 +216,6 @@ int OCLwrapper::loadSource(std::string sourcefilename) {
     m_clprogram[0] = m_loadedprograms[sourcefilename];
     return 1;
   }
-
   // Gets source from file
   struct stat statbuf;
   std::string filename = m_dir;
@@ -198,7 +238,6 @@ int OCLwrapper::loadSource(std::string sourcefilename) {
                                              &finalsource,
                                              NULL,
                                              &m_clerr);
-
   assert(m_clerr == CL_SUCCESS);
   // Build OpenCL program
   m_clerr = clBuildProgram(m_clprogram[0], 0, NULL, m_buildoptions.c_str(),
@@ -213,7 +252,6 @@ int OCLwrapper::loadSource(std::string sourcefilename) {
   return 1;
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Creates the Kernel From Loaded Source
 ////////////////////////////////////////////////////////////////////////////////
 void OCLwrapper::loadKernel(const char* kernelname) {
@@ -228,7 +266,6 @@ void OCLwrapper::loadKernel(const char* kernelname) {
   m_loadedkernels[kernelname] = m_clkernel[0];
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Gets OpenCL build log
 ////////////////////////////////////////////////////////////////////////////////
 void OCLwrapper::getBuildLog(cl_int err,
@@ -237,7 +274,7 @@ void OCLwrapper::getBuildLog(cl_int err,
   cl_int logStatus;
   char *buildLog = NULL;
   size_t buildLogSize = 0;
-  logStatus = clGetProgramBuildInfo (program[0],
+  logStatus = clGetProgramBuildInfo(program[0],
     device,
     CL_PROGRAM_BUILD_LOG,
     buildLogSize,
@@ -248,12 +285,12 @@ void OCLwrapper::getBuildLog(cl_int err,
 
   memset(buildLog, 0, buildLogSize);
 
-  logStatus = clGetProgramBuildInfo (program[0],
-                                     device,
-                                     CL_PROGRAM_BUILD_LOG,
-                                     buildLogSize,
-                                     buildLog,
-                                     NULL);
+  logStatus = clGetProgramBuildInfo(program[0],
+                                    device,
+                                    CL_PROGRAM_BUILD_LOG,
+                                    buildLogSize,
+                                    buildLog,
+                                    NULL);
 
   std::cout << " \n\t\t\tBUILD LOG\n";
   std::cout << " ************************************************\n";
@@ -263,7 +300,6 @@ void OCLwrapper::getBuildLog(cl_int err,
   free(buildLog);
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Creates Memory Buffer
 ////////////////////////////////////////////////////////////////////////////////
 cl_mem OCLwrapper::createBuffer(size_t memsize, cl_mem_flags flag) {
@@ -274,7 +310,6 @@ cl_mem OCLwrapper::createBuffer(size_t memsize, cl_mem_flags flag) {
   return buffer;
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Enqueues Memory Buffer for Writing
 ////////////////////////////////////////////////////////////////////////////////
 void OCLwrapper::enqueueWriteBuffer(cl_mem buffer,
@@ -293,7 +328,6 @@ void OCLwrapper::enqueueWriteBuffer(cl_mem buffer,
   assert(m_clerr == CL_SUCCESS);
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Enqueues Memory Buffer for Reading
 ////////////////////////////////////////////////////////////////////////////////
 void OCLwrapper::enqueueReadBuffer(cl_mem buffer,
@@ -313,7 +347,6 @@ void OCLwrapper::enqueueReadBuffer(cl_mem buffer,
   assert(m_clerr == CL_SUCCESS);
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Sets Kernel Arguments
 ////////////////////////////////////////////////////////////////////////////////
 void OCLwrapper::setKernelArg(int argnum,
@@ -326,29 +359,42 @@ void OCLwrapper::setKernelArg(int argnum,
   assert(m_clerr == CL_SUCCESS);
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Sets Global Dimensions
 ////////////////////////////////////////////////////////////////////////////////
 void OCLwrapper::setGlobalWorksize(cl_uint dim, cl_uint value) {
-  if (dim < 0 || dim > 3) {
-    printf("\n*** ERROR - INVALID DIMENSION SET: %i ***\n", dim);
+  if (dim < 0 || dim > m_maxworkdim) {
+    printf("\n*** ERROR - INVALID DIMENSION SET: %u ***\n", dim);
     return;
+  }
+  if (value > m_maxworkgroupsize || value < 0) {
+    printf("\n*** ERROR - INVALID WORKGROUPSIZE[%u] SET: %u ***\n", dim, value);
   }
   m_globalworksize[dim] = value;
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Sets Local Dimensions
 ////////////////////////////////////////////////////////////////////////////////
 void OCLwrapper::setLocalWorksize(cl_uint dim, cl_uint value) {
-  if (dim < 0 || dim > 3) {
+  if (dim < 0 || dim > m_maxworkdim) {
     printf("\n*** ERROR - INVALID DIMENSION SET: %i ***\n", dim);
     return;
+  }
+  if (value > m_maxworkitemsizes[dim] || value < 0) {
+    printf("\n*** ERROR - INVALID WORKSIZE[%u] SET: %u ***\n", dim, value);
   }
   m_localworksize[dim] = value;
 }
 
+// Sets Local Dimensions
 ////////////////////////////////////////////////////////////////////////////////
+bool OCLwrapper::localSizeIsOK(size_t memsize) {
+  if (memsize <= m_localmemsize) {
+    return true;
+  }
+
+  return false;
+}
+
 // Enqueues NDRange Kernel for Execution
 ////////////////////////////////////////////////////////////////////////////////
 void OCLwrapper::enquequeNDRangeKernel(cl_uint ndrange, bool getKernelTime) {
@@ -400,21 +446,18 @@ void OCLwrapper::enquequeNDRangeKernel(cl_uint ndrange, bool getKernelTime) {
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Calls ClFinish for Current Command Queue
 ////////////////////////////////////////////////////////////////////////////////
 void OCLwrapper::finish() {
   clFinish(m_clcmdqueue);
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Cleans Up OpenCL Memory Object
 ////////////////////////////////////////////////////////////////////////////////
 void OCLwrapper::releaseMem(cl_mem memobj) {
   clReleaseMemObject(memobj);
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Frees all class memory
 ////////////////////////////////////////////////////////////////////////////////
 void OCLwrapper::reset() {
@@ -423,7 +466,6 @@ void OCLwrapper::reset() {
   setDevice(currentdevice);
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Frees all class memory, including created singleton
 ////////////////////////////////////////////////////////////////////////////////
 void OCLwrapper::teardown() {
@@ -432,7 +474,6 @@ void OCLwrapper::teardown() {
   m_oclwrap = NULL;
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Clears all allocated memory except for singleton instance
 ////////////////////////////////////////////////////////////////////////////////
 void OCLwrapper::clearMem() {
@@ -455,7 +496,6 @@ void OCLwrapper::clearMem() {
   clReleaseCommandQueue(m_clcmdqueue);
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // isKernelLoaded: check is kernel with kernelname was already built
 ////////////////////////////////////////////////////////////////////////////////
 bool OCLwrapper::isKernelLoaded(std::string kernelname) {
@@ -464,7 +504,6 @@ bool OCLwrapper::isKernelLoaded(std::string kernelname) {
   return true;
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // isProgramLoaded: checks if program with name sourcefilename is already loaded
 ////////////////////////////////////////////////////////////////////////////////
 bool OCLwrapper::isProgramLoaded(std::string sourcefilename) {
@@ -473,7 +512,6 @@ bool OCLwrapper::isProgramLoaded(std::string sourcefilename) {
   return true;
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // checkErr: checks for error
 ////////////////////////////////////////////////////////////////////////////////
 void OCLwrapper::checkErr(cl_int errorcode) {

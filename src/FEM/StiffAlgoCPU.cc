@@ -39,44 +39,36 @@
 #include "Utils/fileIO.h"
 #include "SPRmatrix/SPRmatrix.h"
 
-////////////////////////////////////////////////////////////////////////////////
 // Constructor Sets Basic Information to Make Code Less Error Prone
 ////////////////////////////////////////////////////////////////////////////////
-StiffAlgoCPU::StiffAlgoCPU(FemData* femdata) {
-  m_femdata = femdata;
+StiffAlgoCPU::StiffAlgoCPU() {
 }
 
-/******************************************************************************/
-//                            CPU FEM Operations                              //
-/******************************************************************************/
-
-////////////////////////////////////////////////////////////////////////////////
 // Selects Stiffness Calculation Option
 ////////////////////////////////////////////////////////////////////////////////
-double StiffAlgoCPU::CalcGlobalStiffness() {
+double StiffAlgoCPU::CalcGlobalStiffness(FemData* femdata) {
   if (m_usecoloring)
-    return CalcStiffnessColoring();
+    return CalcStiffnessColoring(femdata);
   else
-    return CalcGlobalStiffnessNaive();
+    return CalcGlobalStiffnessNaive(femdata);
 }
 
-////////////////////////////////////////////////////////////////////////////////
 // Calculates the Global Sparse Stiffness Matrix K
 ////////////////////////////////////////////////////////////////////////////////
-double StiffAlgoCPU::CalcGlobalStiffnessNaive() {
-  int modeldim = m_femdata->GetModelDim();
-  int numdof = m_femdata->GetNumDof();
-  int nelemdof = m_femdata->GetElemDof();
-  int numelem = m_femdata->GetNumElem();
-  int numelemnodes = m_femdata->GetNumElemNodes();
-  int* elemconnect = m_femdata->GetElemConnect();
-  fem_float* nodecoords = m_femdata->GetNodeCoords();
-  int nloopgpts = m_femdata->GetNumGaussLoopPts();
-  fem_float** gausspts_vec = m_femdata->GetGaussPtsVecCPU();
-  fem_float* gaussweight_vec = m_femdata->GetGaussWeightVec();
-  fem_float** constit_mat = m_femdata->GetConstituitiveMat();
-  SPRmatrix* stiffmat = m_femdata->GetStiffnessMatrix();
-  SPRmatrix::SPRformat sprseformat = m_femdata->GetSparseFormat();
+double StiffAlgoCPU::CalcGlobalStiffnessNaive(FemData* femdata) {
+  int modeldim                     = femdata->GetModelDim();
+  int numdof                       = femdata->GetNumDof();
+  int nelemdof                     = femdata->GetElemDof();
+  int numelem                      = femdata->GetNumElem();
+  int numelemnodes                 = femdata->GetNumElemNodes();
+  int* elemconnect                 = femdata->GetElemConnect();
+  fem_float* nodecoords            = femdata->GetNodeCoords();
+  int nloopgpts                    = femdata->GetNumGaussLoopPts();
+  fem_float** gausspts_vec         = femdata->GetGaussPtsVecCPU();
+  fem_float* gaussweight_vec       = femdata->GetGaussWeightVec();
+  fem_float** constit_mat          = femdata->GetConstituitiveMat();
+  SPRmatrix* stiffmat              = femdata->GetStiffnessMatrix();
+  SPRmatrix::SPRformat sprseformat = femdata->GetSparseFormat();
 
   int dim2 = (modeldim-1)*3;
 
@@ -144,7 +136,7 @@ double StiffAlgoCPU::CalcGlobalStiffnessNaive() {
 
       // Assembles global stiffness matrix
       if (m_assemble) {
-#pragma omp critical
+#pragma omp critical (assemble)
         {
           AssembleK(modeldim,
                     numelemnodes,
@@ -177,23 +169,22 @@ double StiffAlgoCPU::CalcGlobalStiffnessNaive() {
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
 // Calculates the Global Sparse Stiffness Matrix K
 ////////////////////////////////////////////////////////////////////////////////
-double StiffAlgoCPU::CalcStiffnessColoring() {
-  int modeldim                     = m_femdata->GetModelDim();
-  int numdof                       = m_femdata->GetNumDof();
-  int nelemdof                     = m_femdata->GetElemDof();
-  int nelemnodes                   = m_femdata->GetNumElemNodes();
-  int* elemconnect                 = m_femdata->GetElemConnect();
-  fem_float* nodecoords            = m_femdata->GetNodeCoords();
-  int nloopgpts                    = m_femdata->GetNumGaussLoopPts();
-  fem_float** gausspts_vec         = m_femdata->GetGaussPtsVecCPU();
-  fem_float* gaussweight_vec       = m_femdata->GetGaussWeightVec();
-  fem_float** constmat             = m_femdata->GetConstituitiveMat();
-  SPRmatrix* stiffmat              = m_femdata->GetStiffnessMatrix();
-  SPRmatrix::SPRformat sprseformat = m_femdata->GetSparseFormat();
-  const ivecvec colorelem          = m_femdata->GetColorVector();
+double StiffAlgoCPU::CalcStiffnessColoring(FemData* femdata) {
+  int modeldim                     = femdata->GetModelDim();
+  int numdof                       = femdata->GetNumDof();
+  int nelemdof                     = femdata->GetElemDof();
+  int nelemnodes                   = femdata->GetNumElemNodes();
+  int* elemconnect                 = femdata->GetElemConnect();
+  fem_float* nodecoords            = femdata->GetNodeCoords();
+  int nloopgpts                    = femdata->GetNumGaussLoopPts();
+  fem_float** gausspts_vec         = femdata->GetGaussPtsVecCPU();
+  fem_float* gaussweight_vec       = femdata->GetGaussWeightVec();
+  fem_float** constmat             = femdata->GetConstituitiveMat();
+  SPRmatrix* stiffmat              = femdata->GetStiffnessMatrix();
+  SPRmatrix::SPRformat sprseformat = femdata->GetSparseFormat();
+  const ivecvec colorelem          = femdata->GetColorVector();
 
   int dim2 = (modeldim-1)*3;
 
@@ -302,7 +293,6 @@ double StiffAlgoCPU::CalcStiffnessColoring() {
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
 // Calculates the Global Sparse Stiffness Matrix K
 ////////////////////////////////////////////////////////////////////////////////
 void StiffAlgoCPU::AssembleK(int modeldim,

@@ -29,6 +29,7 @@
 #include "SPRmatrix/DIAmatrix.h"
 #include "SPRmatrix/DENmatrix.h"
 #include "SPRmatrix/ELLmatrix.h"
+#include "SPRmatrix/ELLmatrix2.h"
 #include "SPRmatrix/EIGmatrix.h"
 
 
@@ -188,6 +189,82 @@ TEST(SPRSearchTest, SteppedSearch) {
   EXPECT_EQ(pos, 5);
   pos = ELLmatrix::BinSearchIntStep(testintvec, 5, 2, 1, 2);
   EXPECT_EQ(pos, 5);
+
+  free(testintvec);
+  delete(testmatrix);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+TEST(SPRSearchTest, Ell2_binary_search) {
+  CheckMemory chk;
+  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(8, SPRmatrix::DEN);
+  int* testintvec = (int*)calloc(16, sizeof(int));
+
+  testintvec[0] = 0;
+  testintvec[1] = 2;
+  testintvec[2] = 3;
+  testintvec[3] = 5;
+  testintvec[4] = 7;
+  testintvec[5] = 8;
+  testintvec[6] = 11;
+  testintvec[7] = 16;
+  testintvec[8] = 18;
+
+  int pos;
+  pos = ELLmatrix2::BinSearchRow(testintvec, 0,  0, 8, 8);
+  EXPECT_EQ(pos, 0);
+  pos = ELLmatrix2::BinSearchRow(testintvec, 3,  0, 8, 8);
+  EXPECT_EQ(pos, 2);
+  pos = ELLmatrix2::BinSearchRow(testintvec, 4,  0, 8, 8);
+  EXPECT_EQ(pos, 3);
+  pos = ELLmatrix2::BinSearchRow(testintvec, 22, 0, 8, 8);
+  EXPECT_EQ(pos, -1);
+  pos = ELLmatrix2::BinSearchRow(testintvec, 1,  0, 8, 8);
+  EXPECT_EQ(pos, 1);
+  pos = ELLmatrix2::BinSearchRow(testintvec, -1, 0, 8, 8);
+  EXPECT_EQ(pos, 0);
+  pos = ELLmatrix2::BinSearchRow(testintvec, 11, 0, 6, 8);
+  EXPECT_EQ(pos, 6);
+  pos = ELLmatrix2::BinSearchRow(testintvec, 18, 0, 6, 8);
+  EXPECT_EQ(pos, -1);
+
+  free(testintvec);
+  delete(testmatrix);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+TEST(SPRSearchTest, Ell2_linear_search) {
+  CheckMemory chk;
+  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(8, SPRmatrix::DEN);
+  int* testintvec = (int*)calloc(16, sizeof(int));
+
+  testintvec[0] = 0;
+  testintvec[1] = 2;
+  testintvec[2] = 3;
+  testintvec[3] = 5;
+  testintvec[4] = 7;
+  testintvec[5] = 8;
+  testintvec[6] = 11;
+  testintvec[7] = 16;
+  testintvec[8] = 18;
+
+  int pos;
+  pos = ELLmatrix2::LinSearchRow(testintvec, 0,  0, 9, 9);
+  EXPECT_EQ(pos, 0);
+  pos = ELLmatrix2::LinSearchRow(testintvec, 3,  0, 9, 9);
+  EXPECT_EQ(pos, 2);
+  pos = ELLmatrix2::LinSearchRow(testintvec, 4,  0, 9, 9);
+  EXPECT_EQ(pos, 3);
+  pos = ELLmatrix2::LinSearchRow(testintvec, 22, 0, 9, 9);
+  EXPECT_EQ(pos, -1);
+  pos = ELLmatrix2::LinSearchRow(testintvec, 1,  0, 9, 9);
+  EXPECT_EQ(pos, 1);
+  pos = ELLmatrix2::LinSearchRow(testintvec, -1, 0, 9, 9);
+  EXPECT_EQ(pos, 0);
+  pos = ELLmatrix2::LinSearchRow(testintvec, 11, 0, 7, 9);
+  EXPECT_EQ(pos, 6);
+  pos = ELLmatrix2::LinSearchRow(testintvec, 18, 0, 7, 9);
+  EXPECT_EQ(pos, -1);
 
   free(testintvec);
   delete(testmatrix);

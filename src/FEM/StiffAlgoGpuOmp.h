@@ -38,31 +38,30 @@
 
 class StiffAlgoGpuOmp : public StiffAlgo {
 public:
-  StiffAlgoGpuOmp(FemData* femdata);
+  StiffAlgoGpuOmp();
   ~StiffAlgoGpuOmp() {};
 
   // GPU FEM Operations
-  double CalcGlobalStiffness();
+  double CalcGlobalStiffness(FemData* femdata);
 
 protected:
   // Performs serial assembly
   inline void AssembleGPUSerial(int elemdofs,
-                                int nelem,
-                                int modeldim,
-                                int nelemnodes,
-                                int* elemconnect,
-                                SPRmatrix* stiffmat,
-                                fem_float* auxstiffmat);
+    int nelem,
+    int modeldim,
+    int nelemnodes,
+    int* elemconnect,
+    SPRmatrix* stiffmat,
+    fem_float* auxstiffmat);
   // Performs parallel assembly by element coloring
   inline void AssembleGPUColoring(int elemdofs,
-                                  int nelem,
-                                  int modeldim,
-                                  int nelemnodes,
-                                  int* elemconnect,
-                                  SPRmatrix* stiffmat,
-                                  fem_float* auxstiffmat,
-                                  const ivecvec colorelem);
-  FemData* m_femdata;
+    int nelem,
+    int modeldim,
+    int nelemnodes,
+    int* elemconnect,
+    SPRmatrix* stiffmat,
+    fem_float* auxstiffmat,
+    const ivecvec colorelem);
 private:
   void loadKernelAndProgram(int modeldim, int numelemnodes);
 };

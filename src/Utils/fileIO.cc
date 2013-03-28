@@ -424,7 +424,6 @@ int FileIO::OpenOutputFile(std::string out_filename, bool appendmode) {
     writeString("FEMGPU Output File\n");
     writeString("Date: ");
     writeString(asctime(datestruct));
-    writeNewLine();
   } else {
     writeString("###########################################################");
     writeNewLine();
@@ -461,7 +460,6 @@ int FileIO::writeAsmOutputHeader() {
   writeStringTab("SIZE");
   writeStringTab("AsmCPU");
   writeStringTab("AsmGPU");
-  writeStringTab("SolCPU");
   writeNewLine();
 
   return 1;
@@ -592,7 +590,7 @@ int FileIO::writeMatFormat(SPRmatrix::SPRformat format) {
     case SPRmatrix::EIG:
       fprintf(m_outputfile, "Matrix Format: EIG\n"); break;
     default:
-      fprintf(m_outputfile, "Matrix Format: UNKNOWN(ERROR)\n");
+      fprintf(m_outputfile, "Matrix Format: none\n");
   }
 
   return 1;

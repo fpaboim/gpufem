@@ -39,6 +39,7 @@
 #include "DIAmatrix.h"
 #include "CSRmatrix.h"
 #include "ELLmatrix.h"
+#include "ELLmatrix2.h"
 #include "EIGmatrix.h"
 
 // Constructor
@@ -68,6 +69,8 @@ SPRmatrix::CreateMatrix(const int dim, SPRformat matformat) {
     return new CSRmatrix(dim);
   else if (matformat == ELL)
     return new ELLmatrix(dim);
+  else if (matformat == EL2)
+    return new ELLmatrix2(dim);
   else if (matformat == EIG)
     return new EIGmatrix(dim);
   else

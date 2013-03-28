@@ -1,13 +1,13 @@
-/////////////////////////////////////////////////////////////////////
-// My OpenCL Wrapper
-/////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// OpenCL Wrapper - warning: does work in the constructor and is a singleton!
+////////////////////////////////////////////////////////////////////////////////
 #ifndef OCLWRAPPER_H
 #define OCLWRAPPER_H
 
 #include <string>
 #include <map>
 
-#include "cl/cl.h"
+#include "CL/opencl.h"
 
 // macro for easy singleton access
 #define OCL OCLwrapper::instance()
@@ -36,13 +36,14 @@ public:
   void   getBuildLog(cl_int err, cl_program* program, cl_device_id device);
   cl_mem createBuffer(size_t memsize, cl_mem_flags flag);
   void   enqueueWriteBuffer(cl_mem buffer, size_t memsize, void* hostData,
-                            cl_bool blocking);
+           cl_bool blocking);
   void   enqueueReadBuffer(cl_mem buffer, size_t memsize, void* hostData,
-                           cl_bool blocking);
+           cl_bool blocking);
   void   setKernelArg(int argnum, size_t argSpecifierSize,
-                      const void* argAddress);
+           const void* argAddress);
   void   setGlobalWorksize(cl_uint dim, cl_uint value);
   void   setLocalWorksize(cl_uint dim, cl_uint value);
+  bool   localSizeIsOK(size_t memsize);
   void   enquequeNDRangeKernel(cl_uint ndrange, bool getKernelTime);
   void   finish();
   void   releaseMem(cl_mem memobj);
@@ -54,6 +55,7 @@ public:
   }
 
 private:
+  void   getDeviceInfo();
   void   clearMem();
   bool   isKernelLoaded(std::string kernelname);
   bool   isProgramLoaded(std::string sourcefilename);
@@ -62,8 +64,7 @@ private:
   //-------------------------------------------
   // member variables
   //-------------------------------------------
-
-  // pointer to the SINGLETON object of this class
+  // pointer to the singleton object
   static OCLwrapper* m_oclwrap;
   // OpenCL vars
   cl_program       m_clprogram[1];
@@ -76,19 +77,25 @@ private:
   cl_device_id     m_cldeviceGPU;
   cl_int           m_clerr;
   cl_event         m_clevents[2];
-  FILE*            m_clsrcfilehandle;
   cl_uint          m_computeunits;
-  std::string      m_buildoptions;
-
+  cl_uint          m_maxworkdim;
+  size_t           m_maxworkgroupsize;
+  size_t           m_maxworkitemsizes[3];
+  cl_ulong         m_localmemsize;
+  cl_ulong         m_globalmemsize;
+  cl_ulong         m_globalmaxmemsize;
   // Aux vars
-  std::map<std::string, cl_kernel> m_loadedkernels;
+  bool             m_verbose;
+  FILE*            m_clsrcfilehandle;
+  std::string      m_buildoptions;
+  bool             m_usecpu;
+  double           m_exectime;
+  size_t           m_globalworksize[3];
+  size_t           m_localworksize[3];
+  std::string      m_dir;
+  std::string      m_filename;
+  std::map<std::string, cl_kernel>  m_loadedkernels;
   std::map<std::string, cl_program> m_loadedprograms;
-  bool   m_usecpu;
-  double m_exectime;
-  size_t m_globalworksize[3];
-  size_t m_localworksize[3];
-  std::string m_dir;
-  std::string m_filename;
 };
 
 #endif

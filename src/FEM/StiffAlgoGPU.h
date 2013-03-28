@@ -37,14 +37,11 @@
 
 class StiffAlgoGPU : public StiffAlgo {
 public:
-  StiffAlgoGPU(FemData* femdata);
+  StiffAlgoGPU();
   ~StiffAlgoGPU() {};
 
   // GPU FEM Operations
-  double CalcGlobalStiffness();
-
-protected:
-  FemData* m_femdata;
+  double CalcGlobalStiffness(FemData* femdata);
 
 private:
   void loadKernelAndProgram(int modeldim, int numelemnodes);

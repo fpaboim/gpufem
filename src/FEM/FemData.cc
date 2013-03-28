@@ -129,15 +129,13 @@ void FemData::Init(SPRmatrix::SPRformat sprse_format,
   fem_float** nodalloads   = fileIO->getNodalLoads();
 
   std::cout << std::endl;
-  std::cout << "************** STATS *****************" << std::endl;
-  std::cout << "**    Elements: "<< nelem << std::endl;
-  std::cout << "**    Nodes: "<< nnodes << std::endl;
-  std::cout << "**    DOF: "<< ndof << std::endl;
-  std::cout << "**    Nodal Loads: "<< nnodalloads << std::endl;
-  std::cout << "**    Element Nodes: "<< nelemnodes << std::endl;
-  std::cout << "**    Gauss Points: "<< n_gpts << std::endl;
-  std::cout << "**************************************" << std::endl;
-  std::cout << std::endl;
+  std::cout << "** STATS **" << std::endl;
+  std::cout << "Elements: "<< nelem << std::endl;
+  std::cout << "Nodes: "<< nnodes << std::endl;
+  std::cout << "DOF: "<< ndof << std::endl;
+  std::cout << "Nodal Loads: "<< nnodalloads << std::endl;
+  std::cout << "Element Nodes: "<< nelemnodes << std::endl;
+  std::cout << "Gauss Points: "<< n_gpts << std::endl;
 
   // Initializes member variables
   m_sparse_format = sprse_format;

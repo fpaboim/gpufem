@@ -32,6 +32,7 @@
 #include <vector>
 
 #include "SPRmatrix/SPRmatrix.h"
+#include "FEM/femdata.h"
 #include "Utils/util.h"
 
 #define ivecvec std::vector<std::vector<int>>
@@ -42,22 +43,30 @@ public:
   virtual ~StiffAlgo();
 
   // creates derived class object according to device type and returns pointer
-  virtual double CalcGlobalStiffness() = 0;
+  virtual double CalcGlobalStiffness(FemData* femdata) = 0;
 
-  void SetParallelColoring(bool usecoloring) {m_usecoloring = usecoloring;};
-  bool GetParallelColoring() {return m_usecoloring;};
-  void SetMakeAssembly(bool assemble) {m_assemble = assemble;};
-  bool GetMakeAssembly() {return m_assemble;};
+  void SetParallelColoring(bool usecoloring) {
+    m_usecoloring = usecoloring;
+  };
+  bool GetParallelColoring() {
+    return m_usecoloring;
+  };
+  void SetMakeAssembly(bool assemble) {
+    m_assemble = assemble;
+  };
+  bool GetMakeAssembly() {
+    return m_assemble;
+  };
 
 protected:
   void GetdShapeFunctNatCoord(int m_model_dim, int nnodes, fem_float* rst,
-                              fem_float** dShapeMatrix);
+    fem_float** dShapeMatrix);
   void GetJacobianMatrix(int m_model_dim, int nnodes, fem_float** Jacobian,
-                         fem_float** coordsElem, fem_float** dShapeFunc);
+    fem_float** coordsElem, fem_float** dShapeFunc);
   void BuildBMatrix(int modeldim, int nnodes, fem_float** matrixB,
-                    fem_float** dNdcart);
+    fem_float** dNdcart);
   void BuildBMatrix2(int modeldim, int nnodes, fem_float** matrixB,
-                     fem_float** dNdcart);
+    fem_float** dNdcart);
 
   bool m_assemble;  //Performs Assembly
   bool m_usecoloring;  //Uses coloring for parallel assembly
