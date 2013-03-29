@@ -20,7 +20,7 @@
 //-----------------------------------------------------------------------
 ELLmatrix2::ELLmatrix2(int matdim) {
   m_matdim        = matdim;
-  m_maxrowlen     = 32;
+  m_maxrowlen     = 64;
   m_growthfactor  = 2;
   m_matdata       = NULL;
   m_colidx        = NULL;
@@ -48,7 +48,7 @@ void ELLmatrix2::SetElem(const int row, const int col, const fem_float val) {
 
   int rownnz = m_rownnz[row];
   // Strided binary search for insertion position
-  int pos = LinSearchRow(m_colidx, col, row, rownnz, m_maxrowlen);
+  int pos = BinSearchRow(m_colidx, col, row, rownnz, m_maxrowlen);
 
   if (pos == -1) { // key not found
     InsertElem(rownnz, (row * m_maxrowlen + rownnz), val, col, row);
