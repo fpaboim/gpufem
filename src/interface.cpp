@@ -293,13 +293,15 @@ void colorMesh( FemData* femdata, bool usennz ) {
   }
   double t4 = omp_get_wtime();
 
-  printf("Number of colors: %i\n", mshColorObj->GetNumColors());
-  printf("Metis element (+nodal) graph time: %3.4f\n", (t2-t1));
-  printf("Greedy coloring time: %3.4f\n", (t3-t2));
-  if (usennz) {
-    printf("NNZ/Band counting time: %3.4f\n", (t4-t3));
+  if (false) {
+    printf("Number of colors: %i\n", mshColorObj->GetNumColors());
+    printf("Metis element (+nodal) graph time: %3.4f\n", (t2-t1));
+    printf("Greedy coloring time: %3.4f\n", (t3-t2));
+    if (usennz) {
+      printf("NNZ/Band counting time: %3.4f\n", (t4-t3));
+    }
+    printf("+ Total coloring time: %3.4f\n", (t4-t1));
   }
-  printf("+ Total coloring time: %3.4f\n", (t4-t1));
   delete(mshColorObj);
 }
 
@@ -446,6 +448,10 @@ int RunAsmBatchAnalysis(std::vector<std::string> files,
   sprseformat = SPRmatrix::ELL;
   RunAsmBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
     Nucoef, usecolor, makenodal, printstiff, solve, view, outfile, appendmode);
+  printf("Running EL2 matrix, gpts:%i", gausspts);
+  sprseformat = SPRmatrix::EL2;
+  RunAsmBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
+    Nucoef, usecolor, makenodal, printstiff, solve, view, outfile, appendmode);
   printf("Running EIG matrix, gpts:%i", gausspts);
   sprseformat = SPRmatrix::EIG;
   RunAsmBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
@@ -462,6 +468,10 @@ int RunAsmBatchAnalysis(std::vector<std::string> files,
     Nucoef, usecolor, makenodal, printstiff, solve, view, outfile, appendmode);
   printf("Running ELL matrix, gpts:%i", gausspts);
   sprseformat = SPRmatrix::ELL;
+  RunAsmBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
+    Nucoef, usecolor, makenodal, printstiff, solve, view, outfile, appendmode);
+  printf("Running EL2 matrix, gpts:%i", gausspts);
+  sprseformat = SPRmatrix::EL2;
   RunAsmBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
     Nucoef, usecolor, makenodal, printstiff, solve, view, outfile, appendmode);
   printf("Running EIG matrix, gpts:%i", gausspts);
@@ -489,7 +499,7 @@ int RunAsmBatches(std::vector<std::string> files,
                   std::string outfile,
                   const bool appendmode) {
   omp_set_dynamic(0);
-  bool usennz = false;
+  bool usennz   = false;
   bool writesol = false;
 
   FileIO* Filehandler = new FileIO();

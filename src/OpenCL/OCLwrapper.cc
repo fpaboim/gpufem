@@ -144,8 +144,8 @@ void OCLwrapper::getDeviceInfo() {
                              &m_globalmaxmemsize,
                              NULL);
   assert(m_clerr == CL_SUCCESS);
+  printf("Connecting to %s:%s...\n", vendor_name, device_name);
   if (m_verbose) {
-    printf("Connecting to %s:%s...\n", vendor_name, device_name);
     printf("->  Compute Units: %u\n", m_computeunits);
     printf("->  Local Memsize: %lu Kbytes\n", m_localmemsize/1024);
     printf("-> Global Memsize: %lu Mbytes\n", m_globalmemsize/(1024*1024));

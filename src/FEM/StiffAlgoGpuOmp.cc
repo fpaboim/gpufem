@@ -171,7 +171,7 @@ double StiffAlgoGpuOmp::CalcGlobalStiffness(FemData* femdata) {
   double end_time = omp_get_wtime();  // TIMESTAMP
   double totaltime = end_time - perfstart_time;
 
-  if (true) {
+  if (verbose) {
     // Prints OpenCL Performance Timings
     printf("    o-Data Read Time:%.3fms\n", alloc_time-start_time);
     printf("    o-Sparse Matrix Creation/Clearing Time:%.3fms\n",
@@ -184,9 +184,12 @@ double StiffAlgoGpuOmp::CalcGlobalStiffness(FemData* femdata) {
     printf("    x-Enqueue Time:%.3fms\n", enqueue_time-kernel_time);
     printf("    x-Kernel Execution Time:%.3fms\n", enqueue_time-perfstart_time);
     printf("    x-Assembly Time:%.3fms\n", end_time-enqueue_time);
-    printf("------------------------------------------------\n");
-    printf("+ Total GPU Time:%.3fms (x- marks included times)\n", totaltime);
   }
+  printf("------------------------------------------------\n");
+  if (m_usecoloring)
+    printf("+ Total GPU(col) Time:%.3fms (x- marks included times)\n", totaltime);
+  else
+    printf("+ Total GPU(nocol) Time:%.3fms (x- marks included times)\n", totaltime);
 
   free(global_Kaux);
 

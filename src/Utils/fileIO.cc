@@ -587,6 +587,8 @@ int FileIO::writeMatFormat(SPRmatrix::SPRformat format) {
       fprintf(m_outputfile, "Matrix Format: DIA\n"); break;
     case SPRmatrix::ELL:
       fprintf(m_outputfile, "Matrix Format: ELL\n"); break;
+    case SPRmatrix::EL2:
+      fprintf(m_outputfile, "Matrix Format: EL2\n"); break;
     case SPRmatrix::EIG:
       fprintf(m_outputfile, "Matrix Format: EIG\n"); break;
     default:

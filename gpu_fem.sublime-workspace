@@ -4,6 +4,26 @@
 		"selected_items":
 		[
 			[
+				"preal",
+				"prealloc_trigger"
+			],
+			[
+				"m_mat",
+				"m_matdata"
+			],
+			[
+				"rownn",
+				"m_rownnz"
+			],
+			[
+				"m_matd",
+				"m_matdim"
+			],
+			[
+				"m_ma",
+				"m_maxrowlen"
+			],
+			[
 				"Runasmb",
 				"RunAsmBatchAnalysis"
 			],
@@ -152,10 +172,18 @@
 	"buffers":
 	[
 		{
-			"file": "src/Test/AxyGPUTest.cpp",
+			"file": "src/Test/main.cpp",
 			"settings":
 			{
-				"buffer_size": 11757,
+				"buffer_size": 2108,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/SPRmatrix/ELLmatrix2.cc",
+			"settings":
+			{
+				"buffer_size": 19137,
 				"line_ending": "Windows"
 			}
 		},
@@ -163,57 +191,41 @@
 			"file": "src/SPRmatrix/ELLmatrix.cc",
 			"settings":
 			{
-				"buffer_size": 19928,
+				"buffer_size": 19956,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"contents": "Searching 73 files for \"memalloc\"\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\FEM\\StiffAlgoGPU.cc:\n   89      allocVector(nelemdof * nelemdof * numelem, true);\n   90  \n   91:   double memalloc_time = omp_get_wtime();  // TIMESTAMP\n   92  \n   93    // Allocate memory on the device to hold our data and store the results into\n   ..\n  155        opencl_time-alloc_time);\n  156      printf(\"    o-Kernel Creation Time:%.3fms\\n\", perfstart_time-opencl_time);\n  157:     printf(\"    x-Kaux Allocation Time:%.3fms\\n\", memalloc_time-perfstart_time);\n  158      printf(\"    x-WriteBuffer Alloc/Enqueue Time + GaussPts:%.3fms\\n\",\n  159:       writebuff_time-memalloc_time);\n  160      printf(\"    x-Kernel Set Time:%.3fms\\n\", kernel_time-writebuff_time);\n  161      printf(\"    x-Enqueue Time:%.3fms\\n\", enqueue_time-kernel_time);\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\FEM\\StiffAlgoGpuOmp.cc:\n   89      allocVector(nelemdof * nelemdof * numelem, true);\n   90  \n   91:   double memalloc_time = omp_get_wtime();  // TIMESTAMP\n   92  \n   93    // Allocate memory on the device to hold our data and store the results into\n   ..\n  178        opencl_time-alloc_time);\n  179      printf(\"    o-Kernel Creation Time:%.3fms\\n\", perfstart_time-opencl_time);\n  180:     printf(\"    x-Kaux Allocation Time:%.3fms\\n\", memalloc_time-perfstart_time);\n  181      printf(\"    x-WriteBuffer Alloc/Enqueue Time + GaussPts:%.3fms\\n\",\n  182:       writebuff_time-memalloc_time);\n  183      printf(\"    x-Kernel Set Time:%.3fms\\n\", kernel_time-writebuff_time);\n  184      printf(\"    x-Enqueue Time:%.3fms\\n\", enqueue_time-kernel_time);\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\SPRmatrix\\ELLmatrix.cc:\n   79    } else {  // Else inserts element into matrix\n   80      // If matrix is full grows matrix size\n   81:     #pragma omp critical (memalloc)\n   82      {\n   83        InsertElem(rownnz, pos, val, col, row);\n   ..\n  100      m_matdata[pos] += val;\n  101    } else { // Else inserts element into matrix\n  102:     #pragma omp critical (memalloc)\n  103      {\n  104        InsertElem(rownnz, pos, val, col, row);\n  ...\n  531  ////////////////////////////////////////////////////////////////////////////////\n  532  int ELLmatrix::ReallocateForBandsize(const int band) {\n  533:   #pragma omp critical (memalloc)\n  534    {\n  535      m_maxrowlen = band;\n\n9 matches across 3 files\n",
+			"file": "src/SPRmatrix/CSRmatrix.cc",
 			"settings":
 			{
-				"buffer_size": 2444,
-				"line_ending": "Windows",
-				"name": "Find Results",
-				"scratch": true
-			}
-		},
-		{
-			"file": "src/OpenCL/clKernels/LAopsEll.cl",
-			"settings":
-			{
-				"buffer_size": 12502,
-				"line_ending": "Unix"
+				"buffer_size": 7970,
+				"line_ending": "Windows"
 			}
 		},
 		{
 			"file": "src/interface.cpp",
 			"settings":
 			{
-				"buffer_size": 21004,
+				"buffer_size": 21535,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "test_models/Q8/_Q8_nocol_test.txt",
+			"contents": "Searching 75 files for \"connecting\"\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\OpenCL\\OCLwrapper.cc:\n  146    assert(m_clerr == CL_SUCCESS);\n  147    if (m_verbose) {\n  148:     printf(\"Connecting to %s:%s...\\n\", vendor_name, device_name);\n  149      printf(\"->  Compute Units: %u\\n\", m_computeunits);\n  150      printf(\"->  Local Memsize: %lu Kbytes\\n\", m_localmemsize/1024);\n\n1 match in 1 file\n\n\nSearching 75 files for \"coloring\"\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\FEM\\fem.cc:\n  147  ////////////////////////////////////////////////////////////////////////////////\n  148  void FEM::SetDeviceMode(DeviceMode newdevicemode) {\n  149:   bool assemble, usecoloring;\n  150    bool stiffalgoexisted = false;\n  151    if (m_stiffnessalgo != NULL) {\n  152      stiffalgoexisted = true;\n  153      assemble    = m_stiffnessalgo->GetMakeAssembly();\n  154:     usecoloring = m_stiffnessalgo->GetParallelColoring();\n  155      delete m_stiffnessalgo; m_stiffnessalgo = NULL;\n  156    }\n  ...\n  168    if (stiffalgoexisted) {\n  169      m_stiffnessalgo->SetMakeAssembly(assemble);\n  170:     m_stiffnessalgo->SetParallelColoring(usecoloring);\n  171    }\n  172  }\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\FEM\\fem.h:\n   71    };\n   72    bool       GetAssemble() {return m_stiffnessalgo->GetMakeAssembly();};\n   73:   void       SetUseColoring(bool usecolor) {\n   74:     m_stiffnessalgo->SetParallelColoring(usecolor);\n   75    };\n   76:   bool       GetUseColoring() {return m_stiffnessalgo->GetParallelColoring();};\n   77    FemData*   GetFemData() {return m_femdata;};\n   78  \n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\FEM\\femColor.cc:\n   23  \n   24  ////////////////////////////////////////////////////////////////////////////////\n   25: // Finite Element Graph Coloring for Parallel Assembly\n   26  // Author: Francisco Aboim\n   27  // TecGraf / PUC-RIO\n   ..\n   37  #include \"metis.h\"\n   38  \n   39: // number of colors available for greedy coloring\n   40  #define MAXNEIGHBORS 64\n   41  \n   ..\n  128  \n  129  ////////////////////////////////////////////////////////////////////////////////\n  130: // Makes Serial Graph Coloring\n  131  ////////////////////////////////////////////////////////////////////////////////\n  132: int femColor::MakeGreedyColoring(FemData* femdata) {\n  133    if (m_ElemAdjVector == NULL) {\n  134      return 0;\n  ...\n  143    int* neighborColors = (int*) malloc(MAXNEIGHBORS*sizeof(int));\n  144  \n  145:   // does greedy coloring\n  146    for (int elem = 0; elem < m_nElem; ++elem) {\n  147      int currIndex  = m_ElemAdjIndex[elem];\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\FEM\\femColor.h:\n   23  \n   24  /////////////////////////////////////////////////////////////////////\n   25: // Finite Element Coloring Header\n   26  /////////////////////////////////////////////////////////////////////\n   27  #ifndef FEMCOLOR_H_\n   ..\n   42  \n   43    void makeMetisGraph(FemData* femdata, bool makenodal);\n   44:   int  MakeGreedyColoring(FemData* femdata);\n   45    void CalcNNZ(FemData* femdata, int &nnz, int &band);\n   46    int  GetNumColors() {return m_nColors;};\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\FEM\\FemData.h:\n  143  \n  144    std::vector<std::vector<int>> m_colorElem; // Vector for parallel assembly by\n  145:                                              // coloring\n  146  \n  147    bool m_initialized;\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\FEM\\StiffAlgo.cc:\n   34  StiffAlgo::StiffAlgo() {\n   35    m_assemble    = true;\n   36:   m_usecoloring = false;\n   37  }\n   38  \n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\FEM\\StiffAlgo.h:\n   46    virtual double CalcGlobalStiffness(FemData* femdata) = 0;\n   47  \n   48:   void SetParallelColoring(bool usecoloring) {\n   49:     m_usecoloring = usecoloring;\n   50    };\n   51:   bool GetParallelColoring() {\n   52:     return m_usecoloring;\n   53    };\n   54    void SetMakeAssembly(bool assemble) {\n   ..\n   70  \n   71    bool m_assemble;  //Performs Assembly\n   72:   bool m_usecoloring;  //Uses coloring for parallel assembly\n   73  };\n   74  \n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\FEM\\StiffAlgoCPU.cc:\n   48  ////////////////////////////////////////////////////////////////////////////////\n   49  double StiffAlgoCPU::CalcGlobalStiffness(FemData* femdata) {\n   50:   if (m_usecoloring)\n   51:     return CalcStiffnessColoring(femdata);\n   52    else\n   53      return CalcGlobalStiffnessNaive(femdata);\n   ..\n  172  // Calculates the Global Sparse Stiffness Matrix K\n  173  ////////////////////////////////////////////////////////////////////////////////\n  174: double StiffAlgoCPU::CalcStiffnessColoring(FemData* femdata) {\n  175    int modeldim                     = femdata->GetModelDim();\n  176    int numdof                       = femdata->GetNumDof();\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\FEM\\StiffAlgoCPU.h:\n   46  protected:\n   47    double CalcGlobalStiffnessNaive(FemData* femdata);\n   48:   double CalcStiffnessColoring(FemData* femdata);\n   49    void   AssembleK(int modeldim,\n   50                     int numelemnodes,\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\FEM\\StiffAlgoGpuOmp.cc:\n  149    double enqueue_time = omp_get_wtime();  // TIMESTAMP\n  150  \n  151:   if (m_usecoloring) {\n  152:     // Parallel assembly by element coloring\n  153:     AssembleGPUColoring(nelemdof,\n  154                          numelem,\n  155                          modeldim,\n  ...\n  253  // Performs serial assembly of stiffness matrix\n  254  ////////////////////////////////////////////////////////////////////////////////\n  255: void StiffAlgoGpuOmp::AssembleGPUColoring(int elemdofs,\n  256                                            int nelem,\n  257                                            int modeldim,\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\FEM\\StiffAlgoGpuOmp.h:\n   24  ////////////////////////////////////////////////////////////////////////////////\n   25  // StiffAlgoGpuOmp.h - GPU based stiffness calculation and assembly by CPU in\n   26: // parallel using OpenMP and Graph Coloring\n   27  // Author: Francisco Paulo de Aboim (fpaboim@gmail.com)\n   28  ////////////////////////////////////////////////////////////////////////////////\n   ..\n   54      SPRmatrix* stiffmat,\n   55      fem_float* auxstiffmat);\n   56:   // Performs parallel assembly by element coloring\n   57:   inline void AssembleGPUColoring(int elemdofs,\n   58      int nelem,\n   59      int modeldim,\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\interface.cpp:\n  127    }\n  128    int gausspts = lua_tonumber(L, arg); arg++;\n  129:   // Mesh Coloring\n  130    if (!lua_isboolean(L, arg)) {\n  131:     lua_pushstring(L, \"Error getting use mesh coloring\");\n  132      lua_error(L);\n  133    }\n  ...\n  197                   bool append,\n  198                   int gausspts,\n  199:                  bool iscoloring,\n  200                   SPRmatrix::SPRformat sprseformat) {\n  201    Filehandler->OpenOutputFile(outfile, append);\n  202    if (append == false) {\n  203:     outfileWriteGptsColoring(Filehandler, gausspts, iscoloring);\n  204    }\n  205    Filehandler->writeMatFormat(sprseformat);\n  206  }\n  207  \n  208: // outfileWriteGptsColoringHeader: writes gausspts and coloring state to header\n  209  ////////////////////////////////////////////////////////////////////////////////\n  210: void outfileWriteGptsColoring(FileIO* Filehandler, int gausspts,\n  211:                               bool iscoloring) {\n  212    Filehandler->writeString(\"Gps:\");\n  213    Filehandler->writeNumTab(gausspts);\n  214:   Filehandler->writeString(\"Coloring:\");\n  215:   Filehandler->writeNumTab((int)iscoloring);\n  216    Filehandler->writeNewLine();\n  217  }\n  ...\n  276  }\n  277  \n  278: // colorMesh: performs mesh coloring and updates femdata with info\n  279  ////////////////////////////////////////////////////////////////////////////////\n  280  void colorMesh( FemData* femdata, bool usennz ) {\n  ...\n  284    double t2 = omp_get_wtime();\n  285    cout << \"Connect Graph Build Time: \" << (t2-t1) << endl;\n  286:   mshColorObj->MakeGreedyColoring(femdata);\n  287    double t3 = omp_get_wtime();\n  288    int metisnnz, band;\n  ...\n  296    printf(\"Number of colors: %i\\n\", mshColorObj->GetNumColors());\n  297    printf(\"Metis element (+nodal) graph time: %3.4f\\n\", (t2-t1));\n  298:   printf(\"Greedy coloring time: %3.4f\\n\", (t3-t2));\n  299    if (usennz) {\n  300      printf(\"NNZ/Band counting time: %3.4f\\n\", (t4-t3));\n  301    }\n  302:   printf(\"+ Total coloring time: %3.4f\\n\", (t4-t1));\n  303    delete(mshColorObj);\n  304  }\n  ...\n  376                    Nucoef,\n  377                    Filehandler);\n  378:     // Preprocessing element coloring\n  379      if (usecolor) {\n  380        colorMesh(femdata, usennz);\n  381      }\n  382      // Gets global stiffness matrix using selected device\n  383:     FEM_test->SetUseColoring(usecolor);\n  384      FEM_test->SetDeviceMode(deviceType);\n  385      femdata->GetStiffnessMatrix()->Clear();\n  ...\n  447    FileIO* filehand = new FileIO();\n  448    outfileInit(filehand, outfile, true, gausspts, usecolor, SPRmatrix::NIL);\n  449:   outfileWriteGptsColoring(filehand, gausspts, usecolor);\n  450    delete(filehand);\n  451    printf(\"Running EL2 matrix, gpts:%i\", gausspts);\n  ...\n  500                      Nucoef,\n  501                      Filehandler);\n  502:       // Preprocessing element coloring\n  503        if (usecolor) {\n  504          colorMesh(femdata, usennz);\n  505        }\n  506        // Gets global stiffness matrix using selected device\n  507:       FEM_test->SetUseColoring(usecolor);\n  508        FEM_test->SetDeviceMode(FEM::CPU);\n  509        femdata->GetStiffnessMatrix()->Clear();\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\interface.h:\n   54    bool append,\n   55    int gausspts,\n   56:   bool iscoloring,\n   57    SPRmatrix::SPRformat sprseformat);\n   58  \n   ..\n   61    bool writesolheader);\n   62  \n   63: void outfileWriteGptsColoring(FileIO* Filehandler, int gausspts,\n   64:   bool iscoloring);\n   65  \n   66  void outfileWriteResults(const bool isbatch,\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\Lua\\maindlg.lua:\n   33                                SCROLLBAR = \"NO\"}\n   34    local opencltgl  = iup.toggle{TITLE = \"OpenCL (GPU)\"}\n   35:   local colortgl   = iup.toggle{TITLE = \"Mesh Coloring\"}\n   36    local solvetgl   = iup.toggle{TITLE = \"Solve\"}\n   37    local viewtgl    = iup.toggle{TITLE = \"View\"}\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\Microbench\\Microbench.cpp:\n  174        (float) femdata->GetStiffnessMatrix()->GetMatSize() / (1024 * 1024));\n  175  \n  176:     // Preprocessing node coloring\n  177      if (usecolor) {\n  178        femColor* mshColorObj = new femColor();\n  ...\n  180        mshColorObj->makeMetisGraph(femdata, false);\n  181        double t2 = omp_get_wtime();\n  182:       mshColorObj->MakeGreedyColoring(femdata);\n  183        delete(mshColorObj);\n  184      }\n  185  \n  186      // Gets global stiffness matrix using selected device\n  187:     FEM_test->SetUseColoring(usecolor);\n  188      double tstiff = FEM_test->CalcStiffnessMat();\n  189      FEM_test->ApplyConstraint(FEM::PEN,\n  ...\n  319    printf(\"\\n# MATRIX SIZE: %.2fMB\\n\",\n  320      (float) femdata->GetStiffnessMatrix()->GetMatSize() / (1024 * 1024));\n  321:   // Preprocessing node coloring\n  322    if (usecolor) {\n  323      femColor* mshColorObj = new femColor();\n  ...\n  326      double t2 = omp_get_wtime();\n  327      std::cout << \"Connect Graph Build Time: \" << (t2-t1) << std::endl;\n  328:     mshColorObj->MakeGreedyColoring(femdata);\n  329      delete(mshColorObj);\n  330    }\n  331  \n  332    // Gets global stiffness matrix using selected device\n  333:   FEM_test->SetUseColoring(usecolor);\n  334    double tstiff = FEM_test->CalcStiffnessMat();\n  335  \n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\Test\\FemTest.cpp:\n  104  // Macro read, process femdata then color\n  105  ////////////////////////////////////////////////////////////////////////////////\n  106: TEST_P(FemTest, macro_test_with_process_coloring_noleak) {\n  107    CheckMemory chk;\n  108    FileIO* Filehandler = new FileIO();\n  ...\n  121                  Filehandler);\n  122  \n  123:   // Preprocessing element coloring\n  124    if (true) {\n  125      femColor* MshColorObj = new femColor();\n  126      MshColorObj->makeMetisGraph(femdata, false);\n  127:     MshColorObj->MakeGreedyColoring(femdata);\n  128  \n  129      delete(MshColorObj);\n  ...\n  137  // Macro read, process femdata then color and calculate stiffness matrix\n  138  ////////////////////////////////////////////////////////////////////////////////\n  139: TEST_P(FemTest, macro_test_stiffness_coloring_noleak) {\n  140    CheckMemory chk;\n  141    omp_set_num_threads(8);\n  ...\n  155                  Filehandler);\n  156  \n  157:   // Preprocessing element coloring\n  158    if (true) {\n  159      femColor* MshColorObj = new femColor();\n  160      MshColorObj->makeMetisGraph(femdata, false);\n  161:     MshColorObj->MakeGreedyColoring(femdata);\n  162  \n  163      delete(MshColorObj);\n  164    }\n  165  \n  166:   FEM_test->SetUseColoring(true);\n  167    double tstiff = FEM_test->CalcStiffnessMat();\n  168    FEM_test->ApplyConstraint(FEM::PEN,\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\Test\\MeshColoringTest.cpp:\n   31  // Test object creation and deletion for leaks\n   32  ////////////////////////////////////////////////////////////////////////////////\n   33: TEST(MeshColoring, Make_femColor_object_and_teardown_noleak) {\n   34    CheckMemory check;\n   35  \n   ..\n   40  // Test object creation and deletion for leaks\n   41  ////////////////////////////////////////////////////////////////////////////////\n   42: TEST(MeshColoring, Color_Small_Mesh) {\n   43    CheckMemory check;\n   44  \n\n76 matches across 17 files\n\n\nSearching 75 files for \"coloring ti\"\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\interface.cpp:\n  296    printf(\"Number of colors: %i\\n\", mshColorObj->GetNumColors());\n  297    printf(\"Metis element (+nodal) graph time: %3.4f\\n\", (t2-t1));\n  298:   printf(\"Greedy coloring time: %3.4f\\n\", (t3-t2));\n  299    if (usennz) {\n  300      printf(\"NNZ/Band counting time: %3.4f\\n\", (t4-t3));\n  301    }\n  302:   printf(\"+ Total coloring time: %3.4f\\n\", (t4-t1));\n  303    delete(mshColorObj);\n  304  }\n\n2 matches in 1 file\n\n\nSearching 75 files for \"critical (\"\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\FEM\\StiffAlgoCPU.cc:\n  137        // Assembles global stiffness matrix\n  138        if (m_assemble) {\n  139: #pragma omp critical (assemble)\n  140          {\n  141            AssembleK(modeldim,\n  ...\n  264          if (m_assemble) {\n  265            if (stiffmat->GetAllocTrigger()) {\n  266:             #pragma omp critical (memalloc)\n  267              {\n  268                AssembleK(modeldim, nelemnodes, elemconnect, elem, stiffmat,\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\FEM\\StiffAlgoGpuOmp.cc:\n  280                if (stiffmat->GetAllocTrigger())\n  281                {\n  282:                 #pragma omp critical (memalloc)\n  283                  {\n  284                  AssembleMatrix2D(stiffmat, gblDOFi, gblDOFj, auxstiffmat, elemStride, rowStride, i, j);\n  ...\n  305                if (stiffmat->GetAllocTrigger())\n  306                {\n  307:                 #pragma omp critical (memalloc)\n  308                  {\n  309                  AssembleMatrix3D(stiffmat, gblDOFi, gblDOFj, auxstiffmat, elemStride, rowStride, i, j);\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\SPRmatrix\\ELLmatrix.cc:\n  530  ////////////////////////////////////////////////////////////////////////////////\n  531  int ELLmatrix::ReallocateForBandsize(const int band) {\n  532:   #pragma omp critical (memalloc)\n  533    {\n  534      m_maxrowlen = band;\n\nC:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\SPRmatrix\\ELLmatrix2.cc:\n  502  int ELLmatrix2::ReallocateForBandsize(const int band) {\n  503    int lastrowlen = m_maxrowlen;\n  504:   #pragma omp critical (memalloc)\n  505    {\n  506      m_maxrowlen = band;\n\n6 matches across 4 files\n",
 			"settings":
 			{
-				"buffer_size": 7008,
-				"line_ending": "Windows"
+				"buffer_size": 16611,
+				"line_ending": "Windows",
+				"name": "Find Results",
+				"scratch": true
 			}
 		},
 		{
-			"file": "test_models/Q8/_Q8_col_test.txt",
+			"file": "src/OpenCL/OCLwrapper.cc",
 			"settings":
 			{
-				"buffer_size": 4228,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "src/FEM/StiffAlgoGpuOmp.cc",
-			"settings":
-			{
-				"buffer_size": 15624,
+				"buffer_size": 18780,
 				"line_ending": "Windows"
 			}
 		},
@@ -221,7 +233,15 @@
 			"file": "src/FEM/StiffAlgoCPU.cc",
 			"settings":
 			{
-				"buffer_size": 14324,
+				"buffer_size": 16622,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/FEM/StiffAlgoGpuOmp.cc",
+			"settings":
+			{
+				"buffer_size": 15076,
 				"line_ending": "Windows"
 			}
 		},
@@ -234,50 +254,26 @@
 			}
 		},
 		{
-			"file": "src/FEM/fem.h",
+			"file": "src/SPRmatrix/ELLmatrix2.h",
 			"settings":
 			{
-				"buffer_size": 3185,
+				"buffer_size": 3248,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "src/Test/main.cpp",
+			"file": "src/FEM/StiffAlgoGpuOmp.h",
 			"settings":
 			{
-				"buffer_size": 2102,
+				"buffer_size": 4151,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "test_models/Q8/Q8_2_nocol.txt",
+			"file": "src/FEM/StiffAlgoCPU.h",
 			"settings":
 			{
-				"buffer_size": 4339,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "test_models/Q8/Q8_3_nocol.txt",
-			"settings":
-			{
-				"buffer_size": 4337,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "test_models/Q8/Q8_2_col.txt",
-			"settings":
-			{
-				"buffer_size": 4340,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "test_models/Q8/Q8_3_col.txt",
-			"settings":
-			{
-				"buffer_size": 4340,
+				"buffer_size": 2374,
 				"line_ending": "Windows"
 			}
 		}
@@ -285,9 +281,13 @@
 	"build_system": "FEMGPU_build",
 	"command_palette":
 	{
-		"height": 375.0,
+		"height": 210.0,
 		"selected_items":
 		[
+			[
+				"git com	",
+				"Git: Commit"
+			],
 			[
 				"pack re",
 				"Package Control: Remove Package"
@@ -381,7 +381,7 @@
 				"View: Toggle Minimap"
 			]
 		],
-		"width": 407.0
+		"width": 514.0
 	},
 	"console":
 	{
@@ -398,16 +398,42 @@
 	},
 	"file_history":
 	[
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoCPU.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk20/brk20_3_col.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/SPRmatrixTest.cpp",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/interface.cpp",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/femColor.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/gpu_fem.sublime-project",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/gpu_fem.sublime-workspace",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/AxyGPUTest.cpp",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/clKernels/LAopsEll.cl",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/main.cpp",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/fem.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/SPRSearchTest.cpp",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/brk8_2_col.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/brk8_3_col.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk20/_brk20_col.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/_brk8_nocol.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/_brk8_col.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/brk8_2_nocol.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/_Q8_nocol_test.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/_Q8_col_test.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/Q8_3_col.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/Q8_2_col.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/Q8_3_nocol.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/Q8_2_nocol.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/_Q8_col_test_new.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGpuOmp.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/OCLwrapper.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGPU.cc",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoCPU.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/proj/GPU_FEM_Sparse.vcxproj",
 		"/C/Program Files (x86)/AMD APP/include/CL/cl.h",
 		"/C/Program Files (x86)/AMD APP/include/CL/opencl.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/_Q8_2_nocol_test.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Utils/fileIO.cc",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/User/Default (Windows).sublime-keymap",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/interface.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/fem.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGpuOmp.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGPU.h",
@@ -415,20 +441,15 @@
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/OCLwrapper.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/FemTest.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/main.cpp",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGpuOmp.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/interface.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoCPU.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgo.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/Report/matlab/CG.m",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/Report/matlab/runcg.m",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/Report/matlab/preCG.m",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/Q8_2_col.txt",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/Q8_3_col.txt",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/clKernels/LAopsEll.cl",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/clKernels/gpuCG.cl",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/Report/matlab/runPreCGBench.m",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/VintageLines/create_icons.cpp",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.h",
 		"/C/Users/fpaboim/Desktop/notes.md",
 		"/C/Programming/ReferenceCode/OS_bobble_v1.1.fla",
 		"/C/Programming/ReferenceCode/OS_zelda_v1.3.fla",
@@ -436,8 +457,6 @@
 		"/C/Programming/CatMother/fsm/Test/test.lua",
 		"/C/Programming/CatMother/deadjustice/docs/deadjustice.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/misulatool100win/src/main_dialog.lua",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/Q8_3_nocol.txt",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/Q8_2_nocol.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk20/brk20_3_nocol.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk20/brk20_2_nocol.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q4/Q4_3_nocol.txt",
@@ -445,14 +464,10 @@
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q4/Q4_2_nocol.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q4/Q4_3_col.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk20/brk20_2_col.txt",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk20/brk20_3_col.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/clKernels/gpuCG_ELL.cl",
 		"/C/Users/fpaboim/Downloads/mandelbrot.b",
 		"/C/Windows/System32/drivers/etc/hosts - Copy",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/brk8_3_nocol.txt",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/brk8_2_nocol.txt",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/brk8_3_col.txt",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/brk8_2_col.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Lua/maindlg.lua",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/Report/matlab/conjugate_grad.m",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/Matlab/Matlab.tmLanguage",
@@ -466,9 +481,7 @@
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/libs/eigen3.0.5/Eigen/src/Sparse/MappedSparseMatrix.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/libs/eigen3.0.5/Eigen/src/Sparse/DynamicSparseMatrix.h",
 		"/C/Users/fpaboim/Desktop/outtest_brk8.txt",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/SPRmatrixTest.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/ELLmatrix.cc",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/main.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/brk8_3.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/output.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/brk8.txt",
@@ -480,9 +493,6 @@
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/_testmodels/Q4.nf",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/femColor.h",
 		"/C/Programming/libs/metis-5.0.2/libmetis/mesh.c",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/femColor.cc",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/SPRSearchTest.cpp",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.cc",
 		"/C/Programming/libs/metis-4.0.3/Lib/Makefile",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/2Q4.nf",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/FemData.cc",
@@ -490,7 +500,6 @@
 		"/C/Programming/libs/metis-4.0.3/Lib/mesh.c",
 		"/C/Users/fpaboim/Downloads/manual.ps",
 		"/C/Programming/libs/metis-4.0.3/Makefile",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/fem.h",
 		"/C/Programming/libs/metis-4.0.3/INSTALL",
 		"/C/Programming/libs/metis-4.0.3/Makefile.in",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/OclTest.cpp",
@@ -499,7 +508,6 @@
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Utils/fileIO.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/FemDataTest.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Utils/util.cc",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/AxyGPUTest.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Microbench/Microbench.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/libs/eigen3.0.5/doc/examples/Tutorial_ReductionsVisitorsBroadcasting_reductions_bool.cpp",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/VintageLines/vintageLines.py",
@@ -517,15 +525,7 @@
 		"/C/Users/fpaboim/Downloads/eBooks/Literature/ePub eBooks/booklist.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/matlab/ELLgpu_test_validation.m",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/Markdown Preview/README.md",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/SublimeClang/SublimeClang.sublime-settings",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/User/SublimeClang.sublime-settings",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/gpu_fem.sublime-project",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/C++/C++.sublime-settings",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/Default/Default (Linux).sublime-keymap",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/Markdown/Markdown.tmLanguage",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/SublimeBlockCursor/SublimeBlockCursor.py",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/gpufem_notes.txt",
-		"/C/Users/fpaboim/Documents/My Dropbox/Sublime/Packages/SublimeBlockCursor/SublimeBlockCursor.py"
+		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/SublimeClang/SublimeClang.sublime-settings"
 	],
 	"find":
 	{
@@ -547,6 +547,45 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"critical (",
+			"coloring ti",
+			"coloring",
+			"connecting",
+			"macro",
+			"ELL",
+			"trigger",
+			"omp",
+			"critical",
+			"CalcNNz",
+			"colorMe",
+			"color",
+			"nnz",
+			"teardo",
+			"big",
+			"SearchRo",
+			"BinSearchRow",
+			"search",
+			"LinSearchRow",
+			"BinSearchRow",
+			"BinSearchIntStep",
+			"ELLmatrix",
+			"Ellmatrix2",
+			"ELL",
+			"pos",
+			"BinSea",
+			"LinSearchRow",
+			"pos",
+			"band",
+			"align",
+			"Growm",
+			"BinSe",
+			"BinS",
+			"binsea",
+			"binse	n",
+			"binse",
+			"ELLmatrix",
+			"Ellmatrix",
+			"ellma",
 			"memalloc",
 			"coloring",
 			"Total exe",
@@ -635,46 +674,7 @@
 			"alloc",
 			"global_k",
 			"global_Kaux",
-			"aux",
-			"alloc",
-			"define",
-			"nnz",
-			"const",
-			"CalcConstituitiveData",
-			"allocm",
-			"m_x_gausspts_cpu",
-			"SetGaussPoints",
-			"check_",
-			"check",
-			"init",
-			"readnf",
-			"../",
-			"nf",
-			"filehandler",
-			"devicetype",
-			"femtes",
-			"femdata",
-			"mshcol",
-			"mshcolor",
-			"elemType",
-			"ctrl",
-			"find",
-			"undo",
-			"i",
-			"gutt",
-			"numb",
-			"mall",
-			"4",
-			"banks",
-			"oclstrat",
-			"stride",
-			"ELL_",
-			"BenchCGGPU",
-			"    ",
-			"\n    ",
-			"- b2717519\n- Fa241182\n",
-			"split",
-			"select_lines"
+			"aux"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -682,6 +682,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"Ellmatrix2",
 			"SpMVNaive",
 			"2012"
 		],
@@ -694,23 +695,23 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 4,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "src/Test/AxyGPUTest.cpp",
+					"file": "src/Test/main.cpp",
 					"settings":
 					{
-						"buffer_size": 11757,
+						"buffer_size": 2108,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								844,
+								844
 							]
 						],
 						"settings":
@@ -763,29 +764,29 @@
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
 							"vintage_lines.line": 0,
-							"vintage_lines.lines": 358,
+							"vintage_lines.lines": 54,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2609.0,
+						"translation.y": 162.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "src/SPRmatrix/ELLmatrix.cc",
+					"file": "src/SPRmatrix/ELLmatrix2.cc",
 					"settings":
 					{
-						"buffer_size": 19928,
+						"buffer_size": 19137,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3708,
-								3708
+								17780,
+								17780
 							]
 						],
 						"settings":
@@ -837,21 +838,246 @@
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 101,
-							"vintage_lines.lines": 573,
+							"vintage_lines.line": 509,
+							"vintage_lines.lines": 555,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1439.0,
+						"translation.y": 8964.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
+					"file": "src/SPRmatrix/ELLmatrix.cc",
 					"settings":
 					{
-						"buffer_size": 2444,
+						"buffer_size": 19956,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4861,
+								4861
+							]
+						],
+						"settings":
+						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 136,
+							"vintage_lines.lines": 572,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2106.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/SPRmatrix/CSRmatrix.cc",
+					"settings":
+					{
+						"buffer_size": 7970,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7121,
+								7121
+							]
+						],
+						"settings":
+						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 194,
+							"vintage_lines.lines": 215,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3006.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/interface.cpp",
+					"settings":
+					{
+						"buffer_size": 21535,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10632,
+								10632
+							]
+						],
+						"settings":
+						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 304,
+							"vintage_lines.lines": 583,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4877.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"settings":
+					{
+						"buffer_size": 16611,
 						"regions":
 						{
 							"match":
@@ -860,40 +1086,344 @@
 								"regions":
 								[
 									[
-										211,
-										219
+										214,
+										224
 									],
 									[
-										539,
-										547
+										717,
+										725
 									],
 									[
-										676,
-										684
+										918,
+										926
 									],
 									[
-										1029,
-										1037
+										957,
+										965
 									],
 									[
-										1357,
-										1365
+										1172,
+										1180
 									],
 									[
-										1494,
-										1502
+										1184,
+										1192
 									],
 									[
-										1900,
-										1908
+										1415,
+										1423
 									],
 									[
-										2103,
-										2111
+										1480,
+										1488
 									],
 									[
-										2366,
-										2374
+										1538,
+										1546
+									],
+									[
+										1585,
+										1593
+									],
+									[
+										1876,
+										1884
+									],
+									[
+										2057,
+										2065
+									],
+									[
+										2236,
+										2244
+									],
+									[
+										2364,
+										2372
+									],
+									[
+										2564,
+										2572
+									],
+									[
+										2874,
+										2882
+									],
+									[
+										3096,
+										3104
+									],
+									[
+										3472,
+										3480
+									],
+									[
+										3684,
+										3692
+									],
+									[
+										3907,
+										3915
+									],
+									[
+										3924,
+										3932
+									],
+									[
+										3952,
+										3960
+									],
+									[
+										3966,
+										3974
+									],
+									[
+										4013,
+										4021
+									],
+									[
+										4049,
+										4057
+									],
+									[
+										4198,
+										4206
+									],
+									[
+										4216,
+										4224
+									],
+									[
+										4531,
+										4539
+									],
+									[
+										4572,
+										4580
+									],
+									[
+										4851,
+										4859
+									],
+									[
+										5212,
+										5220
+									],
+									[
+										5507,
+										5515
+									],
+									[
+										5562,
+										5570
+									],
+									[
+										5593,
+										5601
+									],
+									[
+										5882,
+										5890
+									],
+									[
+										6337,
+										6345
+									],
+									[
+										6621,
+										6629
+									],
+									[
+										6662,
+										6670
+									],
+									[
+										6899,
+										6907
+									],
+									[
+										7000,
+										7008
+									],
+									[
+										7160,
+										7168
+									],
+									[
+										7344,
+										7352
+									],
+									[
+										7378,
+										7386
+									],
+									[
+										7494,
+										7502
+									],
+									[
+										7530,
+										7538
+									],
+									[
+										7671,
+										7679
+									],
+									[
+										7759,
+										7767
+									],
+									[
+										7894,
+										7902
+									],
+									[
+										7948,
+										7956
+									],
+									[
+										8064,
+										8072
+									],
+									[
+										8390,
+										8398
+									],
+									[
+										8650,
+										8658
+									],
+									[
+										8807,
+										8815
+									],
+									[
+										8995,
+										9003
+									],
+									[
+										9177,
+										9185
+									],
+									[
+										9452,
+										9460
+									],
+									[
+										9697,
+										9705
+									],
+									[
+										9889,
+										9897
+									],
+									[
+										10155,
+										10163
+									],
+									[
+										10290,
+										10298
+									],
+									[
+										10350,
+										10358
+									],
+									[
+										10680,
+										10688
+									],
+									[
+										11024,
+										11032
+									],
+									[
+										11255,
+										11263
+									],
+									[
+										11421,
+										11429
+									],
+									[
+										11708,
+										11716
+									],
+									[
+										11951,
+										11959
+									],
+									[
+										12109,
+										12117
+									],
+									[
+										12465,
+										12473
+									],
+									[
+										12640,
+										12648
+									],
+									[
+										12811,
+										12819
+									],
+									[
+										13088,
+										13096
+									],
+									[
+										13251,
+										13259
+									],
+									[
+										13422,
+										13430
+									],
+									[
+										13525,
+										13533
+									],
+									[
+										13897,
+										13905
+									],
+									[
+										14151,
+										14159
+									],
+									[
+										14538,
+										14549
+									],
+									[
+										14695,
+										14706
+									],
+									[
+										15020,
+										15030
+									],
+									[
+										15216,
+										15226
+									],
+									[
+										15546,
+										15556
+									],
+									[
+										15820,
+										15830
+									],
+									[
+										16242,
+										16252
+									],
+									[
+										16523,
+										16533
 									]
 								],
 								"scope": ""
@@ -902,8 +1432,8 @@
 						"selection":
 						[
 							[
-								1903,
-								1903
+								15032,
+								15032
 							]
 						],
 						"settings":
@@ -953,260 +1483,37 @@
 							],
 							"detect_indentation": false,
 							"line_numbers": false,
-							"output_tag": 1,
+							"output_tag": 4,
 							"result_base_dir": "",
 							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
 							"result_line_regex": "^ +([0-9]+):",
 							"scroll_past_end": true,
 							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
 							"translate_tabs_to_spaces": false,
-							"vintage_lines.line": 35,
-							"vintage_lines.lines": 52,
+							"vintage_lines.line": 375,
+							"vintage_lines.lines": 413,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 270.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "src/OpenCL/clKernels/LAopsEll.cl",
-					"settings":
-					{
-						"buffer_size": 12502,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"bh_regions":
-							[
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close"
-							],
-							"line_numbers": false,
-							"syntax": "Packages/C++/C.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 0,
-							"vintage_lines.lines": 333,
-							"vintage_lines.mode": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4590.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "src/interface.cpp",
-					"settings":
-					{
-						"buffer_size": 21004,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"bh_regions":
-							[
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close"
-							],
-							"line_numbers": false,
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 0,
-							"vintage_lines.lines": 573,
-							"vintage_lines.mode": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 7685.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "test_models/Q8/_Q8_nocol_test.txt",
-					"settings":
-					{
-						"buffer_size": 7008,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								657,
-								657
-							]
-						],
-						"settings":
-						{
-							"bh_regions":
-							[
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close"
-							],
-							"line_numbers": false,
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"vintage_lines.line": 23,
-							"vintage_lines.lines": 233,
-							"vintage_lines.mode": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 7074.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 6,
-					"file": "test_models/Q8/_Q8_col_test.txt",
+					"file": "src/OpenCL/OCLwrapper.cc",
 					"settings":
 					{
-						"buffer_size": 4228,
+						"buffer_size": 18780,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								66,
-								66
+								5616,
+								5616
 							]
 						],
 						"settings":
@@ -1255,106 +1562,33 @@
 								"bh_single_quote_close"
 							],
 							"line_numbers": false,
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"vintage_lines.line": 2,
-							"vintage_lines.lines": 161,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 146,
+							"vintage_lines.lines": 524,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2159.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 7,
-					"file": "src/FEM/StiffAlgoGpuOmp.cc",
-					"settings":
-					{
-						"buffer_size": 15624,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								13374,
-								13374
-							]
-						],
-						"settings":
-						{
-							"bh_regions":
-							[
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close"
-							],
-							"line_numbers": false,
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 293,
-							"vintage_lines.lines": 346,
-							"vintage_lines.mode": true
-						},
-						"translation.x": 39.0,
-						"translation.y": 4752.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 8,
 					"file": "src/FEM/StiffAlgoCPU.cc",
 					"settings":
 					{
-						"buffer_size": 14324,
+						"buffer_size": 16622,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5927,
-								5927
+								15349,
+								15349
 							]
 						],
 						"settings":
@@ -1406,12 +1640,12 @@
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 138,
-							"vintage_lines.lines": 332,
+							"vintage_lines.line": 0,
+							"vintage_lines.lines": 372,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1851.0,
+						"translation.y": 5757.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1419,9 +1653,84 @@
 			]
 		},
 		{
-			"selected": 0,
+			"selected": 4,
 			"sheets":
 			[
+				{
+					"buffer": 8,
+					"file": "src/FEM/StiffAlgoGpuOmp.cc",
+					"settings":
+					{
+						"buffer_size": 15076,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								12685,
+								12685
+							]
+						],
+						"settings":
+						{
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 309,
+							"vintage_lines.lines": 355,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4993.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
 				{
 					"buffer": 9,
 					"file": "gpufem_notes.md",
@@ -1499,18 +1808,18 @@
 				},
 				{
 					"buffer": 10,
-					"file": "src/FEM/fem.h",
+					"file": "src/SPRmatrix/ELLmatrix2.h",
 					"settings":
 					{
-						"buffer_size": 3185,
+						"buffer_size": 3248,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2869,
-								2869
+								2534,
+								2534
 							]
 						],
 						"settings":
@@ -1562,36 +1871,56 @@
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 75,
-							"vintage_lines.lines": 86,
+							"vintage_lines.line": 57,
+							"vintage_lines.lines": 75,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 719.0,
+						"translation.y": 432.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 11,
-					"file": "src/Test/main.cpp",
+					"file": "src/FEM/StiffAlgoGpuOmp.h",
 					"settings":
 					{
-						"buffer_size": 2102,
+						"buffer_size": 4151,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								2005,
+								2005
 							]
 						],
 						"settings":
 						{
 							"bh_regions":
 							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
 								"bh_default",
 								"bh_default_center",
 								"bh_default_open",
@@ -1599,36 +1928,48 @@
 								"bh_unmatched",
 								"bh_unmatched_center",
 								"bh_unmatched_open",
-								"bh_unmatched_close"
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
 							],
-							"line_numbers": false,
+							"line_numbers": true,
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 0,
-							"vintage_lines.lines": 54,
-							"vintage_lines.mode": true
+							"vintage_lines.line": 48,
+							"vintage_lines.lines": 89,
+							"vintage_lines.mode": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 216.0,
+						"translation.y": 756.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 12,
-					"file": "test_models/Q8/Q8_2_nocol.txt",
+					"file": "src/FEM/StiffAlgoCPU.h",
 					"settings":
 					{
-						"buffer_size": 4339,
+						"buffer_size": 2374,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2271,
-								2271
+								2204,
+								2204
 							]
 						],
 						"settings":
@@ -1677,232 +2018,15 @@
 								"bh_single_quote_close"
 							],
 							"line_numbers": false,
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"vintage_lines.line": 64,
-							"vintage_lines.lines": 118,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 55,
+							"vintage_lines.lines": 63,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 13,
-					"file": "test_models/Q8/Q8_3_nocol.txt",
-					"settings":
-					{
-						"buffer_size": 4337,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"bh_regions":
-							[
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close"
-							],
-							"line_numbers": false,
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"vintage_lines.line": 0,
-							"vintage_lines.lines": 118,
-							"vintage_lines.mode": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 14,
-					"file": "test_models/Q8/Q8_2_col.txt",
-					"settings":
-					{
-						"buffer_size": 4340,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								464,
-								464
-							]
-						],
-						"settings":
-						{
-							"bh_regions":
-							[
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close"
-							],
-							"line_numbers": false,
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"vintage_lines.line": 16,
-							"vintage_lines.lines": 118,
-							"vintage_lines.mode": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 54.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 15,
-					"file": "test_models/Q8/Q8_3_col.txt",
-					"settings":
-					{
-						"buffer_size": 4340,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"bh_regions":
-							[
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close"
-							],
-							"line_numbers": false,
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"vintage_lines.line": 0,
-							"vintage_lines.lines": 118,
-							"vintage_lines.mode": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 341.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1960,6 +2084,10 @@
 	{
 		"height": 333.0
 	},
+	"output.git":
+	{
+		"height": 120.0
+	},
 	"replace":
 	{
 		"height": 62.0
@@ -1971,8 +2099,68 @@
 		"selected_items":
 		[
 			[
+				"stiffcpu.h",
+				"src/FEM/StiffAlgoCPU.h"
+			],
+			[
 				"stiffcpu",
 				"src/FEM/StiffAlgoCPU.cc"
+			],
+			[
+				"cpu",
+				"src/FEM/StiffAlgoCPU.cc"
+			],
+			[
+				"interfa",
+				"src/interface.cpp"
+			],
+			[
+				"csrma",
+				"src/SPRmatrix/CSRmatrix.cc"
+			],
+			[
+				"ellmat",
+				"src/SPRmatrix/ELLmatrix.cc"
+			],
+			[
+				"sprma.cc",
+				"src/SPRmatrix/SPRmatrix.cc"
+			],
+			[
+				"sprma.h",
+				"src/SPRmatrix/SPRmatrix.h"
+			],
+			[
+				"sprma",
+				"src/SPRmatrix/SPRmatrix.cc"
+			],
+			[
+				"gpuomp.h",
+				"src/FEM/StiffAlgoGpuOmp.h"
+			],
+			[
+				"stiffalgogpuo",
+				"src/FEM/StiffAlgoGpuOmp.cc"
+			],
+			[
+				"interface.cpp",
+				"src/interface.cpp"
+			],
+			[
+				"stiffgpuo",
+				"src/FEM/StiffAlgoGpuOmp.cc"
+			],
+			[
+				"sprmates",
+				"src/Test/SPRmatrixTest.cpp"
+			],
+			[
+				"main",
+				"src/Test/main.cpp"
+			],
+			[
+				"sprsetes",
+				"src/Test/SPRSearchTest.cpp"
 			],
 			[
 				"gpuomp",
@@ -2095,10 +2283,6 @@
 				"test_models/_testmodels/Q4.nf"
 			],
 			[
-				"sprma",
-				"src/SPRmatrix/SPRmatrix.cc"
-			],
-			[
 				"ellma.h",
 				"src/SPRmatrix/ELLmatrix.h"
 			],
@@ -2207,10 +2391,6 @@
 				"src/Vis/Vis.cc"
 			],
 			[
-				"main",
-				"src/Test/main.cpp"
-			],
-			[
 				"teset.m",
 				"src/Test/matlab/ELLgpu_test_validation.m"
 			],
@@ -2229,14 +2409,6 @@
 			[
 				"clwra",
 				"src/OpenCL/OCLwrapper.cc"
-			],
-			[
-				"sprma.cc",
-				"src/SPRmatrix/SPRmatrix.cc"
-			],
-			[
-				"sprma.h",
-				"src/SPRmatrix/SPRmatrix.h"
 			],
 			[
 				"prmatrix.h",

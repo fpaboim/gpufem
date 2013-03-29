@@ -70,7 +70,7 @@ double StiffAlgoCPU::CalcGlobalStiffnessNaive(FemData* femdata) {
   SPRmatrix* stiffmat              = femdata->GetStiffnessMatrix();
   SPRmatrix::SPRformat sprseformat = femdata->GetSparseFormat();
 
-  int dim2 = (modeldim-1)*3;
+  int dim2 = (modeldim - 1) * 3;
 
   // Checks global stiffness matrix for allocation or clears it
   if (!stiffmat)
@@ -136,13 +136,9 @@ double StiffAlgoCPU::CalcGlobalStiffnessNaive(FemData* femdata) {
 
       // Assembles global stiffness matrix
       if (m_assemble) {
-#pragma omp critical (assemble)
+#pragma omp critical (memalloc)
         {
-          AssembleK(modeldim,
-                    numelemnodes,
-                    elemconnect,
-                    elem,
-                    stiffmat,
+          AssembleK(modeldim, numelemnodes, elemconnect, elem, stiffmat,
                     k_local);
         }
       }
@@ -163,7 +159,7 @@ double StiffAlgoCPU::CalcGlobalStiffnessNaive(FemData* femdata) {
 
   double exec_time = omp_get_wtime();
   printf("------------------------------------------------\n");
-  printf("+Total Execution Time:%.3fms\n", exec_time-start_time);
+  printf("+Total CPU(nocol) Execution Time:%.3fms\n", exec_time-start_time);
 
   return (exec_time-start_time);
 }
@@ -262,12 +258,8 @@ double StiffAlgoCPU::CalcStiffnessColoring(FemData* femdata) {
 
         // Assembles global stiffness matrix
         if (m_assemble) {
-          AssembleK(modeldim,
-                    nelemnodes,
-                    elemconnect,
-                    elem,
-                    stiffmat,
-                    k_local);
+          AssembleKcol(modeldim, nelemnodes, elemconnect, elem, stiffmat,
+                       k_local);
         }  // End of Assembly loop
       }  // End of Elements loop
     }
@@ -287,7 +279,7 @@ double StiffAlgoCPU::CalcStiffnessColoring(FemData* femdata) {
 
   double exec_time = omp_get_wtime();
   printf("------------------------------------------------\n");
-  printf("+Total Execution Time:%.3fms\n", exec_time-start_time);
+  printf("+Total CPU(col) Execution Time:%.3fms\n", exec_time-start_time);
 
   return (exec_time-start_time);
 }
@@ -326,6 +318,54 @@ void StiffAlgoCPU::AssembleK(int modeldim,
         stiffmat->AddElem(gblDOFi  , gblDOFj+2, k_local[(modeldim*i)  ][(modeldim*j)+2]);
         stiffmat->AddElem(gblDOFi+1, gblDOFj+2, k_local[(modeldim*i)+1][(modeldim*j)+2]);
         stiffmat->AddElem(gblDOFi+2, gblDOFj+2, k_local[(modeldim*i)+2][(modeldim*j)+2]);
+      }
+    }
+  }
+}
+
+// Calculates the Global Sparse Stiffness Matrix K
+////////////////////////////////////////////////////////////////////////////////
+void StiffAlgoCPU::AssembleKcol(int modeldim,
+                                int numelemnodes,
+                                int* elemconnect,
+                                int elem,
+                                SPRmatrix* stiffmat,
+                                fem_float** k_local) {
+  if (modeldim == 2) {
+    for (int i = 0; i < numelemnodes; ++i) {
+      int gblDOFi = (elemconnect[numelemnodes*elem+i]-1)*modeldim;
+      for (int j = 0; j < numelemnodes; ++j) {
+        int gblDOFj = (elemconnect[numelemnodes*elem+j]-1)*modeldim;
+        if (stiffmat->GetAllocTrigger()) {
+          #pragma omp critical (memalloc)
+          {
+            stiffmat->AddElem(gblDOFi  , gblDOFj  , k_local[(modeldim*i)  ][(modeldim*j)  ]);
+            stiffmat->AddElem(gblDOFi+1, gblDOFj  , k_local[(modeldim*i)+1][(modeldim*j)  ]);
+            stiffmat->AddElem(gblDOFi  , gblDOFj+1, k_local[(modeldim*i)  ][(modeldim*j)+1]);
+            stiffmat->AddElem(gblDOFi+1, gblDOFj+1, k_local[(modeldim*i)+1][(modeldim*j)+1]);
+          }
+        }
+      }
+    }
+  } else if ( modeldim == 3 ) {
+    for (int i = 0; i < numelemnodes; i++) {
+      int gblDOFi = (elemconnect[numelemnodes*elem+i]-1)*modeldim;
+      for (int j = 0; j < numelemnodes; ++j) {
+        int gblDOFj = (elemconnect[numelemnodes*elem+j]-1)*modeldim;
+        if (stiffmat->GetAllocTrigger()) {
+          #pragma omp critical (memalloc)
+          {
+            stiffmat->AddElem(gblDOFi  , gblDOFj  , k_local[(modeldim*i)  ][(modeldim*j)  ]);
+            stiffmat->AddElem(gblDOFi+1, gblDOFj  , k_local[(modeldim*i)+1][(modeldim*j)  ]);
+            stiffmat->AddElem(gblDOFi+2, gblDOFj  , k_local[(modeldim*i)+2][(modeldim*j)  ]);
+            stiffmat->AddElem(gblDOFi  , gblDOFj+1, k_local[(modeldim*i)  ][(modeldim*j)+1]);
+            stiffmat->AddElem(gblDOFi+1, gblDOFj+1, k_local[(modeldim*i)+1][(modeldim*j)+1]);
+            stiffmat->AddElem(gblDOFi+2, gblDOFj+1, k_local[(modeldim*i)+2][(modeldim*j)+1]);
+            stiffmat->AddElem(gblDOFi  , gblDOFj+2, k_local[(modeldim*i)  ][(modeldim*j)+2]);
+            stiffmat->AddElem(gblDOFi+1, gblDOFj+2, k_local[(modeldim*i)+1][(modeldim*j)+2]);
+            stiffmat->AddElem(gblDOFi+2, gblDOFj+2, k_local[(modeldim*i)+2][(modeldim*j)+2]);
+          }
+        }
       }
     }
   }

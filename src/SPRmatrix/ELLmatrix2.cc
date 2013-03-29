@@ -70,7 +70,7 @@ void ELLmatrix2::AddElem(const int row, const int col, const fem_float val) {
 
   int rownnz = m_rownnz[row];
   // Strided binary search for insertion position
-  int pos = LinSearchRow(m_colidx, col, row, rownnz, m_maxrowlen);
+  int pos = BinSearchRow(m_colidx, col, row, rownnz, m_maxrowlen);
 
   if (pos == -1) { // key not found
     InsertElem(rownnz, (row * m_maxrowlen + rownnz), val, col, row);
@@ -114,7 +114,7 @@ fem_float ELLmatrix2::GetElem(const int row, const int col) {
   if (!BoundsOK(row, col))
     return 0;
   int rownnz = m_rownnz[row];
-  int pos = LinSearchRow(m_colidx, col, row, rownnz, m_maxrowlen);
+  int pos = BinSearchRow(m_colidx, col, row, rownnz, m_maxrowlen);
   if (pos == -1)
     return 0;
 
