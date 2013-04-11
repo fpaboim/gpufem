@@ -53,6 +53,7 @@ private:
   static double BenchCGGPU(FemData*   femdata,
                            size_t     localsize,
                            int        nloops);
+
 };
 
 #endif // MICROBENCH_H_

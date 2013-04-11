@@ -520,6 +520,8 @@ int ELLmatrix2::BinSearchRow(int* intvector,
                              int  nrownnz,
                              int  rowlen) {
   int min = 0, max = nrownnz;
+  if (max == 0)
+    return -1;
   int startpos = row * rowlen;
   const int* rebasedvector = &intvector[startpos];
   while (min < max) {

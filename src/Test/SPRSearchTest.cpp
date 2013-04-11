@@ -164,31 +164,37 @@ TEST(SPRSearchTest, SteppedSearch) {
 
   testintvec[0]  = 1;
   testintvec[1]  = 2;
+
   testintvec[2]  = 3;
   testintvec[3]  = 4;
+
   testintvec[4]  = 5;
-  testintvec[6]  = 6;
-  testintvec[8]  = 11;
-  testintvec[10] = 16;
-  testintvec[12] = 20;
-  testintvec[14] = 21;
+  testintvec[5]  = 6;
+  
+  testintvec[6]  = 11;
+  testintvec[7] = 16;
+
+  testintvec[8] = 20;
+  testintvec[9] = 21;
   int pos;
-  pos = ELLmatrix::BinSearchIntStep(testintvec, 0, 8, 0, 2);
+  pos = ELLmatrix::BinSearchIntStep(testintvec, 0, 5, 0, 2);
   EXPECT_EQ(pos, 0);
-  pos = ELLmatrix::BinSearchIntStep(testintvec, 3, 8, 0, 2);
+  pos = ELLmatrix::BinSearchIntStep(testintvec, 3, 5, 0, 2);
   EXPECT_EQ(pos, 2);
-  pos = ELLmatrix::BinSearchIntStep(testintvec, 4, 8, 0, 2);
+  pos = ELLmatrix::BinSearchIntStep(testintvec, 4, 5, 0, 2);
   EXPECT_EQ(pos, 4);
-  pos = ELLmatrix::BinSearchIntStep(testintvec, 22, 8, 0, 2);
-  EXPECT_EQ(pos, 16);
-  pos = ELLmatrix::BinSearchIntStep(testintvec, 1, 2, 1, 2);
+  pos = ELLmatrix::BinSearchIntStep(testintvec, 12, 5, 0, 2);
+  EXPECT_EQ(pos, 8);
+  pos = ELLmatrix::BinSearchIntStep(testintvec, 22, 5, 0, 2);
+  EXPECT_EQ(pos, -1);
+  pos = ELLmatrix::BinSearchIntStep(testintvec, 1, 5, 1, 2);
   EXPECT_EQ(pos, 1);
-  pos = ELLmatrix::BinSearchIntStep(testintvec, 3, 2, 1, 2);
+  pos = ELLmatrix::BinSearchIntStep(testintvec, 3, 5, 1, 2);
   EXPECT_EQ(pos, 3);
-  pos = ELLmatrix::BinSearchIntStep(testintvec, 5, 2, 1, 2);
+  pos = ELLmatrix::BinSearchIntStep(testintvec, 5, 5, 1, 2);
   EXPECT_EQ(pos, 5);
-  pos = ELLmatrix::BinSearchIntStep(testintvec, 5, 2, 1, 2);
-  EXPECT_EQ(pos, 5);
+  pos = ELLmatrix::BinSearchIntStep(testintvec, 30, 5, 1, 2);
+  EXPECT_EQ(pos, -1);
 
   free(testintvec);
   delete(testmatrix);

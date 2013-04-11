@@ -88,7 +88,7 @@ TEST_P(SPRmatrixTest, CreationDoesNotLeak) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_P(SPRmatrixTest, BigMatrixDoesNotLeak) {
   CheckMemory check;
-  int dummydim = 1*1024;
+  int dummydim = 4*1024;
   SPRmatrix* dummymatrix = SPRmatrix::CreateMatrix(dummydim, GetParam());
   for (int i = 0; i < dummydim; i++) {
     dummymatrix->SetElem(0, i, 1);
@@ -168,6 +168,10 @@ TEST_P(SPRmatrixTest, SetSameRow) {
   m_testmatrix->SetElem(15, 6, 3);
   testfloat = m_testmatrix->GetElem(15, 6);
   EXPECT_FLOAT_EQ(testfloat, 3);
+
+  m_testmatrix->SetElem(15, 7, 5);
+  testfloat = m_testmatrix->GetElem(15, 7);
+  EXPECT_FLOAT_EQ(testfloat, 5);
 
   m_testmatrix->SetElem(15, 4, 4);
   testfloat = m_testmatrix->GetElem(15, 4);
@@ -437,9 +441,9 @@ TEST_P(SPRmatrixTest, DoubleTeardown) {
 }
 
 
-// INSTANTIATE_TEST_CASE_P(DENmatrix,  SPRmatrixTest, Values(SPRmatrix::DEN));
-// INSTANTIATE_TEST_CASE_P(CSRmatrix,  SPRmatrixTest, Values(SPRmatrix::CSR));
+INSTANTIATE_TEST_CASE_P(DENmatrix,  SPRmatrixTest, Values(SPRmatrix::DEN));
+INSTANTIATE_TEST_CASE_P(CSRmatrix,  SPRmatrixTest, Values(SPRmatrix::CSR));
 // INSTANTIATE_TEST_CASE_P(DIAmatrix,  SPRmatrixTest, Values(SPRmatrix::DIA));
-// INSTANTIATE_TEST_CASE_P(ELLmatrix,  SPRmatrixTest, Values(SPRmatrix::ELL));
+INSTANTIATE_TEST_CASE_P(ELLmatrix,  SPRmatrixTest, Values(SPRmatrix::ELL));
 INSTANTIATE_TEST_CASE_P(ELLmatrix2, SPRmatrixTest, Values(SPRmatrix::EL2));
-// INSTANTIATE_TEST_CASE_P(EIGmatrix,  SPRmatrixTest, Values(SPRmatrix::EIG));
+INSTANTIATE_TEST_CASE_P(EIGmatrix,  SPRmatrixTest, Values(SPRmatrix::EIG));

@@ -469,7 +469,6 @@ int FileIO::writeAsmOutputHeader() {
 ////////////////////////////////////////////////////////////////////////////////
 int FileIO::writeSolOutputHeader() {
   writeStringTab("DOF");
-  writeStringTab("NODES");
   writeStringTab("ELEM");
   writeStringTab("SIZE");
   writeStringTab("AsmCPU");
@@ -477,10 +476,9 @@ int FileIO::writeSolOutputHeader() {
   writeStringTab("SolCPU");
   writeStringTab("SolNaive");
   writeStringTab("SolNaiveUR");
+  writeStringTab("SolShr");
   writeStringTab("SolBlk");
   writeStringTab("SolBlkUR");
-  writeStringTab("SolShr");
-  writeStringTab("SolShrUR");
   writeNewLine();
 
   return 1;

@@ -344,6 +344,11 @@ void StiffAlgoCPU::AssembleKcol(int modeldim,
             stiffmat->AddElem(gblDOFi  , gblDOFj+1, k_local[(modeldim*i)  ][(modeldim*j)+1]);
             stiffmat->AddElem(gblDOFi+1, gblDOFj+1, k_local[(modeldim*i)+1][(modeldim*j)+1]);
           }
+        } else {
+          stiffmat->AddElem(gblDOFi  , gblDOFj  , k_local[(modeldim*i)  ][(modeldim*j)  ]);
+          stiffmat->AddElem(gblDOFi+1, gblDOFj  , k_local[(modeldim*i)+1][(modeldim*j)  ]);
+          stiffmat->AddElem(gblDOFi  , gblDOFj+1, k_local[(modeldim*i)  ][(modeldim*j)+1]);
+          stiffmat->AddElem(gblDOFi+1, gblDOFj+1, k_local[(modeldim*i)+1][(modeldim*j)+1]);
         }
       }
     }
@@ -365,6 +370,16 @@ void StiffAlgoCPU::AssembleKcol(int modeldim,
             stiffmat->AddElem(gblDOFi+1, gblDOFj+2, k_local[(modeldim*i)+1][(modeldim*j)+2]);
             stiffmat->AddElem(gblDOFi+2, gblDOFj+2, k_local[(modeldim*i)+2][(modeldim*j)+2]);
           }
+        } else {
+          stiffmat->AddElem(gblDOFi  , gblDOFj  , k_local[(modeldim*i)  ][(modeldim*j)  ]);
+          stiffmat->AddElem(gblDOFi+1, gblDOFj  , k_local[(modeldim*i)+1][(modeldim*j)  ]);
+          stiffmat->AddElem(gblDOFi+2, gblDOFj  , k_local[(modeldim*i)+2][(modeldim*j)  ]);
+          stiffmat->AddElem(gblDOFi  , gblDOFj+1, k_local[(modeldim*i)  ][(modeldim*j)+1]);
+          stiffmat->AddElem(gblDOFi+1, gblDOFj+1, k_local[(modeldim*i)+1][(modeldim*j)+1]);
+          stiffmat->AddElem(gblDOFi+2, gblDOFj+1, k_local[(modeldim*i)+2][(modeldim*j)+1]);
+          stiffmat->AddElem(gblDOFi  , gblDOFj+2, k_local[(modeldim*i)  ][(modeldim*j)+2]);
+          stiffmat->AddElem(gblDOFi+1, gblDOFj+2, k_local[(modeldim*i)+1][(modeldim*j)+2]);
+          stiffmat->AddElem(gblDOFi+2, gblDOFj+2, k_local[(modeldim*i)+2][(modeldim*j)+2]);
         }
       }
     }

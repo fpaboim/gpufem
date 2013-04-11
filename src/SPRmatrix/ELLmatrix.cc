@@ -73,6 +73,10 @@ void ELLmatrix::SetElem(const int row, const int col, const fem_float val) {
   // Strided binary search for insertion position
   int pos = BinSearchIntStep(m_colidx, col, rownnz, row, m_matdim);
 
+  if (pos == -1) { // key not found
+    InsertElem(rownnz, row + (m_matdim * rownnz), val, col, row);
+    return;
+  }
   // In case element exists sets the element
   if (m_colidx[pos] == col) {
     m_matdata[pos] = val;
@@ -91,6 +95,11 @@ void ELLmatrix::AddElem(const int row, const int col, const fem_float val) {
   int rownnz = m_rownnz[row];
   // Strided binary search for insertion position
   int pos = BinSearchIntStep(m_colidx, col, rownnz, row, m_matdim);
+
+  if (pos == -1) { // key not found
+    InsertElem(rownnz, row + (m_matdim * rownnz), val, col, row);
+    return;
+  }
 
   // In case element exists adds to the element
   if (m_colidx[pos] == col) {
@@ -113,12 +122,12 @@ void ELLmatrix::InsertElem(int rownnz, int pos, const fem_float val,
   m_matdata[pos] = val;
   m_colidx[pos]  = col;
   // increments number of nonzeros and checks if matrix needs to be grown
-  rownnz = m_rownnz[row];
+  m_rownnz[row]++;
   if (m_rownnz[row] == (m_maxrowlen - 3)) {
     m_prealloctrigger = true;
     return;
   }
-  if (m_rownnz[row] == m_maxrowlen) {
+  if (m_rownnz[row] == (m_maxrowlen-1)) {
     GrowMatrix();
     m_prealloctrigger = false;
   }
@@ -179,10 +188,11 @@ void ELLmatrix::SetNNZInfo(int nnz, int band) {
 // allocated by calling function)
 ////////////////////////////////////////////////////////////////////////////////
 void ELLmatrix::Ax_y(fem_float* x, fem_float* y) {
-  #pragma omp parallel for
   for (int i = 0; i < m_matdim; ++i) {
     y[i] = 0;
-    for (int j = 0; j < m_rownnz[i]; ++j) {
+    int rownnz = m_rownnz[i];
+#pragma omp parallel for shared(rownnz)
+    for (int j = 0; j < rownnz; ++j) {
       int idx = i + (j * m_matdim);
       y[i] += m_matdata[idx] * x[m_colidx[idx]];
     }
@@ -473,15 +483,15 @@ void ELLmatrix::Clear() {
 void ELLmatrix::Teardown() {
   // Frees mallocd value array and column info array
   if (m_colidx) {
-    _aligned_free(m_colidx);
+    free(m_colidx);
     m_colidx = NULL;
   }
   if (m_matdata) {
-    _aligned_free(m_matdata);
+    free(m_matdata);
     m_matdata = NULL;
   }
   if (m_rownnz) {
-    _aligned_free(m_rownnz);
+    free(m_rownnz);
     m_rownnz = NULL;
   }
   m_maxrowlen = 32;
@@ -489,16 +499,16 @@ void ELLmatrix::Teardown() {
 
 // GrowMatrix: Reallocates matrix data for added nonzeros
 ////////////////////////////////////////////////////////////////////////////////
-inline void ELLmatrix::GrowMatrix() {
+void ELLmatrix::GrowMatrix() {
   m_maxrowlen += m_growstep;
   m_matdata =
-    (fem_float*)_aligned_realloc(m_matdata,
-                                 m_maxrowlen * m_matdim * sizeof(fem_float),
-                                 16);
+    (fem_float*)realloc(m_matdata,
+                                 m_maxrowlen * m_matdim * sizeof(fem_float)
+                                );
   m_colidx  =
-    (int*)_aligned_realloc(m_colidx,
-                           m_maxrowlen * m_matdim * sizeof(int),
-                           16);
+    (int*)realloc(m_colidx,
+                           m_maxrowlen * m_matdim * sizeof(int)
+                           );
   // Sets new matrix data to zero
   for (int i = (m_maxrowlen - m_growstep) * m_matdim;
     i < (m_maxrowlen * m_matdim);
@@ -510,17 +520,14 @@ inline void ELLmatrix::GrowMatrix() {
 // AllocateMatrix: allocated memory for the matrix
 ////////////////////////////////////////////////////////////////////////////////
 int ELLmatrix::AllocateMatrix(const int matdim) {
-  m_matdata = (fem_float*)_aligned_malloc(
-                            m_maxrowlen * matdim * sizeof(fem_float),
-                            16
+  m_matdata = (fem_float*)malloc(
+                            m_maxrowlen * matdim * sizeof(fem_float)
                           );
-  m_colidx  = (int*)_aligned_malloc(m_maxrowlen * matdim * sizeof(int), 16);
-  m_rownnz  = (int*)_aligned_malloc(matdim * sizeof(int), 16);
+  m_colidx  = (int*)malloc(m_maxrowlen * matdim * sizeof(int));
+  m_rownnz  = (int*)malloc(matdim * sizeof(int));
 
   for (int i = 0; i < matdim; ++i) {
     m_rownnz[i] = 0;
-    for (int j = 0; j < m_maxrowlen; j++)
-      m_matdata[i+matdim*j] = 0;
   }
 
   return 1;
@@ -533,12 +540,12 @@ int ELLmatrix::ReallocateForBandsize(const int band) {
   {
     m_maxrowlen = band;
 
-    m_matdata = (fem_float*)_aligned_realloc(m_matdata,
-      m_maxrowlen * m_matdim * sizeof(fem_float),
-      16);
-    m_colidx  = (int*)_aligned_realloc(m_colidx,
-      m_maxrowlen * m_matdim * sizeof(int),
-      16);
+    m_matdata = (fem_float*)realloc(m_matdata,
+      m_maxrowlen * m_matdim * sizeof(fem_float)
+      );
+    m_colidx  = (int*)realloc(m_colidx,
+      m_maxrowlen * m_matdim * sizeof(int)
+      );
   }
 
   #pragma omp parallel for
@@ -560,6 +567,8 @@ int ELLmatrix::BinSearchIntStep(int* intvector,
                                 int  startpos,
                                 int  step) {
   int min = 0, max = steppedlen;
+  if (max == 0)
+    return -1;
   const int* rebasedvector = &intvector[startpos];
   while (min < max) {
     int middle = (min + max) >> 1;
@@ -568,5 +577,12 @@ int ELLmatrix::BinSearchIntStep(int* intvector,
     else
       max = middle;
   }
-  return startpos + (min * step);
+  if (min == max) {
+    if (min == steppedlen)
+      return -1;
+    else
+      return startpos + (min * step);
+  } else {
+    return -1; // not found in array (larger then all values)
+  }
 }

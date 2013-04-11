@@ -89,6 +89,8 @@ class ELLmatrix : public SPRmatrix {
   fem_float* m_matdata;    // matrix data vector - empty data is 0!
   int*       m_colidx;     // column index - empty data is GARBAGE!
   int*       m_rownnz;     // row is index, value is nnz
+  int*       m_rownnztrigger; // given independent row access num of concurrent 
+                              // threads
   int        m_maxrowlen;  // maximum row length (number of compressed columns
                            // stored)
   int        m_growstep;   // step to grow compressed row length

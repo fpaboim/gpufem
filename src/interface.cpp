@@ -180,6 +180,9 @@ static int lua_RunAnalysis(lua_State* L) {
       break;
     // Analysis using SOLVER batch benchmarks
     case SOLVBATCH:
+      RunSolBatchAnalysis(files, matfmt, devicemode, nthreads, gausspts, Emod,
+                          Nu, color, makenodal, printstiff, true, view,
+                          outfile, appendmode);
       break;
     default:  //default falls back to CPU
       assert(false);
@@ -251,16 +254,13 @@ void outfileWriteResults(const bool solve,
   Filehandler->writeNewLine();
 }
 
-// outfileWriteResults: Writes results depending if solving or not
+// outfileWriteAsmResults: Writes assembly benchmark results to file
 ////////////////////////////////////////////////////////////////////////////////
-void outfileWriteBatchResults(const bool solve,
-                              FileIO* Filehandler,
-                              FemData* femdata,
-                              float matsizeMB,
-                              double tstiffcpu,
-                              double tstiffgpu,
-                              double tsolvecpu,
-                              double tsolvegpu ) {
+void outfileWriteAsmBatchResults(FileIO* Filehandler,
+                                 FemData* femdata,
+                                 float matsizeMB,
+                                 double tstiffcpu,
+                                 double tstiffgpu) {
   // Write to output file
   Filehandler->writeNumTab(femdata->GetNumDof());
   Filehandler->writeNumTab(femdata->GetNumNodes());
@@ -268,13 +268,36 @@ void outfileWriteBatchResults(const bool solve,
   Filehandler->writeNumTab(matsizeMB);
   Filehandler->writeNumTab(tstiffcpu);
   Filehandler->writeNumTab(tstiffgpu);
-  if (solve) {
-    Filehandler->writeNumTab(tsolvecpu);
-    Filehandler->writeNumTab(tsolvegpu);
-  }
   Filehandler->writeNewLine();
 }
 
+// outfileWriteSolResults: Writes solver benchmark results to file
+////////////////////////////////////////////////////////////////////////////////
+void outfileWriteSolBatchResults(FileIO* Filehandler,
+                                 FemData* femdata,
+                                 float matsizeMB,
+                                 double tstiffcpu,
+                                 double tstiffgpu,
+                                 double tsolvecpu,
+                                 double tsolvegpu_naive,
+                                 double tsolvegpu_naiveur,
+                                 double tsolvegpu_share,
+                                 double tsolvegpu_blk,
+                                 double tsolvegpu_blkur) {
+  // Write to output file
+  Filehandler->writeNumTab(femdata->GetNumDof());
+  Filehandler->writeNumTab(femdata->GetNumElem());
+  Filehandler->writeNumTab(matsizeMB);
+  Filehandler->writeNumTab(tstiffcpu);
+  Filehandler->writeNumTab(tstiffgpu);
+  Filehandler->writeNumTab(tsolvecpu);
+  Filehandler->writeNumTab(tsolvegpu_naive);
+  Filehandler->writeNumTab(tsolvegpu_naiveur);
+  Filehandler->writeNumTab(tsolvegpu_share);
+  Filehandler->writeNumTab(tsolvegpu_blk);
+  Filehandler->writeNumTab(tsolvegpu_blkur);
+  Filehandler->writeNewLine();
+}
 // colorMesh: performs mesh coloring and updates femdata with info
 ////////////////////////////////////////////////////////////////////////////////
 void colorMesh( FemData* femdata, bool usennz ) {
@@ -439,22 +462,18 @@ int RunAsmBatchAnalysis(std::vector<std::string> files,
                         bool appendmode) {
   // 2 Gausspts
   gausspts = 2;
-  printf("Running CSR matrix, gpts:%i", gausspts);
+  printf("Running CSR matrix, GPTS:%i/n", gausspts);
   sprseformat = SPRmatrix::CSR;
-  RunAsmBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
+  RunBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
     Nucoef, usecolor, makenodal, printstiff, solve, view, outfile, appendmode);
   appendmode = true; // first overwrite then append to file
-  printf("Running ELL matrix, gpts:%i", gausspts);
+  printf("Running ELL matrix, GPTS:%i/n", gausspts);
   sprseformat = SPRmatrix::ELL;
-  RunAsmBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
+  RunBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
     Nucoef, usecolor, makenodal, printstiff, solve, view, outfile, appendmode);
-  printf("Running EL2 matrix, gpts:%i", gausspts);
-  sprseformat = SPRmatrix::EL2;
-  RunAsmBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
-    Nucoef, usecolor, makenodal, printstiff, solve, view, outfile, appendmode);
-  printf("Running EIG matrix, gpts:%i", gausspts);
+  printf("Running EIG matrix, GPTS:%i/n", gausspts);
   sprseformat = SPRmatrix::EIG;
-  RunAsmBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
+  RunBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
     Nucoef, usecolor, makenodal, printstiff, solve, view, outfile, appendmode);
   // 3 Gausspts
   gausspts = 3;
@@ -462,21 +481,17 @@ int RunAsmBatchAnalysis(std::vector<std::string> files,
   outfileInit(filehand, outfile, true, gausspts, usecolor, SPRmatrix::NIL);
   outfileWriteGptsColoring(filehand, gausspts, usecolor);
   delete(filehand);
-  printf("Running CSR matrix, gpts:%i", gausspts);
+  printf("Running CSR matrix, GPTS:%i/n", gausspts);
   sprseformat = SPRmatrix::CSR;
-  RunAsmBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
+  RunBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
     Nucoef, usecolor, makenodal, printstiff, solve, view, outfile, appendmode);
-  printf("Running ELL matrix, gpts:%i", gausspts);
+  printf("Running ELL matrix, GPTS:%i/n", gausspts);
   sprseformat = SPRmatrix::ELL;
-  RunAsmBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
+  RunBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
     Nucoef, usecolor, makenodal, printstiff, solve, view, outfile, appendmode);
-  printf("Running EL2 matrix, gpts:%i", gausspts);
-  sprseformat = SPRmatrix::EL2;
-  RunAsmBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
-    Nucoef, usecolor, makenodal, printstiff, solve, view, outfile, appendmode);
-  printf("Running EIG matrix, gpts:%i", gausspts);
+  printf("Running EIG matrix, GPTS:%i/n", gausspts);
   sprseformat = SPRmatrix::EIG;
-  RunAsmBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
+  RunBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
     Nucoef, usecolor, makenodal, printstiff, solve, view, outfile, appendmode);
 
   return 1;
@@ -484,7 +499,40 @@ int RunAsmBatchAnalysis(std::vector<std::string> files,
 
 // RunAsmBatchAnalysis: Runs FEM assembly batch analysis for benchmarking
 ////////////////////////////////////////////////////////////////////////////////
-int RunAsmBatches(std::vector<std::string> files,
+int RunSolBatchAnalysis(std::vector<std::string> files,
+                        SPRmatrix::SPRformat sprseformat,
+                        FEM::DeviceMode deviceType,
+                        const int numCPUthreads,
+                        int gausspts,
+                        const fem_float Emod,
+                        const fem_float Nucoef,
+                        const bool usecolor,
+                        const bool makenodal,
+                        const bool printstiff,
+                        const bool solve,
+                        const bool view,
+                        std::string outfile,
+                        bool appendmode) {
+  // 2 Gausspts
+  gausspts = 2;
+  printf("Running ELL matrix, GPTS:%i/n", gausspts);
+  sprseformat = SPRmatrix::ELL;
+  RunBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
+    Nucoef, usecolor, makenodal, printstiff, solve, view, outfile, appendmode);
+  appendmode = true; // first overwrite then append to file
+  // 3 Gausspts
+  gausspts = 3;
+  printf("Running ELL matrix, GPTS:%i/n", gausspts);
+  sprseformat = SPRmatrix::ELL;
+  RunBatches(files, sprseformat, deviceType, numCPUthreads, gausspts, Emod,
+    Nucoef, usecolor, makenodal, printstiff, solve, view, outfile, appendmode);
+
+  return 1;
+}
+
+// RunAsmBatchAnalysis: Runs FEM assembly batch analysis for benchmarking
+////////////////////////////////////////////////////////////////////////////////
+int RunBatches(std::vector<std::string> files,
                   SPRmatrix::SPRformat sprseformat,
                   FEM::DeviceMode deviceType,
                   const int numCPUthreads,
@@ -508,7 +556,7 @@ int RunAsmBatches(std::vector<std::string> files,
   // Loops over all input files doing FEM calculations
   for (int threads = 1; threads <= maxthreads; threads *= 2) {
     omp_set_num_threads(threads);
-    printf("*OMP Number of Threads: %i**\n", omp_get_max_threads());
+    printf("** OMP Number of Threads: %i**\n", omp_get_max_threads());
     outfileWriteHeader(Filehandler, threads, solve);
     std::vector<std::string>::iterator vecitr;
     for (vecitr = files.begin(); vecitr != files.end(); ++vecitr) {
@@ -547,29 +595,44 @@ int RunAsmBatches(std::vector<std::string> files,
       FEM_test->ApplyConstraint(FEM::PEN,
                                 Filehandler->getNumSupports(),
                                 Filehandler->getNodeSupports());
-      // Solves linear system for displacements
-      double tsolvecpu = 0, tsolvegpu = 0;
-      if (solve) {
-        tsolvecpu = solveDisplacements(FEM::CPU, femdata);
-        tsolvegpu = solveDisplacements(FEM::GPU, femdata);
-      }
       // Calculation info
       float matsizeMB =
         (float) femdata->GetStiffnessMatrix()->GetMatSize() / (1024 * 1024);
       printf("^ Matrix size: %.2fMB\n", matsizeMB);
-      // Visualization - setup VTK through Vis class
-      if (view) {
-        Vis femVis;
-        femVis.BuildMesh(femdata);
+      // Solves linear system for displacements
+
+      if (solve) {
+        double tsolvecpu = 0, tsolvegpu_naive = 0, tsolvegpu_naiveur = 0,
+          tsolvegpu_share = 0, tsolvegpu_blk = 0, tsolvegpu_blkur = 0;
+        tsolvecpu = solveDisplacements(FEM::CPU, femdata);
+        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::NAIVE);
+        tsolvegpu_naive = solveDisplacements(FEM::GPU, femdata);
+        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::NAIVEUR);
+        tsolvegpu_naiveur = solveDisplacements(FEM::GPU, femdata);
+        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::SHARE);
+        tsolvegpu_share = solveDisplacements(FEM::GPU, femdata);
+        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::BLOCK);
+        tsolvegpu_blk = solveDisplacements(FEM::GPU, femdata);
+        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::BLOCKUR);
+        tsolvegpu_blkur = solveDisplacements(FEM::GPU, femdata);
+        outfileWriteSolBatchResults(Filehandler,
+          femdata,
+          matsizeMB,
+          tstiffcpu,
+          tstiffgpu,
+          tsolvecpu,
+          tsolvegpu_naive,
+          tsolvegpu_naiveur,
+          tsolvegpu_share,
+          tsolvegpu_blk,
+          tsolvegpu_blkur);
+      } else {
+        outfileWriteAsmBatchResults(Filehandler,
+          femdata,
+          matsizeMB,
+          tstiffcpu,
+          tstiffgpu);
       }
-      outfileWriteBatchResults(solve,
-        Filehandler,
-        femdata,
-        matsizeMB,
-        tstiffcpu,
-        tstiffgpu,
-        tsolvecpu,
-        tsolvegpu);
       delete(FEM_test);
     }
     Filehandler->writeNewLine();

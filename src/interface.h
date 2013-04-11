@@ -71,15 +71,24 @@ void outfileWriteResults(const bool isbatch,
   double tstiff,
   double tsolve);
 
-void outfileWriteBatchResults(const bool isbatch,
-  const bool solve,
+void outfileWriteAsmBatchResults(const bool isbatch,
+  FileIO* Filehandler,
+  FemData* femdata,
+  float matsizeMB,
+  double tstiffcpu,
+  double tstiffgpu);
+void outfileWriteSolBatchResults(const bool isbatch,
   FileIO* Filehandler,
   FemData* femdata,
   float matsizeMB,
   double tstiffcpu,
   double tstiffgpu,
   double tsolvecpu,
-  double tsolvegpu);
+  double tsolvegpu_naive,
+  double tsolvegpu_naiveur,
+  double tsolvegpu_share,
+  double tsolvegpu_blk,
+  double tsolvegpu_blkur);
 
 void colorMesh(FemData* femdata, bool usennz);
 
@@ -132,7 +141,7 @@ int RunSolBatchAnalysis(std::vector<std::string> files,
   std::string outfile,
   bool appendmode);
 
-int RunAsmBatches(std::vector<std::string> files,
+int RunBatches(std::vector<std::string> files,
   SPRmatrix::SPRformat sprseformat,
   FEM::DeviceMode deviceType,
   const int numCPUthreads,

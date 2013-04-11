@@ -121,7 +121,10 @@ void Microbench::BenchSearch() {
 ////////////////////////////////////////////////////////////////////////////////
 void Microbench::BenchCG() {
   int ntestloops = 2;
-  int localsize = 8;
+  int localsize  = 8;
+  int iterations = 10000;
+  fem_float precision  = 0.0001f;
+
   SPRmatrix::SPRformat   matformat = SPRmatrix::ELL;
   SPRmatrix::OclStrategy oclstrat  = SPRmatrix::BLOCK;
 
@@ -141,7 +144,7 @@ void Microbench::BenchCG() {
   // testfiles.push_back(
   //   "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Q8//placa64_Q8.nf");
   testfiles.push_back(
-    "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Brk8//rubik10_brk8.nf");
+    "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Brk8//rubik8_brk8.nf");
   testfiles.push_back(
     "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Brk8//rubik12_brk8.nf");
   testfiles.push_back(
@@ -199,8 +202,8 @@ void Microbench::BenchCG() {
              femdata->GetDisplVector(),
              femdata->GetForceVector(),
              femdata->GetNumDof(),
-             3000,
-             0.001f,
+             iterations,
+             precision,
              false);
     }
     tsolvecpu = (omp_get_wtime() - tsolvecpu)/ntestloops;
@@ -504,39 +507,42 @@ double Microbench::BenchCGGPU(SPRmatrix* dummymatrix,
                               size_t     localsize,
                               int        nloops) {
   // Naive Bench
+  int       iterations = 10000;
+  fem_float precision = 0.0001f;
+
   double tini, tnaive, tnaiveur, tshare, tblock, tblockur;
   dummymatrix->SetOclStrategy(SPRmatrix::NAIVE);
   tini = omp_get_wtime();
   for (int i = 0; i <= nloops; i++) {
-    dummymatrix->SolveCgGpu(xvec, yvec, 1000, 0.00001f, localsize);
+    dummymatrix->SolveCgGpu(xvec, yvec, iterations, precision, localsize);
   }
   tnaive = omp_get_wtime() - tini;
   // NaiveUR Bench
   dummymatrix->SetOclStrategy(SPRmatrix::NAIVEUR);
   tini = omp_get_wtime();
   for (int i = 0; i <= nloops; i++) {
-    dummymatrix->SolveCgGpu(xvec, yvec, 1000, 0.00001f, localsize);
+    dummymatrix->SolveCgGpu(xvec, yvec, iterations, precision, localsize);
   }
   tnaiveur = omp_get_wtime() - tini;
   // Shared Bench
   dummymatrix->SetOclStrategy(SPRmatrix::SHARE);
   tini = omp_get_wtime();
   for (int i = 0; i <= nloops; i++) {
-    dummymatrix->SolveCgGpu(xvec, yvec, 1000, 0.00001f, localsize);
+    dummymatrix->SolveCgGpu(xvec, yvec, iterations, precision, localsize);
   }
   tshare = omp_get_wtime() - tini;
   // Blocked Bench
   dummymatrix->SetOclStrategy(SPRmatrix::BLOCK);
   tini = omp_get_wtime();
   for (int i = 0; i <= nloops; i++) {
-    dummymatrix->SolveCgGpu(xvec, yvec, 1000, 0.00001f, localsize);
+    dummymatrix->SolveCgGpu(xvec, yvec, iterations, precision, localsize);
   }
   tblock = omp_get_wtime() - tini;
   // Blocked Bench
   dummymatrix->SetOclStrategy(SPRmatrix::BLOCKUR);
   tini = omp_get_wtime();
   for (int i = 0; i <= nloops; i++) {
-    dummymatrix->SolveCgGpu(xvec, yvec, 1000, 0.00001f, localsize);
+    dummymatrix->SolveCgGpu(xvec, yvec, iterations, precision, localsize);
   }
   tblockur = omp_get_wtime() - tini;
 

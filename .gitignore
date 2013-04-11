@@ -10,3 +10,8 @@ vc10/
 *.cml
 *.top
 *.mgr
+*.asm
+*.tlog
+*.obj
+*.pdb
+*.dll

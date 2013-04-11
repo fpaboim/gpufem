@@ -366,7 +366,7 @@ void OCLwrapper::setGlobalWorksize(cl_uint dim, cl_uint value) {
     printf("\n*** ERROR - INVALID DIMENSION SET: %u ***\n", dim);
     return;
   }
-  if (value > m_maxworkgroupsize || value < 0) {
+  if (value < 0) {
     printf("\n*** ERROR - INVALID WORKGROUPSIZE[%u] SET: %u ***\n", dim, value);
   }
   m_globalworksize[dim] = value;
