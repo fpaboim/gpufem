@@ -153,7 +153,7 @@ void CSRmatrix::SetNNZInfo(int nnz, int band) {
 // Ax_y: does matrix vector multiply and stores result in y (which should be
 // allocated by calling function)
 ////////////////////////////////////////////////////////////////////////////////
-void CSRmatrix::Ax_y(fem_float* x, fem_float* y) {
+void CSRmatrix::Axy(fem_float* x, fem_float* y) {
   spax_yOMP(this, x, y, m_matdim, false);
 }
 

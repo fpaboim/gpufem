@@ -34,7 +34,6 @@
 #include "OpenCL/OCLwrapper.h"
 #include "LAops/SprSolver.h"
 
-
 // The fixture for value parameterized testing class AxyGPUTest.
 ////////////////////////////////////////////////////////////////////////////////
 class AxyGPUTest : public ::testing::TestWithParam<SPRmatrix::OclStrategy> {
@@ -44,12 +43,12 @@ class AxyGPUTest : public ::testing::TestWithParam<SPRmatrix::OclStrategy> {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_P(AxyGPUTest, Ell_diagonal_Ax_y_GPU) {
   CheckMemory check;
-  int matdim  = 2 * 1024;
-  int localsz = 8;
-  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
+  int matdim      = 16 * 1024;
+  int localsz     = 32;
   fem_float* xvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yres = (fem_float*)malloc(matdim * sizeof(fem_float));
+  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
 
   // Populate matrix to solve A * x = y (being that x == y), and A is a diagonal
   // matrix where diagonal values are i^2 (i == j)
@@ -62,8 +61,10 @@ TEST_P(AxyGPUTest, Ell_diagonal_Ax_y_GPU) {
   }
 
   // Test all kernels
+  testmatrix->SetDeviceMode(SPRmatrix::DEV_GPU);
   testmatrix->SetOclStrategy(GetParam());
-  testmatrix->AxyGPU(xvec, yvec, localsz);
+  testmatrix->SetOclLocalSize(localsz);
+  testmatrix->Axy(xvec, yvec);
   for (int i = 0; i < matdim; ++i) {
     ASSERT_NEAR(yvec[i], yres[i], 0.001);
   }
@@ -80,13 +81,13 @@ TEST_P(AxyGPUTest, Ell_diagonal_Ax_y_GPU) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_P(AxyGPUTest, ELL_band_Axy) {
   CheckMemory check;
-  int matdim  = 64;
-  int localsz = 16;
-  int bandsz  = 8;
-  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
+  int matdim      = 64;
+  int localsz     = 16;
+  int bandsz      = 8;
   fem_float* xvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yres = (fem_float*)malloc(matdim * sizeof(fem_float));
+  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
 
   for (int i = 0; i < matdim; ++i) {
     int num = i + 1;
@@ -97,8 +98,10 @@ TEST_P(AxyGPUTest, ELL_band_Axy) {
   }
 
   // Test with all strategies
+  testmatrix->SetDeviceMode(SPRmatrix::DEV_GPU);
   testmatrix->SetOclStrategy(GetParam());
-  testmatrix->AxyGPU(xvec, yvec, localsz);
+  testmatrix->SetOclLocalSize(localsz);
+  testmatrix->Axy(xvec, yvec);
   for (int i = 0; i < matdim; ++i) {
     ASSERT_NEAR(yvec[i], yres[i], 0.001);
   }
@@ -115,13 +118,13 @@ TEST_P(AxyGPUTest, ELL_band_Axy) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_P(AxyGPUTest, ELL_diag_band_Axy) {
   CheckMemory check;
-  int matdim  = 64;
-  int localsz = 16;
-  int bandsz  = 4;
-  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
+  int matdim      = 64;
+  int localsz     = 16;
+  int bandsz      = 4;
   fem_float* xvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yres = (fem_float*)malloc(matdim * sizeof(fem_float));
+  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
 
   for (int i = 0; i < matdim; ++i) {
     int num = i + 1;
@@ -137,8 +140,10 @@ TEST_P(AxyGPUTest, ELL_diag_band_Axy) {
   }
 
   // Test with all strategies
+  testmatrix->SetDeviceMode(SPRmatrix::DEV_GPU);
   testmatrix->SetOclStrategy(GetParam());
-  testmatrix->AxyGPU(xvec, yvec, localsz);
+  testmatrix->SetOclLocalSize(localsz);
+  testmatrix->Axy(xvec, yvec);
   for (int i = 0; i < matdim-1; ++i) {
     ASSERT_NEAR(yvec[i], yres[i], 0.001);
   }
@@ -155,15 +160,16 @@ TEST_P(AxyGPUTest, ELL_diag_band_Axy) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_P(AxyGPUTest, ELL_banded_4to64_localsize) {
   CheckMemory check;
-  int matdim     = 2 * 1024;
-  int minlocalsz = 4;
-  int maxlocalsz = 32;
-  int bandsz     = 16;
-  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
+  int matdim      = 16 * 1024;
+  int minlocalsz  = 4;
+  int maxlocalsz  = 32;
+  int bandsz      = 16;
   fem_float* xvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yres = (fem_float*)malloc(matdim * sizeof(fem_float));
-  // Fill test matrix
+  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
+
+  // Fill test matrix band with ones
   for (int i = 0; i < matdim; ++i) {
     int num = i + 1;
     for (int j = 0; j < bandsz; ++j)
@@ -172,13 +178,16 @@ TEST_P(AxyGPUTest, ELL_banded_4to64_localsize) {
     yres[i] = (float)1 * bandsz;
   }
   // Test with all strategies
+  testmatrix->SetDeviceMode(SPRmatrix::DEV_GPU);
   testmatrix->SetOclStrategy(GetParam());
   for (int localsz = minlocalsz; localsz <= maxlocalsz; localsz *= 2) {
-    testmatrix->AxyGPU(xvec, yvec, localsz);
+    testmatrix->SetOclLocalSize(localsz);
+    testmatrix->Axy(xvec, yvec);
     for (int i = 0; i < matdim; ++i) {
       ASSERT_NEAR(yvec[i], yres[i], 0.001);
     }
   }
+
   // Teardown
   free(xvec);
   free(yvec);
@@ -191,12 +200,12 @@ TEST_P(AxyGPUTest, ELL_banded_4to64_localsize) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_P(AxyGPUTest, Ell_CGGPU) {
   CheckMemory check;
-  int matdim = 32;
-  int localsz = 4;
-  int maxiter = 100;
-  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
+  int matdim      = 32;
+  int localsz     = 4;
+  int maxiter     = 100;
   fem_float* xvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yvec = (fem_float*)malloc(matdim * sizeof(fem_float));
+  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
 
   // Populate matrix to solve I * x = y (being that x == y)
   for (int i = 0; i < matdim; ++i) {
@@ -210,8 +219,10 @@ TEST_P(AxyGPUTest, Ell_CGGPU) {
   testmatrix->SetElem(1,0,2);
 
   // Solve CG with all three strategies
+  testmatrix->SetDeviceMode(SPRmatrix::DEV_GPU);
   testmatrix->SetOclStrategy(GetParam());
-  testmatrix->SolveCgGpu(xvec, yvec, maxiter, 0.000001f, localsz);
+  testmatrix->SetOclLocalSize(localsz);
+  testmatrix->CG(xvec, yvec, maxiter, 0.000001f);
   ASSERT_NEAR(xvec[0],  -1, 0.001);
   ASSERT_NEAR(xvec[1], 1.5, 0.001);
   for (int i = 2; i < matdim; ++i) {
@@ -231,13 +242,13 @@ TEST_P(AxyGPUTest, Ell_CGGPU) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_P(AxyGPUTest, Ell_CGGPU_Localsize_8to64) {
   CheckMemory check;
-  int matdim = 64;
-  int minlocalsz = 16;
-  int maxlocalsz = 64;
-  int maxiter = 500;
-  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
+  int matdim      = 64;
+  int minlocalsz  = 16;
+  int maxlocalsz  = 64;
+  int maxiter     = 500;
   fem_float* xvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yvec = (fem_float*)malloc(matdim * sizeof(fem_float));
+  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
 
   // Populate matrix to solve I * x = y (being that x == y)
   for (int i = 0; i < matdim; ++i) {
@@ -251,9 +262,11 @@ TEST_P(AxyGPUTest, Ell_CGGPU_Localsize_8to64) {
   testmatrix->SetElem(1,0,2);
 
   // Solve CG with all three strategies
+  testmatrix->SetDeviceMode(SPRmatrix::DEV_GPU);
   testmatrix->SetOclStrategy(GetParam());
   for (int localsz = minlocalsz; localsz <= maxlocalsz; localsz *= 2) {
-    testmatrix->SolveCgGpu(xvec, yvec, maxiter, 0.000001f, localsz);
+    testmatrix->SetOclLocalSize(localsz);
+    testmatrix->CG(xvec, yvec, maxiter, 0.000001f);
     ASSERT_NEAR(xvec[0],  -1, 0.001);
     ASSERT_NEAR(xvec[1], 1.5, 0.001);
     for (int i = 2; i < matdim; ++i) {
@@ -274,17 +287,18 @@ TEST_P(AxyGPUTest, Ell_CGGPU_Localsize_8to64) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_P(AxyGPUTest, Ell_CGGPU_small_difference_mat) {
   CheckMemory check;
-  int matdim = 4;
-  int maxiter = 200;
-  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
+  int matdim      = 4;
+  int maxiter     = 200;
   fem_float* xvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* xres = (fem_float*)malloc(matdim * sizeof(fem_float));
+  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
 
   for (int i = 0; i < matdim; ++i) {
     testmatrix->AddElem(i, i    , 2);
     testmatrix->AddElem(i, i + 1, -1);
     testmatrix->AddElem(i, i - 1, -1);
+
     xvec[i] = 0.0f;
     yvec[i] = 1.0f;
   }
@@ -294,8 +308,10 @@ TEST_P(AxyGPUTest, Ell_CGGPU_small_difference_mat) {
   xres[3] = 2;
 
   // Solve CG with all three strategies
+  testmatrix->SetDeviceMode(SPRmatrix::DEV_GPU);
   testmatrix->SetOclStrategy(GetParam());
-  testmatrix->SolveCgGpu(xvec, yvec, maxiter, 0.00001f, 4);
+  testmatrix->SetOclLocalSize(4);
+  testmatrix->CG(xvec, yvec, maxiter, 0.00001f);
 
     // check result
   for (int i = 0; i < matdim; i++) {
@@ -317,13 +333,13 @@ TEST_P(AxyGPUTest, Ell_CGGPU_small_difference_mat) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_P(AxyGPUTest, Ell_CGGPU_Banded_Localsize_8to64) {
   CheckMemory check;
-  int matdim = 32; // assert result must be changed if matrix dimension changes
-  int minlocalsz = 8;
-  int maxlocalsz = 64;
-  int maxiter = 500;
-  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
+  int matdim      = 32; // assert result must be changed if matrix dimension changes
+  int minlocalsz  = 8;
+  int maxlocalsz  = 64;
+  int maxiter     = 500;
   fem_float* xvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yvec = (fem_float*)malloc(matdim * sizeof(fem_float));
+  SPRmatrix* testmatrix = SPRmatrix::CreateMatrix(matdim, SPRmatrix::ELL);
 
   for (int i = 0; i < matdim; ++i) {
     for (int j = 0; j < matdim; ++j) {
@@ -350,9 +366,8 @@ TEST_P(AxyGPUTest, Ell_CGGPU_Banded_Localsize_8to64) {
 }
 
 using ::testing::Values;
-INSTANTIATE_TEST_CASE_P(AxyNAIVE,   AxyGPUTest, Values(SPRmatrix::NAIVE));
-INSTANTIATE_TEST_CASE_P(AxyNAIVEUR, AxyGPUTest, Values(SPRmatrix::NAIVEUR));
-INSTANTIATE_TEST_CASE_P(AxySHARE,   AxyGPUTest, Values(SPRmatrix::SHARE));
-INSTANTIATE_TEST_CASE_P(AxyBLOCK,   AxyGPUTest, Values(SPRmatrix::BLOCK));
-INSTANTIATE_TEST_CASE_P(AxyBLOCKUR, AxyGPUTest, Values(SPRmatrix::BLOCKUR));
-INSTANTIATE_TEST_CASE_P(AxyTEST,    AxyGPUTest, Values(SPRmatrix::TEST));
+INSTANTIATE_TEST_CASE_P(AxyNAIVE,   AxyGPUTest, Values(SPRmatrix::STRAT_NAIVE));
+INSTANTIATE_TEST_CASE_P(AxyNAIVEUR, AxyGPUTest, Values(SPRmatrix::STRAT_NAIVEUR));
+INSTANTIATE_TEST_CASE_P(AxySHARE,   AxyGPUTest, Values(SPRmatrix::STRAT_SHARE));
+INSTANTIATE_TEST_CASE_P(AxyBLOCK,   AxyGPUTest, Values(SPRmatrix::STRAT_BLOCK));
+INSTANTIATE_TEST_CASE_P(AxyBLOCKUR, AxyGPUTest, Values(SPRmatrix::STRAT_BLOCKUR));

@@ -70,12 +70,12 @@ void getStiffnessQ4(__private  fem_float  E,
   //Loops over gauss points
   for (uint gp = 0; gp < (gpts*gpts); gp++) {
     getdShapeMat(gp, X_gausspts, dShapeMat);
-    local_getJacobianMatrix( J, elemCoords, dShapeMat, aux);
-    detJ = det2x2( J );
-    inverse2x2( J_inv, J, detJ);
-    local_matMult_2_2_4( lidx, dNdCart, J_inv, dShapeMat);
-    local_buildBMatrix( lidx, B, dNdCart );
-    local_matMult_3_3_8( lidx, CxB, C, B );
+    local_getJacobianMatrix(J, elemCoords, dShapeMat, aux);
+    detJ = det2x2(J);
+    inverse2x2(J_inv, J, detJ);
+    local_matMult_2_2_4(lidx, dNdCart, J_inv, dShapeMat);
+    local_buildBMatrix(lidx, B, dNdCart);
+    local_matMult_3_3_8(lidx, CxB, C, B);
     local_matAddMultTranspScal_8_3_8( lidx, k_local, B, CxB, (detJ*W_gaussweights[gp]) );
   }
 

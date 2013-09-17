@@ -142,7 +142,7 @@ int CPU_CG(SPRmatrix* matrix_A,
   err_bound = epsilon * epsilon * delta_new;
   for (i = 0; (i < n_iterations) && (delta_new > err_bound); ++i) {
     // q = Ad
-    matrix_A->Ax_y(vector_d, vector_q);
+    matrix_A->Axy(vector_d, vector_q);
     // alpha = rDotrNew / (d dot q)
     alpha = delta_new / dotProductOMP(n, vector_d, vector_q);
     // x = x + alpha * d
@@ -176,91 +176,4 @@ int CPU_CG(SPRmatrix* matrix_A,
   free(vector_q);
 
   return 1;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// GPU Conjugate Gradient Method
-////////////////////////////////////////////////////////////////////////////////
-void GPU_CG(fem_float* matrix_A,
-            fem_float* vector_X,
-            fem_float* vector_B,
-            int n, int n_iterations,
-            fem_float epsilon,
-            size_t local_work_size) {
-    size_t VEC_buffer_size, MAT_buffer_size;
-    cl_mem  MatA_mem, VecX_mem, VecD_mem, VecQ_mem, VecR_mem;  // VecB_mem;
-
-    fem_float* vector_D = allocVector(n, false);
-    fem_float* vector_R = allocVector(n, false);
-    fem_float* vector_Q = allocVector(n, false);
-
-    // Initializes Vectors
-    int i;
-    for (i = 0; i < n; ++i) {
-      vector_X[i] = 0;
-      vector_D[i] = vector_B[i];
-      vector_R[i] = vector_D[i];
-      vector_Q[i] = 0;
-    }
-
-    OCL.loadSource("../src/clKernels/gpuCG.cl");
-    OCL.loadKernel("CGdense");
-
-    // Memory Allocation
-    {
-      VEC_buffer_size = sizeof(float) * n;
-      MAT_buffer_size = sizeof(float) * n * n;
-
-      MatA_mem = OCL.createBuffer(MAT_buffer_size, CL_MEM_READ_ONLY);
-      VecX_mem = OCL.createBuffer(VEC_buffer_size, CL_MEM_READ_WRITE);
-      VecD_mem = OCL.createBuffer(VEC_buffer_size, CL_MEM_READ_WRITE);
-      VecQ_mem = OCL.createBuffer(VEC_buffer_size, CL_MEM_READ_WRITE);
-      VecR_mem = OCL.createBuffer(VEC_buffer_size, CL_MEM_READ_WRITE);
-
-      // Enqueue Buffers For Execution
-      OCL.enqueueWriteBuffer(MatA_mem, MAT_buffer_size, matrix_A, false);
-      OCL.enqueueWriteBuffer(VecX_mem, VEC_buffer_size, vector_X, false);
-      OCL.enqueueWriteBuffer(VecD_mem, VEC_buffer_size, vector_D, false);
-      OCL.enqueueWriteBuffer(VecQ_mem, VEC_buffer_size, vector_Q, false);
-      OCL.enqueueWriteBuffer(VecR_mem, VEC_buffer_size, vector_R, false);
-
-      // Get all of the stuff written and allocated
-      OCL.finish();
-    }
-
-    // Kernel Arguments
-    {
-      i = 0;
-      // Now setup the arguments to our kernel
-      OCL.setKernelArg(i, sizeof(int),    &MatA_mem);
-      OCL.setKernelArg(i, sizeof(cl_mem), &VecX_mem);
-      OCL.setKernelArg(i, sizeof(cl_mem), &VecD_mem);
-      OCL.setKernelArg(i, sizeof(cl_mem), &VecQ_mem);
-      OCL.setKernelArg(i, sizeof(cl_mem), &VecR_mem);
-      OCL.setKernelArg(i, local_work_size * sizeof(fem_float), NULL);
-
-      OCL.finish();
-    }
-
-    // Execution and Read
-    {
-      int global_work_size = n;
-
-      OCL.setGlobalWorksize(1, global_work_size);
-      OCL.setLocalWorksize(1, local_work_size);
-      OCL.enquequeNDRangeKernel(1, true);
-      OCL.enqueueReadBuffer(VecX_mem, VEC_buffer_size, vector_X, true);
-    }
-
-    // Teardown
-    {
-      OCL.releaseMem(MatA_mem);
-      OCL.releaseMem(VecX_mem);
-      OCL.releaseMem(VecD_mem);
-      OCL.releaseMem(VecQ_mem);
-      OCL.releaseMem(VecR_mem);
-    }
-
-    //   printf("Vector X:\n");
-    //   printVectorf(vector_X, n);
 }

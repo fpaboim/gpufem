@@ -187,7 +187,7 @@ void ELLmatrix::SetNNZInfo(int nnz, int band) {
 // Ax_y: does matrix vector multiply and stores result in y (which should be
 // allocated by calling function)
 ////////////////////////////////////////////////////////////////////////////////
-void ELLmatrix::Ax_y(fem_float* x, fem_float* y) {
+void ELLmatrix::Axy(fem_float* x, fem_float* y) {
   for (int i = 0; i < m_matdim; ++i) {
     y[i] = 0;
     int rownnz = m_rownnz[i];
@@ -203,26 +203,9 @@ void ELLmatrix::Ax_y(fem_float* x, fem_float* y) {
 // allocated by calling function)
 ////////////////////////////////////////////////////////////////////////////////
 void ELLmatrix::AxyGPU(fem_float* x, fem_float* y, size_t local_worksize) {
+  size_t localszX = 4;
   bool printkerneltime = false;
-  OCL.setDir("C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//src//OpenCL//clKernels//");
-  //OCL.setDir(".\\..\\src\\OpenCL\\clKernels\\");
-
-  OCL.loadSource("LAopsEll.cl");
-  switch (m_optimizationstrat) {
-    case NAIVE:
-      OCL.loadKernel("SpMVNaive"); break;
-    case NAIVEUR:
-      OCL.loadKernel("SpMVNaiveUR"); break;
-    case SHARE:
-      OCL.loadKernel("SpMVStag"); break;
-    case BLOCK:
-      OCL.loadKernel("SpMVCoal"); break;
-    case BLOCKUR:
-      OCL.loadKernel("SpMVCoalUR"); break;
-    default:
-      printf("ERROR LOADING KERNEL!!!!\n");
-      OCL.loadKernel("SpMVNaive");
-  }
+  SelectOclStrategy();
 
   // Memory Allocation Sizes
   size_t VEC_buffer_size, MAT_buffer_size, IDX_buffer_size;
@@ -255,13 +238,13 @@ void ELLmatrix::AxyGPU(fem_float* x, fem_float* y, size_t local_worksize) {
   OCL.setKernelArg(i, sizeof(int), &m_matdim   ); ++i;
   OCL.setKernelArg(i, sizeof(cl_mem), &VecX_mem); ++i;
   OCL.setKernelArg(i, sizeof(cl_mem), &VecY_mem); ++i;
-  if (m_optimizationstrat == BLOCK) {
+  if (m_optimizationstrat == STRAT_BLOCK) {
     size_t blocksharedsize = local_worksize * local_worksize * sizeof(fem_float);
     bool blksharedmemok = OCL.localSizeIsOK(blocksharedsize);
     assert(blksharedmemok);
     OCL.setKernelArg(i, blocksharedsize, NULL);
   } else {
-    size_t sharedmemsize = m_maxrowlen * sizeof(fem_float);
+    size_t sharedmemsize = local_worksize * sizeof(fem_float);
     bool sharedmemok = OCL.localSizeIsOK(sharedmemsize);
     OCL.setKernelArg(i, sharedmemsize, NULL);
     assert(sharedmemok);
@@ -269,17 +252,16 @@ void ELLmatrix::AxyGPU(fem_float* x, fem_float* y, size_t local_worksize) {
   OCL.finish();
 
   // Block, aka Tiled strategy
-  if ((m_optimizationstrat == BLOCK) || (m_optimizationstrat == BLOCKUR)) {
-    size_t localszX = 4;
+  if ((m_optimizationstrat == STRAT_BLOCK) || (m_optimizationstrat == STRAT_BLOCKUR)) {
     size_t gpumatdim = m_matdim;
-    // make divisible by 32
+    // round up to largest number divisible by 32
     if (gpumatdim % 32 != 0) {
       gpumatdim = gpumatdim >> 5;
       gpumatdim++;
       gpumatdim = gpumatdim << 5;
     }
-    OCL.setLocalWorksize (0, localszX);
-    OCL.setLocalWorksize (1, local_worksize);
+    OCL.setLocalWorksize(0, localszX);
+    OCL.setLocalWorksize(1, local_worksize);
     OCL.setGlobalWorksize(0, localszX);
     OCL.setGlobalWorksize(1, gpumatdim);
     OCL.enquequeNDRangeKernel(2, printkerneltime);
@@ -288,7 +270,6 @@ void ELLmatrix::AxyGPU(fem_float* x, fem_float* y, size_t local_worksize) {
     OCL.setGlobalWorksize(0, m_matdim * local_worksize);
     OCL.enquequeNDRangeKernel(1, printkerneltime);
   }
-
   OCL.enqueueReadBuffer(VecY_mem, VEC_buffer_size, y, true);
 
   // Teardown
@@ -299,6 +280,32 @@ void ELLmatrix::AxyGPU(fem_float* x, fem_float* y, size_t local_worksize) {
   OCL.releaseMem(VecY_mem);
 }
 
+// Selects which CG implementation to run based on device
+////////////////////////////////////////////////////////////////////////////////
+void ELLmatrix::CG(fem_float* vector_X,
+                   fem_float* vector_B,
+                   int n_iterations,
+                   fem_float epsilon) {
+  switch (m_devicemode) {
+    case DEV_CPU:
+      omp_set_num_threads(1);
+      CPU_CG(vector_X, vector_B, n_iterations, epsilon, false);
+      break;
+    case DEV_OMP:
+      omp_set_num_threads(omp_get_num_procs());
+      CPU_CG(vector_X, vector_B, n_iterations, epsilon, false);
+      break;
+    case DEV_GPU:
+      omp_set_num_threads(omp_get_num_procs());
+      SolveCgGpu(vector_X, vector_B, n_iterations, epsilon, m_ocllocalworksize);
+      break;
+    default:  // default falls back to CPU single threaded
+      omp_set_num_threads(1);
+      CPU_CG(vector_X, vector_B, n_iterations, epsilon, false);
+      assert(false);
+      break;
+  }
+}
 
 // GPU_CG: Solve is controlled by host with partial work (mainly LA Ops
 // done by the GPU - for CG see Shewchuk
@@ -322,25 +329,7 @@ void ELLmatrix::SolveCgGpu(fem_float* vector_X,
     vector_D[i] = vector_B[i];
     vector_R[i] = vector_B[i];
   }
-  OCL.setDir("C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//src//OpenCL//clKernels//");
-  //OCL.setDir(".\\..\\src\\OpenCL\\clKernels\\");
-  OCL.loadSource("LAopsEll.cl");
-  switch (m_optimizationstrat) {
-    case NAIVE:
-      OCL.loadKernel("SpMVNaive"); break;
-    case NAIVEUR:
-      OCL.loadKernel("SpMVNaiveUR"); break;
-    case SHARE:
-      OCL.loadKernel("SpMVStag"); break;
-    case BLOCK:
-      OCL.loadKernel("SpMVCoal"); break;
-    case BLOCKUR:
-      OCL.loadKernel("SpMVCoalUR"); break;
-    case TEST:
-      OCL.loadKernel("SpMVCoalUR2"); break;
-    default:
-      OCL.loadKernel("SpMVNaive");
-  }
+  SelectOclStrategy();
   // Memory Allocation Sizes
   MAT_buffer_size = sizeof(fem_float) * m_matdim * m_maxrowlen;
   IDX_buffer_size = sizeof(int) * m_matdim * m_maxrowlen;
@@ -369,9 +358,9 @@ void ELLmatrix::SolveCgGpu(fem_float* vector_X,
   OCL.setKernelArg(i, sizeof(cl_mem), &VecQ_mem); ++i;
 
   // Sets kernel arguments and local worksize limits
-  if ((m_optimizationstrat == BLOCK) ||
-      (m_optimizationstrat == BLOCKUR) ||
-      (m_optimizationstrat == TEST)) {
+  if ((m_optimizationstrat == STRAT_BLOCK) ||
+      (m_optimizationstrat == STRAT_BLOCKUR) ||
+      (m_optimizationstrat == STRAT_TEST)) {
     while (local_worksize * localszX > 256) {
       local_worksize /= 2;
     }
@@ -385,9 +374,9 @@ void ELLmatrix::SolveCgGpu(fem_float* vector_X,
 
   // Fixes dimensions to ensure divisibility by local sizes and
   // sets OpenCL worksizes
-  if ((m_optimizationstrat == BLOCK) ||
-      (m_optimizationstrat == BLOCKUR) ||
-      (m_optimizationstrat == TEST)) {
+  if ((m_optimizationstrat == STRAT_BLOCK) ||
+      (m_optimizationstrat == STRAT_BLOCKUR) ||
+      (m_optimizationstrat == STRAT_TEST)) {
     // make global matdim divisible by 32
     size_t gpumatdim = m_matdim;
     if (gpumatdim % 32 != 0) {
@@ -400,7 +389,7 @@ void ELLmatrix::SolveCgGpu(fem_float* vector_X,
     OCL.setGlobalWorksize(0, localszX);
     OCL.setGlobalWorksize(1, gpumatdim);
   } else {
-    if (m_optimizationstrat == SHARE) {
+    if (m_optimizationstrat == STRAT_SHARE) {
       if (local_worksize >= 64) {
         local_worksize = 32;
       }
@@ -423,9 +412,9 @@ void ELLmatrix::SolveCgGpu(fem_float* vector_X,
   for (i = 0; (i < n_iterations) && (delta_new > err_bound); ++i) {
     // q = Ad
     //matrix_A->Ax_y(vector_d, vector_q);
-    if ((m_optimizationstrat == BLOCK) ||
-        (m_optimizationstrat == BLOCKUR) ||
-        (m_optimizationstrat == TEST)) {
+    if ((m_optimizationstrat == STRAT_BLOCK) ||
+        (m_optimizationstrat == STRAT_BLOCKUR) ||
+        (m_optimizationstrat == STRAT_TEST)) {
       OCL.enquequeNDRangeKernel(2, false);
     } else {
       OCL.enquequeNDRangeKernel(1, false);
@@ -468,6 +457,29 @@ void ELLmatrix::SolveCgGpu(fem_float* vector_X,
   _aligned_free(vector_D);
   _aligned_free(vector_Q);
   _aligned_free(vector_R);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ELLmatrix::SelectOclStrategy() {
+  OCL.setDir("C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//src//OpenCL//clKernels//");
+  //OCL.setDir(".\\..\\src\\OpenCL\\clKernels\\");
+  OCL.loadSource("LAopsEll.cl");
+  switch (m_optimizationstrat) {
+    case STRAT_NAIVE:
+      OCL.loadKernel("SpMVNaive"); break;
+    case STRAT_NAIVEUR:
+      OCL.loadKernel("SpMVNaiveUR"); break;
+    case STRAT_SHARE:
+      OCL.loadKernel("SpMVStag"); break;
+    case STRAT_BLOCK:
+      OCL.loadKernel("SpMVCoal"); break;
+    case STRAT_BLOCKUR:
+      OCL.loadKernel("SpMVCoalUR2"); break;
+    case STRAT_TEST:
+      OCL.loadKernel("SpMVCoalUR2"); break;
+    default:
+      OCL.loadKernel("SpMVNaive");
+  }
 }
 
 // Clear: resets the matrix data but otherwise keeps matrix information

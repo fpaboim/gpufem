@@ -118,7 +118,7 @@ void FemData::Init(SPRmatrix::SPRformat sprse_format,
   const int   modeldim     = fileIO->getModelDim();
   const char* analysis     = fileIO->getAnalysis();
   const int   nnodes       = fileIO->getNumNodes();
-  const int   ndof         = modeldim*fileIO->getNumNodes();
+  const int   ndof         = modeldim * fileIO->getNumNodes();
   const int   nelem        = fileIO->getNumElements();
   const int   nsupports    = fileIO->getNumSupports();
   const int   nnodalloads  = fileIO->getNumNodalLoads();
@@ -197,8 +197,8 @@ void FemData::SetGaussPoints(int n_gpts) {
     m_num_loop_gpts = n_gpts*n_gpts*n_gpts;
   // First index corresponds to distinct combinations of gauss points where the
   // increment order is from last coordinate to first (n^modelDim combinations)
-  m_x_gausspts_cpu = allocMatrix(m_num_loop_gpts, m_model_dim, false);
-  m_x_gausspts_gpu = allocVector(m_num_loop_gpts * m_model_dim, false);
+  m_x_gausspts_cpu     = allocMatrix(m_num_loop_gpts, m_model_dim, false);
+  m_x_gausspts_gpu     = allocVector(m_num_loop_gpts * m_model_dim, false);
   m_w_gaussweights_vec = allocVector(m_num_loop_gpts, false);
 
   // Builds the gauss point vectors

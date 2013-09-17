@@ -31,6 +31,8 @@ __kernel void SpMVCoal(__global  float* matData,     // INPUT MATRIX DATA
 
   uint slabsize   = matDim * loclenx;
   uint NumBlocksX = ELLwidth / loclenx;
+  if (NumBlocksX == 0)
+    NumBlocksX = 1;
   float sum = 0;
   // Loops the vertical "slab" over ELLwidth
   for (int i = 0; i < NumBlocksX; ++i) {
@@ -99,8 +101,9 @@ __kernel void SpMVCoalUR(__global  float* matData,     // INPUT MATRIX DATA
     xval.y  = vector_x[col.y];
     xval.z  = vector_x[col.z];
     xval.w  = vector_x[col.w];
-    sum4    += aval * xval;
+    sum4   += aval * xval;
   }
+
   auxShared[locidy * loclenx + locidx] = sum4.x + sum4.y + sum4.z + sum4.w;
 
   // Only one thread per row reduces
@@ -115,7 +118,8 @@ __kernel void SpMVCoalUR(__global  float* matData,     // INPUT MATRIX DATA
       sum4.w += auxShared[localbase + i + 3];
     }
     barrier(CLK_LOCAL_MEM_FENCE);
-    vector_y[gloidy] = sum4.x + sum4.y + sum4.z + sum4.w;
+    if (gloidy < matDim)
+      vector_y[gloidy] = sum4.x + sum4.y + sum4.z + sum4.w;
   }
 }
 
@@ -130,6 +134,7 @@ __kernel void SpMVCoalUR2(__global  float* matData,     // INPUT MATRIX DATA
                           __global  float* vector_y,    // OUTPUT
                           __local   float* auxShared) { // LOCAL SHARED BUFFER
   //uint grpidy  = get_group_id(1);
+  uint gloidx  = get_global_id(0);
   uint gloidy  = get_global_id(1);
   uint locidx  = get_local_id(0);
   uint locidy  = get_local_id(1);
@@ -139,34 +144,36 @@ __kernel void SpMVCoalUR2(__global  float* matData,     // INPUT MATRIX DATA
   // Zero out local memory
   auxShared[loclenx * locidy + locidx] = 0;
 
-  uint localbase = (locidy * loclenx) + locidx;
   uint slabsize   = matDim * loclenx;
   uint NumBlocksX = ELLwidth / loclenx;
 
   // Loops the vertical "slab" over ELLwidth
   float4 sum4 = 0;
   for (int i = 0; i < NumBlocksX; i += 4) {
-    int4 index, col;
+    int4 index, col, colnum;
     float4 aval, xval;
+    int locinslab = gloidy + (matDim * locidx);
 
-    index.x = i * slabsize + gloidy + (matDim * locidx);
-    index.y = (i + 1) * slabsize + gloidy + (matDim * locidx);
-    index.z = (i + 2) * slabsize + gloidy + (matDim * locidx);
-    index.w = (i + 3) * slabsize + gloidy + (matDim * locidx);
+    index.x = i * slabsize + locinslab;
+    index.y = (i + 1) * slabsize + locinslab;
+    index.z = (i + 2) * slabsize + locinslab;
+    index.w = (i + 3) * slabsize + locinslab;
+    colnum = index / matDim;
     col.x = colIdx[index.x];
     col.y = colIdx[index.y];
     col.z = colIdx[index.z];
     col.w = colIdx[index.w];
-    aval.x = matData[index.x];
-    aval.y = matData[index.y];
-    aval.z = matData[index.z];
-    aval.w = matData[index.w];
+    aval.x = (colnum.x < rowNnz) ? matData[index.x] : 0;
+    aval.y = (colnum.y < rowNnz) ? matData[index.y] : 0;
+    aval.z = (colnum.z < rowNnz) ? matData[index.z] : 0;
+    aval.w = (colnum.w < rowNnz) ? matData[index.w] : 0;
     xval.x = vector_x[col.x];
     xval.y = vector_x[col.y];
     xval.z = vector_x[col.z];
     xval.w = vector_x[col.w];
     sum4  += aval * xval;
   }
+  uint localbase = (locidy * loclenx) + locidx;
   auxShared[localbase] = sum4.x + sum4.y + sum4.z + sum4.w;
 
   // Only one thread per row reduces
@@ -184,6 +191,51 @@ __kernel void SpMVCoalUR2(__global  float* matData,     // INPUT MATRIX DATA
       vector_y[gloidy] = sum4.x + sum4.y + sum4.z + sum4.w;
   }
 }
+
+// SpMVCoal: Coalesced version of SpMV kernel (using blocking)
+////////////////////////////////////////////////////////////////////////////////
+__kernel void SpMVCoalUR3(__global  float* matData,     // INPUT MATRIX DATA
+                          __global  int*   colIdx,
+                          __global  int*   rowNnz,
+                          __private int    ELLwidth,
+                          __private int    matDim,
+                          __global  float* vector_x,    // INPUT
+                          __global  float* vector_y,    // OUTPUT
+                          __local   float* auxShared) { // LOCAL SHARED BUFFER
+  //uint grpidy  = get_group_id(1);
+  uint gloidy  = get_global_id(1);
+  uint locidx  = get_local_id(0);
+  uint locidy  = get_local_id(1);
+  uint loclenx = get_local_size(0);
+
+  // Zero out local memory
+  auxShared[loclenx * locidy + locidx] = 0;
+
+  uint slabsize   = matDim * loclenx;
+  uint NumBlocksX = ELLwidth / loclenx;
+
+  float sum = 0.0f;
+  // Loops the vertical "slab" over ELLwidth
+  for (int i = 0; i < NumBlocksX; ++i) {
+    //         baseaddress  +  locate group + locate in group
+    int index  = i * slabsize + gloidy + (matDim * locidx);
+    int col    = colIdx[index];
+    float aval = matData[index];
+    float xval = vector_x[col];
+    sum       += aval * xval;
+  }
+  auxShared[locidy * loclenx + locidx] = sum;
+  // Only one thread per row reduces
+  if (locidx == 0) {
+    barrier(CLK_LOCAL_MEM_FENCE);
+    sum = 0;
+    uint localbase = locidy * loclenx;
+    for (int i = 0; i < loclenx; ++i) {
+      sum += auxShared[localbase + i];
+    }
+    barrier(CLK_LOCAL_MEM_FENCE);
+    vector_y[gloidy] = sum;
+  }
 
 // SpMVStag: matrix vector product computed with staggered offsets
 ////////////////////////////////////////////////////////////////////////////////
@@ -240,6 +292,9 @@ __kernel void SpMVStag(__global  float* matData,     // INPUT MATRIX DATA
   uint locid       = get_local_id(0);
   uint loclen      = get_local_size(0);
   uint numblocks   = ELLwidth / loclen;
+  if (numblocks == 0) {
+    numblocks = 1;
+  }
   uint blockstride = loclen * matDim;
   uint slaboffset  = grpid + (locid * matDim);
 

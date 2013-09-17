@@ -410,7 +410,7 @@ TEST_P(SPRmatrixTest, Ax_Y) {
     accumulator += i*i;
   }
 
-  m_testmatrix->Ax_y(xvec, yvec);
+  m_testmatrix->Axy(xvec, yvec);
 
   for (int i = 0; i < m_matdim; ++i) {
     testfloat += yvec[i];

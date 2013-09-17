@@ -100,14 +100,13 @@ double StiffAlgoCPU::CalcGlobalStiffnessNaive(FemData* femdata) {
       for (int j = 0; j < numelemnodes; ++j) {
         for (int i = 0; i < modeldim; ++i) {
           // node in nodeCoords is nodeCoords[node-1][x,y,z]
-          int index = (elemconnect[numelemnodes*elem+j]-1)*modeldim+i;
+          int index = (elemconnect[numelemnodes * elem + j] - 1) * modeldim + i;
           m_elem_coords[i][j] = nodecoords[index];
         }
       }
 
       // resets local matrix
       zeroMatrix(k_local, nelemdof, nelemdof);
-
       for (int gp = 0; gp < nloopgpts; ++gp) {
         // gets natural coordinates form function
         GetdShapeFunctNatCoord(modeldim, numelemnodes, gausspts_vec[gp],

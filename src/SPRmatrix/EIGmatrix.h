@@ -46,7 +46,11 @@ class EIGmatrix : public SPRmatrix {
   size_t       GetMatSize();
   int          GetNNZ();
   void         SetNNZInfo(int nnz, int band);
-  void         Ax_y(fem_float* x, fem_float* y);
+  void         Axy(fem_float* x, fem_float* y);
+  void         CG(fem_float* vector_X,
+                  fem_float* vector_B,
+                  int n_iterations,
+                  fem_float epsilon){};
   void         SolveCgGpu(fem_float* vector_X,
                           fem_float* vector_B,
                           int n_iterations,

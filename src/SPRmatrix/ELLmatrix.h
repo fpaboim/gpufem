@@ -48,39 +48,39 @@ class ELLmatrix : public SPRmatrix {
   ELLmatrix(int matdim);
   ~ELLmatrix();
 
-  void         SetElem(const int row, const int col, const fem_float val);
-  void         AddElem(const int row, const int col, const fem_float val);
-  fem_float    GetElem(const int row, const int col);
-  size_t       GetMatSize();
-  int          GetNNZ();
-  void         SetNNZInfo(int nnz, int band);
-  void         Ax_y(fem_float* x, fem_float* y);
-  void         AxyGPU(fem_float* x, fem_float* y, size_t local_worksize);
-  void         SolveCgGpu(fem_float* vector_X,
-                          fem_float* vector_B,
-                          int n_iterations,
-                          fem_float epsilon,
-                          size_t local_work_size);
-  void         SolveCgGpu2(fem_float* vector_X,
-                           fem_float* vector_B,
-                           int n_iterations,
-                           fem_float epsilon,
-                           size_t local_work_size);
-  void         Clear();
-  void         Teardown();
-  static int   BinSearchIntStep(int* intvector,
-                                int  val,
-                                int  steppedlength,
-                                int  startpos,
-                                int  step) ;
+  void       SetElem(const int row, const int col, const fem_float val);
+  void       AddElem(const int row, const int col, const fem_float val);
+  fem_float  GetElem(const int row, const int col);
+  size_t     GetMatSize();
+  int        GetNNZ();
+  void       SetNNZInfo(int nnz, int band);
+  void       Axy(fem_float* x, fem_float* y);
+  void       AxyGPU(fem_float* x, fem_float* y, size_t local_worksize);
+  void       CG(fem_float* vector_X,
+                fem_float* vector_B,
+                int    n_iterations,
+                fem_float  epsilon);
+  void       SolveCgGpu(fem_float* vector_X,
+                        fem_float* vector_B,
+                        int	   n_iterations,
+                        fem_float  epsilon,
+                        size_t local_work_size);
+  void       Clear();
+  void       Teardown();
+  static int BinSearchIntStep(int* intvector,
+                              int  val,
+                              int  steppedlength,
+                              int  startpos,
+                              int  step) ;
 
  private:
-  void         InsertElem(int rownnz, int pos, const fem_float val,
-                          const int col, const int row);
-  void         GrowMatrix();
-  int          AllocateMatrix(const int matdim);
-  int          ReallocateForBandsize(const int matdim);
-  int          CheckBounds(const int row, const int col);
+  void       InsertElem(int rownnz, int pos, const fem_float val,
+                        const int col, const int row);
+  void       GrowMatrix();
+  int        AllocateMatrix(const int matdim);
+  int        ReallocateForBandsize(const int matdim);
+  int        CheckBounds(const int row, const int col);
+  void       SelectOclStrategy();
 
   //-------------------------------------------
   // member variables
@@ -89,7 +89,7 @@ class ELLmatrix : public SPRmatrix {
   fem_float* m_matdata;    // matrix data vector - empty data is 0!
   int*       m_colidx;     // column index - empty data is GARBAGE!
   int*       m_rownnz;     // row is index, value is nnz
-  int*       m_rownnztrigger; // given independent row access num of concurrent 
+  int*       m_rownnztrigger; // given independent row access num of concurrent
                               // threads
   int        m_maxrowlen;  // maximum row length (number of compressed columns
                            // stored)

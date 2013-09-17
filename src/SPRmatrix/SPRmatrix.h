@@ -33,7 +33,6 @@
 class SPRmatrix
 {
 public:
-  // Sparse Matrix Type Enum
   typedef enum SPRformat {
     NIL = 0,
     DEN = 1,
@@ -45,15 +44,22 @@ public:
     BCR = 7,
   } SPRformat;
 
+  // Device and in case of CPU also multithreading with OMP
+  typedef enum DeviceMode {
+    DEV_CPU = 0,
+    DEV_OMP = 1,
+    DEV_GPU = 2,
+  } DeviceMode;
+
   // Optimization strategy used in opencl kernels
   typedef enum OclStrategy {
-    UNDEF   = 0,
-    NAIVE   = 1,
-    NAIVEUR = 2,
-    SHARE   = 3,
-    BLOCK   = 4,
-    BLOCKUR = 5,
-    TEST    = 6,
+    STRAT_UNDEF   = 0,
+    STRAT_NAIVE   = 1,
+    STRAT_NAIVEUR = 2,
+    STRAT_SHARE   = 3,
+    STRAT_BLOCK   = 4,
+    STRAT_BLOCKUR = 5,
+    STRAT_TEST    = 6,
   } OclStrategy;
 
   SPRmatrix();
@@ -67,15 +73,14 @@ public:
   virtual void      SetNNZInfo(int nnz, int band) = 0;
   virtual int       GetNNZ() = 0;
   virtual void      Clear() = 0;
-  virtual void      Ax_y(fem_float* x, fem_float* y) = 0;
-  virtual void      AxyGPU(fem_float* x, fem_float* y, size_t local_worksize){};
-  virtual void      SolveCgGpu(fem_float* vector_X,
-                               fem_float* vector_B,
-                               int n_iterations,
-                               fem_float epsilon,
-                               size_t local_work_size) = 0;
+  virtual void      Axy(fem_float* x, fem_float* y) = 0;
+  virtual void      CG(fem_float* vector_X,
+                       fem_float* vector_B,
+                       int n_iterations,
+                       fem_float epsilon) = 0;
   virtual void      Teardown() = 0; // Deallocates matrix
 
+public:
   // common sparse matrix public functions
   static SPRmatrix* CreateMatrix(const int dim, SPRformat matformat);
   int               BinSearchInt(const int* intvector, const int val,
@@ -98,19 +103,36 @@ public:
                       m_optimizationstrat = strat;
                     };
   OclStrategy       GetOclStrategy() {return m_optimizationstrat;};
+  void              SetDeviceMode(DeviceMode device) {
+                      m_devicemode = device;
+                    };
+  DeviceMode        GetDeviceMode() {return m_devicemode;};
+  void              SetOclLocalSize(int localsize) {
+                      m_ocllocalworksize = localsize;
+                    };
+  int               GetOclLocalSize() {return m_ocllocalworksize;};
   void              VerboseErrors(bool isverbose) {
                       m_verboseerrors = isverbose;
                     };
   int               GetAllocTrigger(){ return m_prealloctrigger;};
 
 protected:
-  int               InputIsOK(fem_float val, int row, int col);
-  int               BoundsOK(int row, int col);
+  // Format Indifferent Solvers
+  int Cholesky(fem_float* vectorX, fem_float* VectorY, int dim, bool print);
+  int CPU_CG(fem_float* vector_X,
+           fem_float* vector_Y,
+           int n_iterations,
+           fem_float epsilon,
+           bool print);
+  int InputIsOK(fem_float val, int row, int col);
+  int BoundsOK(int row, int col);
 
   // common data
-  int         m_matdim;     /* square matrix dimension      */
-  SPRformat   m_matformat;  /* sparse matrix storage format */
-  OclStrategy m_optimizationstrat;  /* sparse matrix storage format */
+  int         m_matdim;
+  SPRformat   m_matformat;
+  OclStrategy m_optimizationstrat;
+  int         m_ocllocalworksize;
+  DeviceMode  m_devicemode;
   bool        m_verboseerrors;
   bool        m_prealloctrigger;
 };

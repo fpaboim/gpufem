@@ -605,15 +605,15 @@ int RunBatches(std::vector<std::string> files,
         double tsolvecpu = 0, tsolvegpu_naive = 0, tsolvegpu_naiveur = 0,
           tsolvegpu_share = 0, tsolvegpu_blk = 0, tsolvegpu_blkur = 0;
         tsolvecpu = solveDisplacements(FEM::CPU, femdata);
-        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::NAIVE);
+        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::STRAT_NAIVE);
         tsolvegpu_naive = solveDisplacements(FEM::GPU, femdata);
-        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::NAIVEUR);
+        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::STRAT_NAIVEUR);
         tsolvegpu_naiveur = solveDisplacements(FEM::GPU, femdata);
-        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::SHARE);
+        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::STRAT_SHARE);
         tsolvegpu_share = solveDisplacements(FEM::GPU, femdata);
-        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::BLOCK);
+        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::STRAT_BLOCK);
         tsolvegpu_blk = solveDisplacements(FEM::GPU, femdata);
-        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::BLOCKUR);
+        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::STRAT_BLOCKUR);
         tsolvegpu_blkur = solveDisplacements(FEM::GPU, femdata);
         outfileWriteSolBatchResults(Filehandler,
           femdata,

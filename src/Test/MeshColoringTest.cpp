@@ -43,5 +43,9 @@ TEST(MeshColoring, Color_Small_Mesh) {
   CheckMemory check;
 
   femColor* mshColorObj = new femColor();
+  // TODO: Implementation with femdata mock object creation to decouple coloring
+  // and femdata tests, also useful to decouple file io and femdata in femdata
+  // tests.. which is also something that sould be done
+
   delete mshColorObj;
 }
