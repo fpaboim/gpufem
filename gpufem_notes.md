@@ -3,6 +3,7 @@ GPUFEM Notes
 
 ## Lists
 ### TODO
+* Add microbench to interface
 * Add differences in memory initialization (dynamic/static) regarding host and kernel executions.
 Ideas!:
 * No transfer by zeroing only at the GPU?

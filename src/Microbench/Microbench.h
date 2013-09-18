@@ -45,11 +45,25 @@ private:
                             fem_float* yvec,
                             size_t     localsize,
                             int        nloops);
+
+  static double getAxyTime(SPRmatrix* sprmat,
+                           fem_float* xvec,
+                           fem_float* yvec,
+                           int nloops);
+
+  static double  getCGTime(SPRmatrix* sprmat,
+                           fem_float* xvec,
+                           fem_float* yvec,
+                           int nloops,
+                           int niterations,
+                           fem_float precision);
+
   static double BenchCGGPU(SPRmatrix* dummymatrix,
                            fem_float* xvec,
                            fem_float* yvec,
                            size_t     localsize,
                            int        nloops);
+
   static double BenchCGGPU(FemData*   femdata,
                            size_t     localsize,
                            int        nloops);

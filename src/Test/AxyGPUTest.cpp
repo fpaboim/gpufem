@@ -43,8 +43,8 @@ class AxyGPUTest : public ::testing::TestWithParam<SPRmatrix::OclStrategy> {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_P(AxyGPUTest, Ell_diagonal_Ax_y_GPU) {
   CheckMemory check;
-  int matdim      = 16 * 1024;
-  int localsz     = 32;
+  int matdim      = 4 * 1024;
+  int localsz     = 4;
   fem_float* xvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yres = (fem_float*)malloc(matdim * sizeof(fem_float));
@@ -160,10 +160,10 @@ TEST_P(AxyGPUTest, ELL_diag_band_Axy) {
 ////////////////////////////////////////////////////////////////////////////////
 TEST_P(AxyGPUTest, ELL_banded_4to64_localsize) {
   CheckMemory check;
-  int matdim      = 16 * 1024;
+  int matdim      = 64 * 1024;
   int minlocalsz  = 4;
-  int maxlocalsz  = 32;
-  int bandsz      = 16;
+  int maxlocalsz  = 64;
+  int bandsz      = 8;
   fem_float* xvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yvec = (fem_float*)malloc(matdim * sizeof(fem_float));
   fem_float* yres = (fem_float*)malloc(matdim * sizeof(fem_float));

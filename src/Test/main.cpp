@@ -47,7 +47,7 @@ void filterTests() {
   //runtests.append(":FileIOTest*");
   runtests.append(":LAopsTest*");
   //runtests.append(":SPRSearchTest*");
-  runtests.append(":*SPRmatrix*");
+  //runtests.append(":*SPRmatrix*");
   runtests.append(":Axy*");
   //runtests.append(":Mesh*");
   //runtests.append(":FEManalysis*");

@@ -41,16 +41,17 @@ public:
   FEM();
   ~FEM();
 
-  typedef enum DeviceMode {
-    CPU    = 0,
-    GPUOMP = 1,
-    GPU    = 2,
-  } DeviceMode;
+  enum DeviceMode {
+    CPU,
+    OMP,
+    GPUOMP,
+    GPU,
+  };
 
-  typedef enum ConstraintMode {
+  enum ConstraintMode {
     PEN = 0,
     SUB = 1,
-  } ConstraintMode;
+  };
 
   // creates derived class object according to device type and returns pointer
   void       Init(bool assemble, DeviceMode devicemode);

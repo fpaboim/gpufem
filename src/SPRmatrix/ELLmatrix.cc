@@ -96,16 +96,18 @@ void ELLmatrix::AddElem(const int row, const int col, const fem_float val) {
   // Strided binary search for insertion position
   int pos = BinSearchIntStep(m_colidx, col, rownnz, row, m_matdim);
 
-  if (pos == -1) { // key not found
-    InsertElem(rownnz, row + (m_matdim * rownnz), val, col, row);
-    return;
-  }
-
-  // In case element exists adds to the element
-  if (m_colidx[pos] == col) {
-    m_matdata[pos] += val;
-  } else { // Else inserts element into matrix
-    InsertElem(rownnz, pos, val, col, row);
+  #pragma omp critical
+  {
+    if (pos == -1) { // key not found
+      InsertElem(rownnz, row + (m_matdim * rownnz), val, col, row);
+    } else {
+      // In case element exists adds to the element
+      if (m_colidx[pos] == col) {
+        m_matdata[pos] += val;
+      } else { // Else inserts element into matrix
+        InsertElem(rownnz, pos, val, col, row);
+      }
+    }
   }
 }
 
@@ -123,11 +125,13 @@ void ELLmatrix::InsertElem(int rownnz, int pos, const fem_float val,
   m_colidx[pos]  = col;
   // increments number of nonzeros and checks if matrix needs to be grown
   m_rownnz[row]++;
-  if (m_rownnz[row] == (m_maxrowlen - 3)) {
+  if (rownnz == 31)
+    double dum = 1;
+  if (m_rownnz[row] == (m_maxrowlen - 5)) {
     m_prealloctrigger = true;
     return;
   }
-  if (m_rownnz[row] == (m_maxrowlen-1)) {
+  if (m_rownnz[row] == m_maxrowlen) {
     GrowMatrix();
     m_prealloctrigger = false;
   }
@@ -474,7 +478,7 @@ void ELLmatrix::SelectOclStrategy() {
     case STRAT_BLOCK:
       OCL.loadKernel("SpMVCoal"); break;
     case STRAT_BLOCKUR:
-      OCL.loadKernel("SpMVCoalUR2"); break;
+      OCL.loadKernel("SpMVCoalUR"); break;
     case STRAT_TEST:
       OCL.loadKernel("SpMVCoalUR2"); break;
     default:

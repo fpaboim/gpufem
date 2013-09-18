@@ -44,9 +44,7 @@ typedef enum BatchMode {
 // Analysis Interface Functions
 ////////////////////////////////////////////////////////////////////////////////
 int LuaRegisterCFunctions(lua_State* L);
-
 static int lua_RunAnalysis(lua_State* L);
-
 static int lua_GetMaxThreads(lua_State* L);
 
 void outfileInit(FileIO* Filehandler,
@@ -84,6 +82,7 @@ void outfileWriteSolBatchResults(const bool isbatch,
   double tstiffcpu,
   double tstiffgpu,
   double tsolvecpu,
+  double tsolveomp,
   double tsolvegpu_naive,
   double tsolvegpu_naiveur,
   double tsolvegpu_share,
@@ -140,6 +139,8 @@ int RunSolBatchAnalysis(std::vector<std::string> files,
   const bool view,
   std::string outfile,
   bool appendmode);
+
+double GPUSolveTime(FemData* femdata, SPRmatrix::OclStrategy oclstrategy);
 
 int RunBatches(std::vector<std::string> files,
   SPRmatrix::SPRformat sprseformat,

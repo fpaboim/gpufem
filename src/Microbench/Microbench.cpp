@@ -124,7 +124,6 @@ void Microbench::BenchCG() {
   int localsize  = 8;
   int iterations = 10000;
   fem_float precision  = 0.0001f;
-
   SPRmatrix::SPRformat   matformat = SPRmatrix::ELL;
   SPRmatrix::OclStrategy oclstrat  = SPRmatrix::STRAT_BLOCK;
 
@@ -137,20 +136,21 @@ void Microbench::BenchCG() {
   OCL.loadKernel("SpMVStag");
   OCL.loadKernel("SpMVCoal");
   OCL.loadKernel("SpMVCoalUR");
+  OCL.loadKernel("SpMVCoalUR2");
 
   std::vector<std::string> testfiles;
   // testfiles.push_back(
   //   "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Q4//placa96_Q4.nf");
-  // testfiles.push_back(
-  //   "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Q8//placa64_Q8.nf");
+  testfiles.push_back(
+   "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Q8//placa64_Q8.nf");
   testfiles.push_back(
     "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Brk8//rubik8_brk8.nf");
   testfiles.push_back(
     "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Brk8//rubik12_brk8.nf");
   testfiles.push_back(
     "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Brk8//rubik16_brk8.nf");
-  testfiles.push_back(
-    "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Brk20//rubik12_brk20.nf");
+//  testfiles.push_back(
+//    "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Brk20//rubik12_brk20.nf");
 
   for (size_t i = 0; i < testfiles.size(); i++) {
     // Finite Element Test Case
@@ -172,7 +172,6 @@ void Microbench::BenchCG() {
                   10,
                   0.25,
                   fileIO);
-    femdata->GetStiffnessMatrix()->SetOclStrategy(oclstrat);
     printf("\n# MATRIX SIZE: %.2fMB\n",
       (float) femdata->GetStiffnessMatrix()->GetMatSize() / (1024 * 1024));
 
@@ -197,7 +196,7 @@ void Microbench::BenchCG() {
     // CPU CG Bench
     omp_set_num_threads(4);
     double tsolvecpu = omp_get_wtime();
-    for (int i = 0; i <= ntestloops; i++) {
+    for (int i = 0; i < ntestloops; i++) {
       CPU_CG(femdata->GetStiffnessMatrix(),
              femdata->GetDisplVector(),
              femdata->GetForceVector(),
@@ -288,10 +287,10 @@ void Microbench::BenchCG2() {
     // GPU CG Microbench
     ////////////////////////////////////////////////////////////////////////////
     omp_set_num_threads(4);
-    BenchCGGPU(dummymatrix, xvec, yvec, localsize, ntestloops);
-    BenchCGGPU(dummymatrix, xvec, yvec, localsize*2, ntestloops);
-    BenchCGGPU(dummymatrix, xvec, yvec, localsize*4, ntestloops);
-    BenchCGGPU(dummymatrix, xvec, yvec, localsize*8, ntestloops);
+    BenchCGGPU(dummymatrix, xvec, yvec, localsize * 1, ntestloops);
+    BenchCGGPU(dummymatrix, xvec, yvec, localsize * 2, ntestloops);
+    BenchCGGPU(dummymatrix, xvec, yvec, localsize * 4, ntestloops);
+    BenchCGGPU(dummymatrix, xvec, yvec, localsize * 8, ntestloops);
 
     free(yvec);
     free(xvec);
@@ -381,7 +380,6 @@ void Microbench::BenchMV() {
 
   for (int testsize = initestsize; testsize <= maxtestsize; testsize *= 2) {
     int localsize = 16;
-    double t1, t2; // aux vars for getting timestamps
     SPRmatrix* dummymatrix = SPRmatrix::CreateMatrix(testsize, matformat);
     dummymatrix->VerboseErrors(false);
     // test arrays setup
@@ -401,30 +399,19 @@ void Microbench::BenchMV() {
     ////////////////////////////////////////////////////////////////////////////
     printf("==================================================\n");
 
+    double totaltime = 0;
     omp_set_num_threads(1);
-    t1 = omp_get_wtime();
-    for (int i = 0; i <= ntestloops; i++) {
-      dummymatrix->Axy(xvec, yvec);
-    }
-    t2 = omp_get_wtime() - t1;
-    printf("CPU time(%i): %.4fms \n", omp_get_max_threads(), (t2*1000));
+    totaltime = getAxyTime(dummymatrix, xvec, yvec, ntestloops);
+    printf("CPU time(%i): %.4fms \n", omp_get_max_threads(), (totaltime*1000));
     // CPU CG Microbench
     omp_set_num_threads(2);
-    t1 = omp_get_wtime();
-    for (int i = 0; i <= ntestloops; i++) {
-      dummymatrix->Axy(xvec, yvec);
-    }
-    t2 = omp_get_wtime() - t1;
-    printf("CPU  time(%i): %.4fms \n", omp_get_max_threads(), (t2*1000));
+    totaltime = getAxyTime(dummymatrix, xvec, yvec, ntestloops);
+    printf("CPU  time(%i): %.4fms \n", omp_get_max_threads(), (totaltime*1000));
     // CPU CG Microbench
     omp_set_num_threads(4);
-    t1 = omp_get_wtime();
-    for (int i = 0; i <= ntestloops; i++) {
-      dummymatrix->Axy(xvec, yvec);
-    }
-    t2 = omp_get_wtime() - t1;
-    printf("CPU time(%i): %.4fms \n", omp_get_max_threads(), (t2*1000));
-    double gflops = (2.0f * testsize * (double)bandsize * 1.0e-6) / (t2 / ntestloops);
+    totaltime = getAxyTime(dummymatrix, xvec, yvec, ntestloops);
+    printf("CPU time(%i): %.4fms \n", omp_get_max_threads(), (totaltime*1000));
+    double gflops = (2.0f * testsize * (double)bandsize * 1.0e-6) / (totaltime / ntestloops);
     printf("CPU MFLOP(%i): %.4f Mflops \n", omp_get_max_threads(), gflops);
 
     // GPU CG Microbench
@@ -452,51 +439,59 @@ double Microbench::BenchAxyGPU(SPRmatrix* dummymatrix,
                                size_t     localsize,
                                int        nloops) {
   // Naive Bench
-  double tini, tnaive, tnaiveur, tshare, tblock, tblockur;
+  dummymatrix->SetDeviceMode(SPRmatrix::DEV_GPU);
+  dummymatrix->SetOclLocalSize(localsize);
   dummymatrix->SetOclStrategy(SPRmatrix::STRAT_NAIVE);
-  tini = omp_get_wtime();
-  for (int i = 0; i <= nloops; i++) {
-    dummymatrix->AxyGPU(xvec, yvec, localsize);
-  }
-  tnaive = omp_get_wtime() - tini;
+  double tnaive = getAxyTime(dummymatrix, xvec, yvec, nloops);
   // NaiveUR Bench
   dummymatrix->SetOclStrategy(SPRmatrix::STRAT_NAIVEUR);
-  tini = omp_get_wtime();
-  for (int i = 0; i <= nloops; i++) {
-    dummymatrix->AxyGPU(xvec, yvec, localsize);
-  }
-  tnaiveur = omp_get_wtime() - tini;
+  double tnaiveur = getAxyTime(dummymatrix, xvec, yvec, nloops);
   // Shared Bench
   dummymatrix->SetOclStrategy(SPRmatrix::STRAT_SHARE);
-  tini = omp_get_wtime();
-  for (int i = 0; i <= nloops; i++) {
-    dummymatrix->AxyGPU(xvec, yvec, localsize);
-  }
-  tshare = omp_get_wtime() - tini;
+  double tshare = getAxyTime(dummymatrix, xvec, yvec, nloops);
   // Blocked Bench
   dummymatrix->SetOclStrategy(SPRmatrix::STRAT_BLOCK);
-  tini = omp_get_wtime();
-  for (int i = 0; i <= nloops; i++) {
-    dummymatrix->AxyGPU(xvec, yvec, localsize);
-  }
-  tblock = omp_get_wtime() - tini;
+  double tblock = getAxyTime(dummymatrix, xvec, yvec, nloops);
   // Blocked Bench
   dummymatrix->SetOclStrategy(SPRmatrix::STRAT_BLOCKUR);
-  tini = omp_get_wtime();
-  for (int i = 0; i <= nloops; i++) {
-    dummymatrix->AxyGPU(xvec, yvec, localsize);
-  }
-  tblockur = omp_get_wtime() - tini;
+  double tblockur = getAxyTime(dummymatrix, xvec, yvec, nloops);
 
   printf("GPU time(%2i): N:%.0fms NUR:%.0fms S:%.0fms B:%.0fms BUR:%.0fms\n",
-          localsize,
-          (tnaive*1000),
-          (tnaiveur*1000),
-          (tshare*1000),
-          (tblock*1000),
-          (tblockur*1000));
+         localsize,
+         (tnaive*1000),
+         (tnaiveur*1000),
+         (tshare*1000),
+         (tblock*1000),
+         (tblockur*1000));
 
   return tblock/nloops;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+double Microbench::getAxyTime(SPRmatrix* sprmat,
+                              fem_float* xvec,
+                              fem_float* yvec,
+                              int nloops) {
+  double tini = omp_get_wtime();
+  for (int i = 0; i < nloops; i++) {
+    sprmat->Axy(xvec, yvec);
+  }
+  return omp_get_wtime() - tini;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+double Microbench::getCGTime(SPRmatrix* sprmat,
+                              fem_float* xvec,
+                              fem_float* yvec,
+                              int nloops,
+                              int niterations,
+                              fem_float precision) {
+  double tini = omp_get_wtime();
+  for (int i = 0; i < nloops; i++) {
+    sprmat->CG(xvec, yvec, niterations, precision);
+  }
+  return omp_get_wtime() - tini;
 }
 
 // BenchCG: Benchmark for testing performance of CG solver
@@ -507,52 +502,33 @@ double Microbench::BenchCGGPU(SPRmatrix* dummymatrix,
                               size_t     localsize,
                               int        nloops) {
   // Naive Bench
-  int       iterations = 10000;
-  fem_float precision = 0.0001f;
+  int niter = 1000;
+  fem_float precision = 0.001f;
 
-  double tini, tnaive, tnaiveur, tshare, tblock, tblockur;
+  dummymatrix->SetDeviceMode(SPRmatrix::DEV_GPU);
+  dummymatrix->SetOclLocalSize(localsize);
   dummymatrix->SetOclStrategy(SPRmatrix::STRAT_NAIVE);
-  tini = omp_get_wtime();
-  for (int i = 0; i <= nloops; i++) {
-    dummymatrix->SolveCgGpu(xvec, yvec, iterations, precision, localsize);
-  }
-  tnaive = omp_get_wtime() - tini;
+  double tnaive = getCGTime(dummymatrix, xvec, yvec, nloops, niter, precision);
   // NaiveUR Bench
   dummymatrix->SetOclStrategy(SPRmatrix::STRAT_NAIVEUR);
-  tini = omp_get_wtime();
-  for (int i = 0; i <= nloops; i++) {
-    dummymatrix->SolveCgGpu(xvec, yvec, iterations, precision, localsize);
-  }
-  tnaiveur = omp_get_wtime() - tini;
+  double tnaiveur = getCGTime(dummymatrix, xvec, yvec, nloops, niter, precision);
   // Shared Bench
   dummymatrix->SetOclStrategy(SPRmatrix::STRAT_SHARE);
-  tini = omp_get_wtime();
-  for (int i = 0; i <= nloops; i++) {
-    dummymatrix->SolveCgGpu(xvec, yvec, iterations, precision, localsize);
-  }
-  tshare = omp_get_wtime() - tini;
+  double tshare = getCGTime(dummymatrix, xvec, yvec, nloops, niter, precision);
   // Blocked Bench
   dummymatrix->SetOclStrategy(SPRmatrix::STRAT_BLOCK);
-  tini = omp_get_wtime();
-  for (int i = 0; i <= nloops; i++) {
-    dummymatrix->SolveCgGpu(xvec, yvec, iterations, precision, localsize);
-  }
-  tblock = omp_get_wtime() - tini;
+  double tblock = getCGTime(dummymatrix, xvec, yvec, nloops, niter, precision);
   // Blocked Bench
   dummymatrix->SetOclStrategy(SPRmatrix::STRAT_BLOCKUR);
-  tini = omp_get_wtime();
-  for (int i = 0; i <= nloops; i++) {
-    dummymatrix->SolveCgGpu(xvec, yvec, iterations, precision, localsize);
-  }
-  tblockur = omp_get_wtime() - tini;
+  double tblockur = getCGTime(dummymatrix, xvec, yvec, nloops, niter, precision);
 
   printf("CGGPU time(%2i): N:%.0fms NUR:%.0fms S:%.0fms B:%.0fms BUR:%.0fms\n",
-          localsize,
-          (tnaive*1000),
-          (tnaiveur*1000),
-          (tshare*1000),
-          (tblock*1000),
-          (tblockur*1000));
+         localsize,
+         (tnaive * 1000),
+         (tnaiveur * 1000),
+         (tshare * 1000),
+         (tblock * 1000),
+         (tblockur * 1000));
 
   return tblock/nloops;
 }
@@ -565,58 +541,37 @@ double Microbench::BenchCGGPU(FemData* femdata,
   SPRmatrix* matrix = femdata->GetStiffnessMatrix();
   fem_float* xvect = femdata->GetDisplVector();
   fem_float* yvect = femdata->GetForceVector();
+  int niter = 1000;
+  fem_float precision = 0.00001f;
   // Naive Bench
-  double tini, tnaive, tnaiveur, tshare, tblock, tblockur, ttest;
+  matrix->SetDeviceMode(SPRmatrix::DEV_GPU);
+  matrix->SetOclLocalSize(localsize);
   matrix->SetOclStrategy(SPRmatrix::STRAT_NAIVE);
-  tini = omp_get_wtime();
-  for (int i = 0; i <= nloops; i++) {
-    matrix->SolveCgGpu(xvect, yvect, 1000, 0.00001f, localsize);
-  }
-  tnaive = omp_get_wtime() - tini;
+  double tnaive = getCGTime(matrix, xvect, yvect, nloops, niter, precision);
   // NaiveUR Bench
   matrix->SetOclStrategy(SPRmatrix::STRAT_NAIVEUR);
-  tini = omp_get_wtime();
-  for (int i = 0; i <= nloops; i++) {
-    matrix->SolveCgGpu(xvect, yvect, 1000, 0.00001f, localsize);
-  }
-  tnaiveur = omp_get_wtime() - tini;
+  double tnaiveur = getCGTime(matrix, xvect, yvect, nloops, niter, precision);
   // Shared Bench
   matrix->SetOclStrategy(SPRmatrix::STRAT_SHARE);
-  tini = omp_get_wtime();
-  for (int i = 0; i <= nloops; i++) {
-    matrix->SolveCgGpu(xvect, yvect, 1000, 0.00001f, localsize);
-  }
-  tshare = omp_get_wtime() - tini;
+  double tshare = getCGTime(matrix, xvect, yvect, nloops, niter, precision);
   // Blocked Bench
   matrix->SetOclStrategy(SPRmatrix::STRAT_BLOCK);
-  tini = omp_get_wtime();
-  for (int i = 0; i <= nloops; i++) {
-    matrix->SolveCgGpu(xvect, yvect, 1000, 0.00001f, localsize);
-  }
-  tblock = omp_get_wtime() - tini;
+  double tblock = getCGTime(matrix, xvect, yvect, nloops, niter, precision);
   // Blocked Bench
   matrix->SetOclStrategy(SPRmatrix::STRAT_BLOCKUR);
-  tini = omp_get_wtime();
-  for (int i = 0; i <= nloops; i++) {
-    matrix->SolveCgGpu(xvect, yvect, 1000, 0.00001f, localsize);
-  }
-  tblockur = omp_get_wtime() - tini;
+  double tblockur = getCGTime(matrix, xvect, yvect, nloops, niter, precision);
   // Blocked Bench
   matrix->SetOclStrategy(SPRmatrix::STRAT_TEST);
-  tini = omp_get_wtime();
-  for (int i = 0; i <= nloops; i++) {
-    matrix->SolveCgGpu(xvect, yvect, 1000, 0.00001f, localsize);
-  }
-  ttest = omp_get_wtime() - tini;
+  double ttest = getCGTime(matrix, xvect, yvect, nloops, niter, precision);
 
   printf("CGGPU time(%2i): N:%.0fms NUR:%.0fms S:%.0fms B:%.0fms BUR:%.0fms TST:%.0fms\n",
-          localsize,
-          (tnaive*1000),
-          (tnaiveur*1000),
-          (tshare*1000),
-          (tblock*1000),
-          (tblockur*1000),
-          (ttest*1000));
+         localsize,
+         (tnaive * 1000),
+         (tnaiveur * 1000),
+         (tshare * 1000),
+         (tblock * 1000),
+         (tblockur * 1000),
+         (ttest * 1000));
 
   return __min(tnaive,__min(tnaiveur, __min(tblock, tblockur)))/nloops;
 }

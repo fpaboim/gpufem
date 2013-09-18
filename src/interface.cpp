@@ -189,7 +189,6 @@ static int lua_RunAnalysis(lua_State* L) {
   }
 
   // function returns to lua 0 results
-
   return 0;
 }
 
@@ -279,6 +278,7 @@ void outfileWriteSolBatchResults(FileIO* Filehandler,
                                  double tstiffcpu,
                                  double tstiffgpu,
                                  double tsolvecpu,
+                                 double tsolveomp,
                                  double tsolvegpu_naive,
                                  double tsolvegpu_naiveur,
                                  double tsolvegpu_share,
@@ -334,20 +334,22 @@ double solveDisplacements(FEM::DeviceMode deviceType, FemData* femdata) {
   printf("..Solving for displacements:\n");
   double tsolve = omp_get_wtime();
   if (deviceType == FEM::CPU) {
-    CPU_CG(femdata->GetStiffnessMatrix(),
+    femdata->GetStiffnessMatrix()->SetDeviceMode(SPRmatrix::DEV_CPU);
+    femdata->GetStiffnessMatrix()->CG(
       femdata->GetDisplVector(),
       femdata->GetForceVector(),
-      femdata->GetNumDof(),
       3000,
-      0.001f,
-      false);
+      0.001f);
     tsolve = omp_get_wtime() - tsolve;
   } else {
-    femdata->GetStiffnessMatrix()->SolveCgGpu(femdata->GetDisplVector(),
+    femdata->GetStiffnessMatrix()->SetDeviceMode(SPRmatrix::DEV_GPU);
+    femdata->GetStiffnessMatrix()->SetOclLocalSize(8);
+    femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::STRAT_NAIVE);
+    femdata->GetStiffnessMatrix()->CG(
+      femdata->GetDisplVector(),
       femdata->GetForceVector(),
       3000,
-      0.001f,
-      1);
+      0.001f);
     tsolve = omp_get_wtime() - tsolve;
   }
   // printVectorf(femdata->GetDisplVector(), ndof);
@@ -602,25 +604,22 @@ int RunBatches(std::vector<std::string> files,
       // Solves linear system for displacements
 
       if (solve) {
-        double tsolvecpu = 0, tsolvegpu_naive = 0, tsolvegpu_naiveur = 0,
+        double tsolvecpu = 0, tsolveomp = 0, tsolvegpu_naive = 0, tsolvegpu_naiveur = 0,
           tsolvegpu_share = 0, tsolvegpu_blk = 0, tsolvegpu_blkur = 0;
         tsolvecpu = solveDisplacements(FEM::CPU, femdata);
-        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::STRAT_NAIVE);
-        tsolvegpu_naive = solveDisplacements(FEM::GPU, femdata);
-        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::STRAT_NAIVEUR);
-        tsolvegpu_naiveur = solveDisplacements(FEM::GPU, femdata);
-        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::STRAT_SHARE);
-        tsolvegpu_share = solveDisplacements(FEM::GPU, femdata);
-        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::STRAT_BLOCK);
-        tsolvegpu_blk = solveDisplacements(FEM::GPU, femdata);
-        femdata->GetStiffnessMatrix()->SetOclStrategy(SPRmatrix::STRAT_BLOCKUR);
-        tsolvegpu_blkur = solveDisplacements(FEM::GPU, femdata);
+        tsolveomp = solveDisplacements(FEM::OMP, femdata);
+        tsolvegpu_naive   = GPUSolveTime(femdata, SPRmatrix::STRAT_NAIVE);
+        tsolvegpu_naiveur = GPUSolveTime(femdata, SPRmatrix::STRAT_NAIVEUR);
+        tsolvegpu_share   = GPUSolveTime(femdata, SPRmatrix::STRAT_SHARE);
+        tsolvegpu_blk     = GPUSolveTime(femdata, SPRmatrix::STRAT_BLOCK);
+        tsolvegpu_blkur   = GPUSolveTime(femdata, SPRmatrix::STRAT_BLOCKUR);
         outfileWriteSolBatchResults(Filehandler,
           femdata,
           matsizeMB,
           tstiffcpu,
           tstiffgpu,
           tsolvecpu,
+          tsolveomp,
           tsolvegpu_naive,
           tsolvegpu_naiveur,
           tsolvegpu_share,
@@ -643,4 +642,10 @@ int RunBatches(std::vector<std::string> files,
   printAnalysisEnd();
 
   return 1;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+double GPUSolveTime(FemData* femdata, SPRmatrix::OclStrategy oclstrategy) {
+  femdata->GetStiffnessMatrix()->SetOclStrategy(oclstrategy);
+  return solveDisplacements(FEM::GPU, femdata);
 }
