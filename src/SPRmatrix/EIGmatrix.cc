@@ -107,6 +107,30 @@ void EIGmatrix::Axy(fem_float* x, fem_float* y) {
   spax_yOMP(this, x, y, m_matdim, false);
 }
 
+// Ax_y: does matrix vector multiply and stores result in y (which should be
+// allocated by calling function)
+////////////////////////////////////////////////////////////////////////////////
+void EIGmatrix::CG(fem_float* vector_X, fem_float* vector_B, int n_iterations,
+        fem_float  epsilon) {
+  switch (m_devicemode) {
+    case DEV_CPU:
+      omp_set_num_threads(1);
+      CPU_CG(vector_X, vector_B, n_iterations, epsilon, false);
+      break;
+    case DEV_OMP:
+      break;
+    case DEV_GPU:
+      omp_set_num_threads(omp_get_num_procs());
+      SolveCgGpu(vector_X, vector_B, n_iterations, epsilon, m_ocllocalworksize);
+      break;
+    default:  // default falls back to CPU single threaded
+      omp_set_num_threads(1);
+      CPU_CG(vector_X, vector_B, n_iterations, epsilon, false);
+      assert(false);
+      break;
+  }
+}
+
 // GPU_CG: Solves Ax = b for x by conjugate gradient method using GPU
 ////////////////////////////////////////////////////////////////////////////////
 void EIGmatrix::SolveCgGpu(fem_float* vector_X,

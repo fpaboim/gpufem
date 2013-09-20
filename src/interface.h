@@ -75,6 +75,7 @@ void outfileWriteAsmBatchResults(const bool isbatch,
   float matsizeMB,
   double tstiffcpu,
   double tstiffgpu);
+
 void outfileWriteSolBatchResults(const bool isbatch,
   FileIO* Filehandler,
   FemData* femdata,

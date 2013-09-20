@@ -34,6 +34,7 @@
 #include "Utils/util.h"
 
 #include <Eigen/Sparse>
+//#include <Eigen/IterativeLinearSolvers>
 
 class EIGmatrix : public SPRmatrix {
  public:
@@ -50,7 +51,7 @@ class EIGmatrix : public SPRmatrix {
   void         CG(fem_float* vector_X,
                   fem_float* vector_B,
                   int n_iterations,
-                  fem_float epsilon){};
+                  fem_float epsilon);
   void         SolveCgGpu(fem_float* vector_X,
                           fem_float* vector_B,
                           int n_iterations,
@@ -68,7 +69,7 @@ class EIGmatrix : public SPRmatrix {
   //-------------------------------------------
   // ELLpack Matrix Format Data Structure
   // Matrix data vector
-  Eigen::DynamicSparseMatrix<fem_float, Eigen::RowMajor> m_matrix;
+  Eigen::SparseMatrix<fem_float, Eigen::RowMajor> m_matrix;
   int        m_maxrowlen;  // maximum row length (number of compressed columns
                            // stored)
   int        m_growstep;   // step to grow compressed row length

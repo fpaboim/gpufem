@@ -41,15 +41,15 @@ int main(int argc, char** argv)  {
 ////////////////////////////////////////////////////////////////////////////////
 void filterTests() {
   std::string runtests = "";
-  //runtests.append(":OclTest*");
-  //runtests.append(":FemDataTest*");
-  //runtests.append(":FemTest*");
-  //runtests.append(":FileIOTest*");
-  runtests.append(":LAopsTest*");
-  //runtests.append(":SPRSearchTest*");
-  //runtests.append(":*SPRmatrix*");
+//   runtests.append(":OclTest*");
+//   runtests.append(":FemDataTest*");
+//   runtests.append(":FemTest*");
+//   runtests.append(":FileIOTest*");
+//   runtests.append(":LAopsTest*");
+//   runtests.append(":SPRSearchTest*");
+  runtests.append(":*SPRmatrix*");
   runtests.append(":Axy*");
-  //runtests.append(":Mesh*");
-  //runtests.append(":FEManalysis*");
+  runtests.append(":FEManalysis*");
+//   runtests.append(":Mesh*");
   testing::GTEST_FLAG(filter) = runtests;
 }

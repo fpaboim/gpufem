@@ -420,7 +420,7 @@ int SPRmatrix::CPU_CG(fem_float* vector_X,
     addSelfScaledToVectOMP(vector_d, vector_r, beta, m_matdim);
   }
 
-  if (print == 1) {
+  if (print == true) {
     if (i == n_iterations) {
       printf("\n\n***********\nReached max num of iterations!\n***********\n");
     } else {

@@ -31,6 +31,7 @@
 
 #include "SprMatrix/Sprmatrix.h"
 #include "FEM/FemData.h"
+#include <string.h>
 
 class Microbench {
 public:
@@ -40,7 +41,19 @@ public:
   static void BenchMV();
 
 private:
-  static double BenchAxyGPU(SPRmatrix* dummymatrix,
+  struct stratTime {
+    double time;
+    SPRmatrix::OclStrategy strat;
+  };
+
+  static std::string getStratString(SPRmatrix::OclStrategy strategy);
+
+  static void printGPUSolveTime(double tsolvegpu, double tsolvecpu, double tstiff,
+                         int localsize);
+
+  static void preloadEllKernels();
+
+  static stratTime BenchAxyGPU(SPRmatrix* dummymatrix,
                             fem_float* xvec,
                             fem_float* yvec,
                             size_t     localsize,
@@ -58,15 +71,17 @@ private:
                            int niterations,
                            fem_float precision);
 
-  static double BenchCGGPU(SPRmatrix* dummymatrix,
+  static stratTime BenchCGGPU(FemData*   femdata,
+                           size_t     localsize,
+                           int        nloops);
+
+  static stratTime BenchCGGPU(SPRmatrix* matrix,
                            fem_float* xvec,
                            fem_float* yvec,
                            size_t     localsize,
                            int        nloops);
 
-  static double BenchCGGPU(FemData*   femdata,
-                           size_t     localsize,
-                           int        nloops);
+  static stratTime _min(stratTime t1, stratTime t2);
 
 };
 

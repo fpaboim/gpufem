@@ -11,7 +11,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // SpMVCoal: Coalesced version of SpMV kernel (using blocking)
-////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 __kernel void SpMVCoal(__global  float* matData,     // INPUT MATRIX DATA
                        __global  int*   colIdx,
                        __global  int*   rowNnz,
@@ -58,7 +58,7 @@ __kernel void SpMVCoal(__global  float* matData,     // INPUT MATRIX DATA
 }
 
 // SpMVCoal: Coalesced version of SpMV kernel (using blocking)
-////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 __kernel void SpMVCoalUR(__global  float* matData,     // INPUT MATRIX DATA
                          __global  int*   colIdx,
                          __global  int*   rowNnz,
@@ -126,6 +126,74 @@ __kernel void SpMVCoalUR(__global  float* matData,     // INPUT MATRIX DATA
 // SpMVCoal: Coalesced version of SpMV kernel (using blocking)
 ////////////////////////////////////////////////////////////////////////////////
 __kernel void SpMVCoalUR2(__global  float* matData,     // INPUT MATRIX DATA
+                          __global  int*   colIdx,
+                          __global  int*   rowNnz,
+                          __private int    ELLwidth,
+                          __private int    matDim,
+                          __global  float* vector_x,    // INPUT
+                          __global  float* vector_y,    // OUTPUT
+                          __local   float* auxShared) { // LOCAL SHARED BUFFER
+  //uint grpidy  = get_group_id(1);
+  uint gloidx  = get_global_id(0);
+  uint gloidy  = get_global_id(1);
+  uint locidx  = get_local_id(0);
+  uint locidy  = get_local_id(1);
+  uint loclenx = get_local_size(0);
+  uint locleny = get_local_size(1);
+
+  // Zero out local memory
+  auxShared[loclenx * locidy + locidx] = 0;
+
+  uint slabsize   = matDim * loclenx;
+  uint NumBlocksX = ELLwidth / loclenx;
+
+  // Loops the vertical "slab" over ELLwidth
+  float4 sum4 = 0;
+  for (int i = 0; i < NumBlocksX; i += 4) {
+    int4 index, col;
+    float4 aval, xval;
+    int locinslab = gloidy + (matDim * locidx);
+
+    index.x = i * slabsize + locinslab;
+    index.y = (i + 1) * slabsize + locinslab;
+    index.z = (i + 2) * slabsize + locinslab;
+    index.w = (i + 3) * slabsize + locinslab;
+    col.x = colIdx[index.x];
+    col.y = colIdx[index.y];
+    col.z = colIdx[index.z];
+    col.w = colIdx[index.w];
+    aval.x  = matData[index.x];
+    aval.y  = matData[index.y];
+    aval.z  = matData[index.z];
+    aval.w  = matData[index.w];
+    xval.x = vector_x[col.x];
+    xval.y = vector_x[col.y];
+    xval.z = vector_x[col.z];
+    xval.w = vector_x[col.w];
+    sum4  += aval * xval;
+  }
+  uint localbase = (locidy * loclenx) + locidx;
+  auxShared[localbase] = sum4.x + sum4.y + sum4.z + sum4.w;
+
+  // Only one thread per row reduces
+  if (locidx < 4) {
+    barrier(CLK_LOCAL_MEM_FENCE);
+    sum4.x = 0; sum4.y = 0; sum4.z = 0; sum4.w = 0;
+    for (int i = 0; i < loclenx; i += 4) {
+      sum4.x += auxShared[localbase + i];
+      sum4.y += auxShared[localbase + i + 1];
+      sum4.z += auxShared[localbase + i + 2];
+      sum4.w += auxShared[localbase + i + 3];
+    }
+    barrier(CLK_LOCAL_MEM_FENCE);
+    if (locidx == 0)
+      vector_y[gloidy] = sum4.x + sum4.y + sum4.z + sum4.w;
+  }
+}
+
+// SpMVCoal: Coalesced version of SpMV kernel (using blocking)
+////////////////////////////////////////////////////////////////////////////////
+__kernel void SpMVCoalUR3(__global  float* matData,     // INPUT MATRIX DATA
                           __global  int*   colIdx,
                           __global  int*   rowNnz,
                           __private int    ELLwidth,

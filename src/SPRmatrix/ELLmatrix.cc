@@ -192,10 +192,10 @@ void ELLmatrix::SetNNZInfo(int nnz, int band) {
 // allocated by calling function)
 ////////////////////////////////////////////////////////////////////////////////
 void ELLmatrix::Axy(fem_float* x, fem_float* y) {
+#pragma omp parallel for
   for (int i = 0; i < m_matdim; ++i) {
     y[i] = 0;
     int rownnz = m_rownnz[i];
-#pragma omp parallel for shared(rownnz)
     for (int j = 0; j < rownnz; ++j) {
       int idx = i + (j * m_matdim);
       y[i] += m_matdata[idx] * x[m_colidx[idx]];
@@ -296,7 +296,6 @@ void ELLmatrix::CG(fem_float* vector_X,
       CPU_CG(vector_X, vector_B, n_iterations, epsilon, false);
       break;
     case DEV_OMP:
-      omp_set_num_threads(omp_get_num_procs());
       CPU_CG(vector_X, vector_B, n_iterations, epsilon, false);
       break;
     case DEV_GPU:
@@ -415,7 +414,6 @@ void ELLmatrix::SolveCgGpu(fem_float* vector_X,
   err_bound = epsilon * epsilon * delta_new;
   for (i = 0; (i < n_iterations) && (delta_new > err_bound); ++i) {
     // q = Ad
-    //matrix_A->Ax_y(vector_d, vector_q);
     if ((m_optimizationstrat == STRAT_BLOCK) ||
         (m_optimizationstrat == STRAT_BLOCKUR) ||
         (m_optimizationstrat == STRAT_TEST)) {
@@ -424,7 +422,6 @@ void ELLmatrix::SolveCgGpu(fem_float* vector_X,
       OCL.enquequeNDRangeKernel(1, false);
     }
     OCL.enqueueReadBuffer(VecQ_mem, VEC_buffer_size, vector_Q, true);
-    //AxyGPU(vector_D, vector_Q, local_worksize);
 
     // alpha = rDotrNew / (d dot q)
     alpha = delta_new / dotProductOMP(m_matdim, vector_D, vector_Q);

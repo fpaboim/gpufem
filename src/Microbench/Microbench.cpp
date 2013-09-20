@@ -122,35 +122,24 @@ void Microbench::BenchSearch() {
 void Microbench::BenchCG() {
   int ntestloops = 2;
   int localsize  = 8;
-  int iterations = 10000;
-  fem_float precision  = 0.0001f;
+  int iterations = 15000;
+  fem_float precision  = 0.001f;
   SPRmatrix::SPRformat   matformat = SPRmatrix::ELL;
   SPRmatrix::OclStrategy oclstrat  = SPRmatrix::STRAT_BLOCK;
 
   // Builds kernel and loads source so that dynamic loading does not interfere
   // in benchmarking
-  OCL.setDir(".\\..\\src\\OpenCL\\clKernels\\");
-  OCL.loadSource("LAopsEll.cl");
-  OCL.loadKernel("SpMVNaive");
-  OCL.loadKernel("SpMVNaiveUR");
-  OCL.loadKernel("SpMVStag");
-  OCL.loadKernel("SpMVCoal");
-  OCL.loadKernel("SpMVCoalUR");
-  OCL.loadKernel("SpMVCoalUR2");
+  preloadEllKernels();
 
   std::vector<std::string> testfiles;
-  // testfiles.push_back(
-  //   "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Q4//placa96_Q4.nf");
-  testfiles.push_back(
-   "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Q8//placa64_Q8.nf");
-  testfiles.push_back(
-    "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Brk8//rubik8_brk8.nf");
-  testfiles.push_back(
-    "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Brk8//rubik12_brk8.nf");
-  testfiles.push_back(
-    "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Brk8//rubik16_brk8.nf");
-//  testfiles.push_back(
-//    "C://Users//fpaboim//Desktop//parallel_projects//GPU_FEM//fpaboim_gpufem//test_models//Brk20//rubik12_brk20.nf");
+  // testfiles.push_back(".//..//test_models//Q4//placa96_Q4.nf");
+  testfiles.push_back(".//..//test_models//Q8//placa48_Q8.nf");
+  //  testfiles.push_back(".//..//test_models//Q8//placa64_Q8.nf");
+  testfiles.push_back(".//..//test_models//Brk8//rubik8_brk8.nf");
+  testfiles.push_back(".//..//test_models//Brk8//rubik12_brk8.nf");
+  testfiles.push_back(".//..//test_models//Brk8//rubik16_brk8.nf");
+  // testfiles.push_back(".//..//test_models//Brk20//rubik12_brk20.nf");
+  testfiles.push_back(".//..//test_models//Brk20//rubik20_brk20.nf");
 
   for (size_t i = 0; i < testfiles.size(); i++) {
     // Finite Element Test Case
@@ -194,38 +183,80 @@ void Microbench::BenchCG() {
 
     // Solves linear system for displacements
     // CPU CG Bench
+    femdata->GetStiffnessMatrix()->SetDeviceMode(SPRmatrix::DEV_OMP);
     omp_set_num_threads(4);
     double tsolvecpu = omp_get_wtime();
     for (int i = 0; i < ntestloops; i++) {
-      CPU_CG(femdata->GetStiffnessMatrix(),
-             femdata->GetDisplVector(),
-             femdata->GetForceVector(),
-             femdata->GetNumDof(),
-             iterations,
-             precision,
-             false);
+      femdata->GetStiffnessMatrix()->CG(femdata->GetDisplVector(),
+                                        femdata->GetForceVector(),
+                                        iterations,
+                                        precision);
     }
     tsolvecpu = (omp_get_wtime() - tsolvecpu)/ntestloops;
-    double tsolvegpu1 = BenchCGGPU(femdata, localsize, ntestloops);
-    double tsolvegpu2 = BenchCGGPU(femdata, localsize*2, ntestloops);
-    double tsolvegpu3 = BenchCGGPU(femdata, localsize*4, ntestloops);
-    double tsolvegpu4 = BenchCGGPU(femdata, localsize*8, ntestloops);
+    stratTime tsolvegpu1 = BenchCGGPU(femdata, localsize, ntestloops);
+    stratTime tsolvegpu2 = BenchCGGPU(femdata, localsize*2, ntestloops);
+    stratTime tsolvegpu3 = BenchCGGPU(femdata, localsize*4, ntestloops);
+    stratTime tsolvegpu4 = BenchCGGPU(femdata, localsize*8, ntestloops);
+    stratTime tsolvegpu5 = BenchCGGPU(femdata, localsize*16, ntestloops);
+
+    stratTime fastest = _min(tsolvegpu1, _min(tsolvegpu2,
+                          _min(tsolvegpu3, _min(tsolvegpu4, tsolvegpu5))));
 
     printf("Solver Time CPU: %3.4f -> %.2f%% of Stiffness Time\n",
-           tsolvecpu, (tsolvecpu/tstiff)*100);
-    printf("Solver Time GPU(%i): %3.4f -> %.0f%% of Stiffness Time -> %.0f%% of CPU Time\n",
-           localsize  , tsolvegpu1, (tsolvegpu1/tstiff)*100, (tsolvegpu1/tsolvecpu)*100);
-    printf("Solver Time GPU(%i): %3.4f -> %.0f%% of Stiffness Time -> %.0f%% of CPU Time\n",
-           localsize*2, tsolvegpu2, (tsolvegpu2/tstiff)*100, (tsolvegpu2/tsolvecpu)*100);
-    printf("Solver Time GPU(%i): %3.4f -> %.0f%% of Stiffness Time -> %.0f%% of CPU Time\n",
-           localsize*4, tsolvegpu3, (tsolvegpu3/tstiff)*100, (tsolvegpu3/tsolvecpu)*100);
-    printf("Solver Time GPU(%i): %3.4f -> %.0f%% of Stiffness Time -> %.0f%% of CPU Time\n",
-           localsize*8, tsolvegpu4, (tsolvegpu4/tstiff)*100, (tsolvegpu4/tsolvecpu)*100);
+           tsolvecpu, (tsolvecpu/tstiff) * 100);
+    printf("===================== Comparison ======================\n");
+    printGPUSolveTime(tsolvegpu1.time, tsolvecpu, tstiff, localsize*1);
+    printGPUSolveTime(tsolvegpu2.time, tsolvecpu, tstiff, localsize*2);
+    printGPUSolveTime(tsolvegpu3.time, tsolvecpu, tstiff, localsize*4);
+    printGPUSolveTime(tsolvegpu4.time, tsolvecpu, tstiff, localsize*8);
+    printGPUSolveTime(tsolvegpu5.time, tsolvecpu, tstiff, localsize*16);
+    if (tsolvecpu < fastest.time) {
+      printf("Fastest Time (CPU):%3.4f\n", tsolvecpu);
+    } else {
+      std::string fasteststrat = getStratString(fastest.strat);
+      std::cout << "Fastest Time (" << fasteststrat << "):" << fastest.time <<
+        std::endl;
+    }
   }
-
 }
+
+///////////////////////////////////////////////////////////////////////////////
+std::string Microbench::getStratString(SPRmatrix::OclStrategy strategy) {
+  std::string stratstring;
+  switch (strategy) {
+  case SPRmatrix::STRAT_NAIVE:
+    stratstring = "STRAT_NAIVE";
+    break;
+  case SPRmatrix::STRAT_NAIVEUR:
+    stratstring = "STRAT_NAIVEUR";
+    break;
+  case SPRmatrix::STRAT_SHARE:
+    stratstring = "STRAT_SHARE";
+    break;
+  case SPRmatrix::STRAT_BLOCK:
+    stratstring = "STRAT_BLOCK";
+    break;
+  case SPRmatrix::STRAT_BLOCKUR:
+    stratstring = "STRAT_BLOCKUR";
+    break;
+  case SPRmatrix::STRAT_TEST:
+    stratstring = "STRAT_TEST";
+    break;
+  default:  //default falls back to CPU
+    assert(false);
+  }
+  return stratstring;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void Microbench::printGPUSolveTime(double tsolvegpu, double tsolvecpu, double tstiff,
+                       int localsize) {
+    printf("GPU Solve Time(%i): %3.4f-> %.0f%% of Stiffness-> %.0f%% of CPU\n",
+      localsize, tsolvegpu, (tsolvegpu/tstiff)*100, (tsolvegpu/tsolvecpu)*100);
+}
+
 // BenchCG: Benchmark for testing performance of CG solver
-////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 void Microbench::BenchCG2() {
   int initestsize = 4 * 1024;
   int maxtestsize = 16 * 1024;
@@ -235,13 +266,7 @@ void Microbench::BenchCG2() {
 
   // Builds kernel and loads source so that dynamic loading does not interfere
   // in benchmarking
-  OCL.setDir(".\\..\\src\\OpenCL\\clKernels\\");
-  OCL.loadSource("LAopsEll.cl");
-  OCL.loadKernel("SpMVNaive");
-  OCL.loadKernel("SpMVNaiveUR");
-  OCL.loadKernel("SpMVStag");
-  OCL.loadKernel("SpMVCoal");
-  OCL.loadKernel("SpMVCoalUR");
+  preloadEllKernels();
 
   for (int testsize = initestsize; testsize <= maxtestsize; testsize *= 2) {
     printf("-----------------\nCG TestSize: %i\n", testsize);
@@ -257,13 +282,12 @@ void Microbench::BenchCG2() {
 
     // Print Results
     double t1, t2; // aux vars for getting timestamps
-
     // CPU CG Microbench
-    ////////////////////////////////////////////////////////////////////////////
+    dummymatrix->SetDeviceMode(SPRmatrix::DEV_OMP);
     omp_set_num_threads(1);
     t1 = omp_get_wtime();
     for (int i = 0; i <= ntestloops; i++) {
-      CPU_CG(dummymatrix, xvec, yvec, testsize, 1000, 0.00001f, false);
+      dummymatrix->CG(xvec, yvec, 1000, 0.00001f);
     }
     t2 = omp_get_wtime() - t1;
     printf("CPU time(%i): %.4fms \n", omp_get_max_threads(), (t2*1000));
@@ -271,7 +295,7 @@ void Microbench::BenchCG2() {
     omp_set_num_threads(2);
     t1 = omp_get_wtime();
     for (int i = 0; i <= ntestloops; i++) {
-      CPU_CG(dummymatrix, xvec, yvec, testsize, 1000, 0.00001f, false);
+      dummymatrix->CG(xvec, yvec, 1000, 0.00001f);
     }
     t2 = omp_get_wtime() - t1;
     printf("CPU time(%i): %.4fms \n", omp_get_max_threads(), (t2*1000));
@@ -279,13 +303,12 @@ void Microbench::BenchCG2() {
     omp_set_num_threads(4);
     t1 = omp_get_wtime();
     for (int i = 0; i <= ntestloops; i++) {
-      CPU_CG(dummymatrix, xvec, yvec, testsize, 1000, 0.00001f, false);
+      dummymatrix->CG(xvec, yvec, 1000, 0.00001f);
     }
     t2 = omp_get_wtime() - t1;
     printf("CPU time(%i): %.4fms \n", omp_get_max_threads(), (t2*1000));
 
     // GPU CG Microbench
-    ////////////////////////////////////////////////////////////////////////////
     omp_set_num_threads(4);
     BenchCGGPU(dummymatrix, xvec, yvec, localsize * 1, ntestloops);
     BenchCGGPU(dummymatrix, xvec, yvec, localsize * 2, ntestloops);
@@ -343,19 +366,16 @@ void Microbench::BenchCG2() {
   // Solves linear system for displacements
   printf("..Solving for displacements:\n");
   double tsolvecpu = omp_get_wtime();
-  CPU_CG(femdata->GetStiffnessMatrix(),
-         femdata->GetDisplVector(),
-         femdata->GetForceVector(),
-         femdata->GetNumDof(),
-         3000,
-         0.001f,
-         false);
-  double tsolvegpu = BenchCGGPU(femdata, localsize, ntestloops);
+  femdata->GetStiffnessMatrix()->CG(femdata->GetDisplVector(),
+                                    femdata->GetForceVector(),
+                                    3000,
+                                    0.001f);
+  stratTime tsolvegpu = BenchCGGPU(femdata, localsize, ntestloops);
 
   printf("Solver Time CPU: %3.4f -> %.2f%% of Stiffness Time\n",
-         tsolvecpu, (tsolvecpu/tstiff)*100);
+         tsolvecpu, (tsolvecpu/tstiff) * 100);
   printf("Solver Time GPU: %3.4f -> %.2f%% of Stiffness Time\n",
-         tsolvegpu, (tsolvegpu/tstiff)*100);
+         tsolvegpu.time, (tsolvegpu.time/tstiff) * 100);
 }
 
 // BenchMV: Microbenchmark for testing performance of MV product
@@ -369,14 +389,7 @@ void Microbench::BenchMV() {
 
   // Builds kernel and loads source so that dynamic loading does not interfere
   // in benchmarking
-  OCL.setDir(".\\..\\src\\OpenCL\\clKernels\\");
-  // Preloads all kernels and source not to interfere in benchmark time
-  OCL.loadSource("LAopsEll.cl");
-  OCL.loadKernel("SpMVNaive");
-  OCL.loadKernel("SpMVNaiveUR");
-  OCL.loadKernel("SpMVStag");
-  OCL.loadKernel("SpMVCoal");
-  OCL.loadKernel("SpMVCoalUR");
+  preloadEllKernels();
 
   for (int testsize = initestsize; testsize <= maxtestsize; testsize *= 2) {
     int localsize = 16;
@@ -396,9 +409,7 @@ void Microbench::BenchMV() {
     printf("MV microbench testsize: %i\n", testsize);
 
     // CPU MV Microbench
-    ////////////////////////////////////////////////////////////////////////////
     printf("==================================================\n");
-
     double totaltime = 0;
     omp_set_num_threads(1);
     totaltime = getAxyTime(dummymatrix, xvec, yvec, ntestloops);
@@ -415,15 +426,15 @@ void Microbench::BenchMV() {
     printf("CPU MFLOP(%i): %.4f Mflops \n", omp_get_max_threads(), gflops);
 
     // GPU CG Microbench
-    ////////////////////////////////////////////////////////////////////////////
     printf("--------------------------------------------------\n");
     BenchAxyGPU(dummymatrix, xvec, yvec, localsize, ntestloops);
     localsize *= 2;
     BenchAxyGPU(dummymatrix, xvec, yvec, localsize, ntestloops);
     localsize *= 2;
-    double tgpu = BenchAxyGPU(dummymatrix, xvec, yvec, localsize, ntestloops);
-    gflops = (2.0f * testsize * (double)bandsize * 1.0e-6) / tgpu;
-    printf("GPU MFLOP: %.4f Mflops \n", gflops);
+    stratTime tgpu = BenchAxyGPU(dummymatrix, xvec, yvec, localsize, ntestloops);
+    gflops = (2.0f * testsize * (double)bandsize * 1.0e-6) / tgpu.time;
+    std::cout << "GPU MFLOP(" << getStratString(tgpu.strat);
+    printf("): %.4f Mflops \n", gflops);
 
     free(yvec);
     free(xvec);
@@ -431,40 +442,67 @@ void Microbench::BenchMV() {
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void Microbench::preloadEllKernels() {
+  OCL.setDir(".\\..\\src\\OpenCL\\clKernels\\");
+  // Preloads all kernels and source not to interfere in benchmark time
+  OCL.loadSource("LAopsEll.cl");
+  OCL.loadKernel("SpMVNaive");
+  OCL.loadKernel("SpMVNaiveUR");
+  OCL.loadKernel("SpMVStag");
+  OCL.loadKernel("SpMVCoal");
+  OCL.loadKernel("SpMVCoalUR");
+  OCL.loadKernel("SpMVCoalUR2");
+}
+
 // BenchCG: Benchmark for testing performance of CG solver
 ////////////////////////////////////////////////////////////////////////////////
-double Microbench::BenchAxyGPU(SPRmatrix* dummymatrix,
+Microbench::stratTime Microbench::BenchAxyGPU(SPRmatrix* dummymatrix,
                                fem_float* xvec,
                                fem_float* yvec,
                                size_t     localsize,
                                int        nloops) {
-  // Naive Bench
   dummymatrix->SetDeviceMode(SPRmatrix::DEV_GPU);
   dummymatrix->SetOclLocalSize(localsize);
-  dummymatrix->SetOclStrategy(SPRmatrix::STRAT_NAIVE);
-  double tnaive = getAxyTime(dummymatrix, xvec, yvec, nloops);
+  stratTime naive, naiveur, share, block, blockur, test;
+  // Naive Bench
+  naive.strat = SPRmatrix::STRAT_NAIVE;
+  dummymatrix->SetOclStrategy(naive.strat);
+  naive.time = getAxyTime(dummymatrix, xvec, yvec, nloops);
   // NaiveUR Bench
-  dummymatrix->SetOclStrategy(SPRmatrix::STRAT_NAIVEUR);
-  double tnaiveur = getAxyTime(dummymatrix, xvec, yvec, nloops);
+  naiveur.strat = SPRmatrix::STRAT_NAIVEUR;
+  dummymatrix->SetOclStrategy(naiveur.strat);
+  naiveur.time = getAxyTime(dummymatrix, xvec, yvec, nloops);
   // Shared Bench
-  dummymatrix->SetOclStrategy(SPRmatrix::STRAT_SHARE);
-  double tshare = getAxyTime(dummymatrix, xvec, yvec, nloops);
+  share.strat = SPRmatrix::STRAT_SHARE;
+  dummymatrix->SetOclStrategy(share.strat);
+  share.time = getAxyTime(dummymatrix, xvec, yvec, nloops);
   // Blocked Bench
-  dummymatrix->SetOclStrategy(SPRmatrix::STRAT_BLOCK);
-  double tblock = getAxyTime(dummymatrix, xvec, yvec, nloops);
+  block.strat = SPRmatrix::STRAT_BLOCK;
+  dummymatrix->SetOclStrategy(block.strat);
+  block.time = getAxyTime(dummymatrix, xvec, yvec, nloops);
   // Blocked Bench
-  dummymatrix->SetOclStrategy(SPRmatrix::STRAT_BLOCKUR);
-  double tblockur = getAxyTime(dummymatrix, xvec, yvec, nloops);
+  blockur.strat = SPRmatrix::STRAT_BLOCKUR;
+  dummymatrix->SetOclStrategy(blockur.strat);
+  blockur.time = getAxyTime(dummymatrix, xvec, yvec, nloops);
+  // Test Bench
+  test.strat = SPRmatrix::STRAT_TEST;
+  dummymatrix->SetOclStrategy(test.strat);
+  test.time = getAxyTime(dummymatrix, xvec, yvec, nloops);
 
-  printf("GPU time(%2i): N:%.0fms NUR:%.0fms S:%.0fms B:%.0fms BUR:%.0fms\n",
+  stratTime mintime = _min(naive, _min(naiveur, _min(share,
+    _min(block, _min(blockur, test)))));
+
+  printf("CGGPU time(%2i): N:%.0fms NUR:%.0fms S:%.0fms B:%.0fms BUR:%.0fms TST:%.0fms\n",
          localsize,
-         (tnaive*1000),
-         (tnaiveur*1000),
-         (tshare*1000),
-         (tblock*1000),
-         (tblockur*1000));
+         (naive.time * 1000),
+         (naiveur.time * 1000),
+         (share.time * 1000),
+         (block.time * 1000),
+         (blockur.time * 1000),
+         (test.time * 1000));
 
-  return tblock/nloops;
+  return mintime;
 }
 
 
@@ -480,98 +518,88 @@ double Microbench::getAxyTime(SPRmatrix* sprmat,
   return omp_get_wtime() - tini;
 }
 
+// BenchCG: Benchmark for testing performance of CG solver
 ////////////////////////////////////////////////////////////////////////////////
+Microbench::stratTime Microbench::BenchCGGPU(FemData* femdata,
+                              size_t   localsize,
+                              int      nloops) {
+  SPRmatrix* matrix = femdata->GetStiffnessMatrix();
+  fem_float* xvect = femdata->GetDisplVector();
+  fem_float* yvect = femdata->GetForceVector();
+
+  return BenchCGGPU(matrix, xvect, yvect, localsize, nloops);
+}
+
+// BenchCG: Benchmark for testing performance of CG solver
+////////////////////////////////////////////////////////////////////////////////
+Microbench::stratTime Microbench::BenchCGGPU(SPRmatrix* matrix,
+                              fem_float* xvec,
+                              fem_float* yvec,
+                              size_t     localsize,
+                              int        nloops) {
+  int niter = 5000;
+  fem_float precision = 0.0001f;
+
+  stratTime naive, naiveur, share, block, blockur, btest;
+  // Naive Bench
+  matrix->SetDeviceMode(SPRmatrix::DEV_GPU);
+  matrix->SetOclLocalSize(localsize);
+  naive.strat = SPRmatrix::STRAT_NAIVE;
+  matrix->SetOclStrategy(naive.strat);
+  naive.time = getCGTime(matrix, xvec, yvec, nloops, niter, precision);
+  // NaiveUR Bench
+  naiveur.strat = SPRmatrix::STRAT_NAIVEUR;
+  matrix->SetOclStrategy(naiveur.strat);
+  naiveur.time = getCGTime(matrix, xvec, yvec, nloops, niter, precision);
+  // Shared Bench
+  share.strat = SPRmatrix::STRAT_SHARE;
+  matrix->SetOclStrategy(share.strat);
+  share.time = getCGTime(matrix, xvec, yvec, nloops, niter, precision);
+  // Blocked Bench
+  block.strat = SPRmatrix::STRAT_BLOCK;
+  matrix->SetOclStrategy(block.strat);
+  block.time = getCGTime(matrix, xvec, yvec, nloops, niter, precision);
+  // Blocked Bench
+  blockur.strat = SPRmatrix::STRAT_BLOCKUR;
+  matrix->SetOclStrategy(blockur.strat);
+  blockur.time = getCGTime(matrix, xvec, yvec, nloops, niter, precision);
+  // Blocked Bench
+  btest.strat = SPRmatrix::STRAT_TEST;
+  matrix->SetOclStrategy(btest.strat);
+  btest.time = getCGTime(matrix, xvec, yvec, nloops, niter, precision);
+
+  stratTime mintime = _min(naive, _min(naiveur, _min(share,
+    _min(block, _min(blockur, btest)))));
+
+  printf("CGGPU time(%2i): N:%.0fms NUR:%.0fms S:%.0fms B:%.0fms BUR:%.0fms TST:%.0fms\n",
+         localsize,
+         (naive.time * 1000),
+         (naiveur.time * 1000),
+         (share.time * 1000),
+         (block.time * 1000),
+         (blockur.time * 1000),
+         (btest.time * 1000));
+
+  return mintime;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+Microbench::stratTime Microbench::_min(stratTime t1, stratTime t2) {
+  return (t1.time < t2.time ? t1 : t2);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 double Microbench::getCGTime(SPRmatrix* sprmat,
                               fem_float* xvec,
                               fem_float* yvec,
                               int nloops,
                               int niterations,
                               fem_float precision) {
+  if (nloops <= 0) return 0;
   double tini = omp_get_wtime();
   for (int i = 0; i < nloops; i++) {
     sprmat->CG(xvec, yvec, niterations, precision);
   }
-  return omp_get_wtime() - tini;
+  return (omp_get_wtime() - tini) / nloops;
 }
 
-// BenchCG: Benchmark for testing performance of CG solver
-////////////////////////////////////////////////////////////////////////////////
-double Microbench::BenchCGGPU(SPRmatrix* dummymatrix,
-                              fem_float* xvec,
-                              fem_float* yvec,
-                              size_t     localsize,
-                              int        nloops) {
-  // Naive Bench
-  int niter = 1000;
-  fem_float precision = 0.001f;
-
-  dummymatrix->SetDeviceMode(SPRmatrix::DEV_GPU);
-  dummymatrix->SetOclLocalSize(localsize);
-  dummymatrix->SetOclStrategy(SPRmatrix::STRAT_NAIVE);
-  double tnaive = getCGTime(dummymatrix, xvec, yvec, nloops, niter, precision);
-  // NaiveUR Bench
-  dummymatrix->SetOclStrategy(SPRmatrix::STRAT_NAIVEUR);
-  double tnaiveur = getCGTime(dummymatrix, xvec, yvec, nloops, niter, precision);
-  // Shared Bench
-  dummymatrix->SetOclStrategy(SPRmatrix::STRAT_SHARE);
-  double tshare = getCGTime(dummymatrix, xvec, yvec, nloops, niter, precision);
-  // Blocked Bench
-  dummymatrix->SetOclStrategy(SPRmatrix::STRAT_BLOCK);
-  double tblock = getCGTime(dummymatrix, xvec, yvec, nloops, niter, precision);
-  // Blocked Bench
-  dummymatrix->SetOclStrategy(SPRmatrix::STRAT_BLOCKUR);
-  double tblockur = getCGTime(dummymatrix, xvec, yvec, nloops, niter, precision);
-
-  printf("CGGPU time(%2i): N:%.0fms NUR:%.0fms S:%.0fms B:%.0fms BUR:%.0fms\n",
-         localsize,
-         (tnaive * 1000),
-         (tnaiveur * 1000),
-         (tshare * 1000),
-         (tblock * 1000),
-         (tblockur * 1000));
-
-  return tblock/nloops;
-}
-
-// BenchCG: Benchmark for testing performance of CG solver
-////////////////////////////////////////////////////////////////////////////////
-double Microbench::BenchCGGPU(FemData* femdata,
-                              size_t   localsize,
-                              int      nloops) {
-  SPRmatrix* matrix = femdata->GetStiffnessMatrix();
-  fem_float* xvect = femdata->GetDisplVector();
-  fem_float* yvect = femdata->GetForceVector();
-  int niter = 1000;
-  fem_float precision = 0.00001f;
-  // Naive Bench
-  matrix->SetDeviceMode(SPRmatrix::DEV_GPU);
-  matrix->SetOclLocalSize(localsize);
-  matrix->SetOclStrategy(SPRmatrix::STRAT_NAIVE);
-  double tnaive = getCGTime(matrix, xvect, yvect, nloops, niter, precision);
-  // NaiveUR Bench
-  matrix->SetOclStrategy(SPRmatrix::STRAT_NAIVEUR);
-  double tnaiveur = getCGTime(matrix, xvect, yvect, nloops, niter, precision);
-  // Shared Bench
-  matrix->SetOclStrategy(SPRmatrix::STRAT_SHARE);
-  double tshare = getCGTime(matrix, xvect, yvect, nloops, niter, precision);
-  // Blocked Bench
-  matrix->SetOclStrategy(SPRmatrix::STRAT_BLOCK);
-  double tblock = getCGTime(matrix, xvect, yvect, nloops, niter, precision);
-  // Blocked Bench
-  matrix->SetOclStrategy(SPRmatrix::STRAT_BLOCKUR);
-  double tblockur = getCGTime(matrix, xvect, yvect, nloops, niter, precision);
-  // Blocked Bench
-  matrix->SetOclStrategy(SPRmatrix::STRAT_TEST);
-  double ttest = getCGTime(matrix, xvect, yvect, nloops, niter, precision);
-
-  printf("CGGPU time(%2i): N:%.0fms NUR:%.0fms S:%.0fms B:%.0fms BUR:%.0fms TST:%.0fms\n",
-         localsize,
-         (tnaive * 1000),
-         (tnaiveur * 1000),
-         (tshare * 1000),
-         (tblock * 1000),
-         (tblockur * 1000),
-         (ttest * 1000));
-
-  return __min(tnaive,__min(tnaiveur, __min(tblock, tblockur)))/nloops;
-}

@@ -121,7 +121,8 @@ TEST_F(LAopsTest, CGCPU_solver_nonsingular) {
   testmatrix->SetElem(0,1,2);
   testmatrix->SetElem(1,0,2);
 
-  CPU_CG(testmatrix, xvec, yvec, matdim, 3000, 0.00001f, false);
+  testmatrix->SetDeviceMode(SPRmatrix::DEV_CPU);
+  testmatrix->CG(xvec, yvec, 3000, 0.00001f);
   //cholesky(testmatrix, xvec, yvec, matdim, true);
 
   ASSERT_NEAR(xvec[0], -1, 0.001);

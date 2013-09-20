@@ -351,8 +351,9 @@ TEST_P(AxyGPUTest, Ell_CGGPU_Banded_Localsize_8to64) {
 
   // tests varying local sizes
   testmatrix->SetOclStrategy(GetParam());
+  testmatrix->SetDeviceMode(SPRmatrix::DEV_CPU);
   for (int localsz = minlocalsz; localsz <= maxlocalsz; localsz *= 2) {
-    CPU_CG(testmatrix, xvec, yvec, matdim, maxiter, 0.00001f, false);
+    testmatrix->CG(xvec, yvec, maxiter, 0.00001f);
     for (int i = 0; i < matdim; i++) {
       ASSERT_NEAR(xvec[i], 0.0303f, 0.001);
     }
