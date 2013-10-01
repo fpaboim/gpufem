@@ -53,6 +53,8 @@ private:
 
   static void preloadEllKernels();
 
+  static double calcMFlops(int testsize, int bandsize, double time);
+
   static stratTime BenchAxyGPU(SPRmatrix* dummymatrix,
                             fem_float* xvec,
                             fem_float* yvec,

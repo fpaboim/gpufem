@@ -47,9 +47,10 @@ void filterTests() {
 //   runtests.append(":FileIOTest*");
 //   runtests.append(":LAopsTest*");
 //   runtests.append(":SPRSearchTest*");
-  runtests.append(":*SPRmatrix*");
-  runtests.append(":Axy*");
-  runtests.append(":FEManalysis*");
+//   runtests.append(":*SPRmatrix*");
+//   runtests.append(":Axy*");
+//   runtests.append(":FEManalysis*");
 //   runtests.append(":Mesh*");
+  runtests.append(":Solver*");
   testing::GTEST_FLAG(filter) = runtests;
 }

@@ -4,6 +4,22 @@
 		"selected_items":
 		[
 			[
+				"tsol",
+				"tsolvegpu2"
+			],
+			[
+				"stra",
+				"stratTime"
+			],
+			[
+				"tbl",
+				"tblockur"
+			],
+			[
+				"select",
+				"selectBatchMode"
+			],
+			[
 				"allocM",
 				"allocMatrix"
 			],
@@ -187,7 +203,39 @@
 			"file": "src/FEM/StiffAlgoCPU.cc",
 			"settings":
 			{
-				"buffer_size": 17858,
+				"buffer_size": 17867,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/SPRmatrix/SPRmatrix.cc",
+			"settings":
+			{
+				"buffer_size": 14290,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/SPRmatrix/ELLmatrix.cc",
+			"settings":
+			{
+				"buffer_size": 20750,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/Microbench/Microbench.cpp",
+			"settings":
+			{
+				"buffer_size": 23810,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/SPRmatrix/EIGmatrix.cc",
+			"settings":
+			{
+				"buffer_size": 6396,
 				"line_ending": "Windows"
 			}
 		},
@@ -195,35 +243,81 @@
 			"file": "gpufem_notes.md",
 			"settings":
 			{
-				"buffer_size": 7513,
+				"buffer_size": 7548,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"contents": "Package Control Messages\n========================\n\nAlignment:\n---------\n\n  Sublime Alignment 2.1.0 Changelog:\n  - Added support for Sublime Text 3 thanks to kevinsperrine\n  \n\n\nMarkdown Preview:\n----------------\n\n  Changes in Markdown Preview\n  ===========================\n  \n  ## 1.0.3\n  \n  * The `messages.json` should OK for this time.\n  \n  ## 1.0.2\n  \n  * Fixes messages.json and changelog versions.\n  \n  ## 1.0.1\n  \n  * Removed markdown2 parser for its not well maintained and buggy.\n  * Make Python Markdown parser as default.\n  * Split the preview commands for *Python Markdown* parser and *Github Flavored Markdown* parser.\n  * Add markdown file build support, build parser are config via the origin `\"parser\"` settings.\n  * Add this changlog file for both developpers and users.\n  * Add messages.json which make display of `README.md` and `CHANGES.md`\n  * Try use `Markdown Extended.tmLanguage` for cheat sheet if you installed `Markdown Extended`.\n  \n  ## 1.0.0\n  \n  * Support for ST3.\n  * Added Python Markdown parser.\n  * CSS search first in markdown file directory and the the build-in.\n  \n",
+			"file": "src/OpenCL/clKernels/LAopsEll.cl",
 			"settings":
 			{
-				"buffer_size": 1102,
-				"line_ending": "Windows",
-				"name": "Package Control Messages",
-				"scratch": true
+				"buffer_size": 15261,
+				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "src/OpenCL/clKernels/gpuFEM_Q4.cl",
+			"file": "/C/Users/fpaboim/Desktop/visfem.md",
 			"settings":
 			{
-				"buffer_size": 12566,
-				"line_ending": "Unix"
+				"buffer_size": 180,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/SPRmatrix/ELLmatrix.h",
+			"settings":
+			{
+				"buffer_size": 4484,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/Microbench/Microbench.h",
+			"settings":
+			{
+				"buffer_size": 3313,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/SPRmatrix/EIGmatrix.h",
+			"settings":
+			{
+				"buffer_size": 3170,
+				"line_ending": "Windows"
 			}
 		}
 	],
 	"build_system": "FEMGPU_build",
 	"command_palette":
 	{
-		"height": 85.0,
+		"height": 160.0,
 		"selected_items":
 		[
+			[
+				"priev",
+				"Markdown Preview: Python Markdown: Preview in Browser"
+			],
+			[
+				"mark previ bro",
+				"Markdown Preview: Python Markdown: Preview in Browser"
+			],
+			[
+				"mark chea",
+				"Markdown Preview: Open Markdown Cheat sheet"
+			],
+			[
+				"previ mark",
+				"Markdown Preview: Python Markdown: Preview in Browser"
+			],
+			[
+				"mark pre",
+				"Markdown Preview: Open Markdown Cheat sheet"
+			],
+			[
+				"package ",
+				"Package Control: Upgrade Package"
+			],
 			[
 				"package up",
 				"Package Control: Upgrade Package"
@@ -247,10 +341,6 @@
 			[
 				"pack re",
 				"Package Control: Remove Package"
-			],
-			[
-				"mark pre",
-				"Markdown Preview: preview in Browser"
 			],
 			[
 				"mark prev",
@@ -333,7 +423,7 @@
 				"View: Toggle Minimap"
 			]
 		],
-		"width": 514.0
+		"width": 562.0
 	},
 	"console":
 	{
@@ -350,6 +440,27 @@
 	},
 	"file_history":
 	[
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/_brk8_solve_col.txt",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/fem.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Utils/fileIO.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/interface.cpp",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/interface.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/ELLmatrix2.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/clKernels/gpuFEM_Q4.cl",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/ELLmatrix2.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/EIGmatrix.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/DENmatrix.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/LAops/SprSolver.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Utils/util.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/fem.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/DIAmatrix.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/DENmatrix.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/EIGmatrix.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/CSRmatrix.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/BCRmatrix.h",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/gpufem_notes.md",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/gpu_fem.sublime-project",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/User/Preferences.sublime-settings",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/User/Default (Windows).sublime-keymap",
@@ -363,16 +474,11 @@
 		"/C/Programming/Vim/_vimrc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Microbench/Microbench.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/OCLwrapper.cc",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/interface.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/.gitignore",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/ELLmatrix2.h",
 		"/C/Programming/arduino-1.0/ArduinoIO/readme.txt",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/ELLmatrix2.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/FEManalysisTest.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/main.cpp",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/interface.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/ELLmatrix.cc",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/_brk8_solve_col.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Microbench/Microbench.cpp",
 		"/F/Arduino/Lib Matlab/readme.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/.git/config",
@@ -381,12 +487,9 @@
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/gpufem/.git/refs/heads/master",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/AxyGPUTest.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/main.cpp",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Utils/fileIO.cc",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/EIGmatrix.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/_brk8_solve_nocol.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/_brk8_solve.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/ELLmatrix.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGpuOmp.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/Report/test_models_home/Q4/_Q4_nocol.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/Report/test_models_home/Q4/_Q4_col.txt",
@@ -415,12 +518,10 @@
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk20/brk20_3_col.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk20/brk20_2_col.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk20/_brk20_col_test.txt",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/SPRmatrixTest.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/femColor.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/gpu_fem.sublime-workspace",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/clKernels/LAopsEll.cl",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/fem.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/SPRSearchTest.cpp",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/brk8_2_col.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/brk8_3_col.txt",
@@ -437,7 +538,6 @@
 		"/C/Program Files (x86)/AMD APP/include/CL/cl.h",
 		"/C/Program Files (x86)/AMD APP/include/CL/opencl.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q8/_Q8_2_nocol_test.txt",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/fem.cc",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoGPU.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgo.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/OCLwrapper.h",
@@ -467,17 +567,7 @@
 		"/C/Windows/System32/drivers/etc/hosts - Copy",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/brk8_3_nocol.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Lua/maindlg.lua",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/Report/matlab/conjugate_grad.m",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/Matlab/Matlab.tmLanguage",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/Objective-C/Objective-C.tmLanguage",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/gpufem_notes.md",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/User/MarkdownPreview.sublime-settings",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/Markdown Preview/sample.md",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/Markdown Preview/MarkdownPreview.sublime-settings",
-		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/SmartMarkdown/SmartMarkdown.sublime-settings",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/libs/eigen3.0.5/Eigen/src/Sparse/MappedSparseMatrix.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/libs/eigen3.0.5/Eigen/src/Sparse/DynamicSparseMatrix.h",
-		"/C/Users/fpaboim/Desktop/outtest_brk8.txt"
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/Report/matlab/conjugate_grad.m"
 	],
 	"find":
 	{
@@ -499,6 +589,43 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"C",
+			"C://",
+			"xvec",
+			"dummymatrix",
+			"Solver Time",
+			"cggpu",
+			"swit",
+			"strattime",
+			"BenchCGGPU",
+			"int",
+			"SelectOclStrategy",
+			"axygpu",
+			"nloops",
+			"outfileWriteSolBatchResults",
+			"writeSolOutputHeader",
+			"AsmCPU",
+			"SolveCgGpu",
+			"solvecgg",
+			"switch",
+			"omp_set_num_threads",
+			"addself",
+			"n",
+			"matrix_A->",
+			"matrixA->",
+			"matrixA",
+			"fem_float epsilon);",
+			"fem_float epsilon)",
+			"m_cllocalworksize",
+			"AxyGPU",
+			"DeviceMode",
+			"spmvcoal",
+			"spmvcoalur",
+			"m_optimiza",
+			"loadkernel",
+			"loadSource",
+			"SpMVCoalUR",
+			"spmvcoalur",
 			"+ ",
 			"\n+",
 			"ctrl+p",
@@ -589,44 +716,7 @@
 			"devicemode",
 			"matfmt",
 			"setocl",
-			"setLocalwork",
-			"localsi",
-			"local",
-			"locals",
-			"band",
-			"local",
-			"size",
-			"printf",
-			"computeuni",
-			"setting colo",
-			"m_femdata",
-			"setdevi",
-			"m_femdata",
-			"stiffness",
-			"m_femda",
-			"solveDis",
-			"outfilew",
-			"file",
-			"stiff",
-			"numCPU",
-			"writesol",
-			"enum ",
-			"vis",
-			"locleny",
-			"SPMVCoalUR",
-			"apple",
-			"x1",
-			"f",
-			"fnnnn",
-			"new",
-			"TODO",
-			"## ",
-			"markdown",
-			"format",
-			"runan",
-			"verbose",
-			"cpu",
-			"@Opencl"
+			"setLocalwork"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -647,7 +737,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 4,
 			"sheets":
 			[
 				{
@@ -655,15 +745,15 @@
 					"file": "src/FEM/StiffAlgoCPU.cc",
 					"settings":
 					{
-						"buffer_size": 17858,
+						"buffer_size": 17867,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4565,
-								4565
+								5096,
+								5096
 							]
 						],
 						"settings":
@@ -716,36 +806,30 @@
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 103,
-							"vintage_lines.lines": 387,
+							"vintage_lines.line": 117,
+							"vintage_lines.lines": 386,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1404.0,
+						"translation.y": 1483.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 1,
-			"sheets":
-			[
+				},
 				{
 					"buffer": 1,
-					"file": "gpufem_notes.md",
+					"file": "src/SPRmatrix/SPRmatrix.cc",
 					"settings":
 					{
-						"buffer_size": 7513,
+						"buffer_size": 14290,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								523,
-								523
+								0,
+								0
 							]
 						],
 						"settings":
@@ -795,43 +879,320 @@
 								"bh_single_quote_close"
 							],
 							"line_numbers": false,
-							"spell_check": true,
-							"syntax": "Packages/Markdown/Markdown.tmLanguage",
-							"vintage_lines.line": 14,
-							"vintage_lines.lines": 85,
-							"vintage_lines.mode": true,
-							"wrap_width": 0
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 0,
+							"vintage_lines.lines": 458,
+							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2970.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
+					"file": "src/SPRmatrix/ELLmatrix.cc",
 					"settings":
 					{
-						"buffer_size": 1102,
+						"buffer_size": 20750,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1102,
-								1102
+								0,
+								0
 							]
 						],
 						"settings":
 						{
 							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
 							"line_numbers": false,
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"vintage_lines.line": 41,
-							"vintage_lines.lines": 41,
-							"vintage_lines.mode": true,
-							"word_wrap": true
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 0,
+							"vintage_lines.lines": 601,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 576.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/Microbench/Microbench.cpp",
+					"settings":
+					{
+						"buffer_size": 23810,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 0,
+							"vintage_lines.lines": 614,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2196.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/SPRmatrix/EIGmatrix.cc",
+					"settings":
+					{
+						"buffer_size": 6396,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2561,
+								2561
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 65,
+							"vintage_lines.lines": 177,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 918.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 6,
+			"sheets":
+			[
+				{
+					"buffer": 5,
+					"file": "gpufem_notes.md",
+					"settings":
+					{
+						"buffer_size": 7548,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1022,
+								1022
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/Markdown/Markdown.tmLanguage",
+							"vintage_lines.line": 30,
+							"vintage_lines.lines": 86,
+							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -840,19 +1201,19 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "src/OpenCL/clKernels/gpuFEM_Q4.cl",
+					"buffer": 6,
+					"file": "src/OpenCL/clKernels/LAopsEll.cl",
 					"settings":
 					{
-						"buffer_size": 12566,
+						"buffer_size": 15261,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2125,
-								2125
+								3095,
+								3095
 							]
 						],
 						"settings":
@@ -905,12 +1266,390 @@
 							"syntax": "Packages/C++/C.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 64,
-							"vintage_lines.lines": 359,
+							"vintage_lines.line": 73,
+							"vintage_lines.lines": 412,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1152.0,
+						"translation.y": 1026.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/C/Users/fpaboim/Desktop/visfem.md",
+					"settings":
+					{
+						"buffer_size": 180,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								180,
+								180
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/Markdown/Markdown.tmLanguage",
+							"vintage_lines.line": 8,
+							"vintage_lines.lines": 8,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "src/SPRmatrix/ELLmatrix.h",
+					"settings":
+					{
+						"buffer_size": 4484,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 0,
+							"vintage_lines.lines": 100,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 918.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "src/Microbench/Microbench.h",
+					"settings":
+					{
+						"buffer_size": 3313,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 0,
+							"vintage_lines.lines": 90,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/SPRmatrix/ELLmatrix.cc",
+					"settings":
+					{
+						"buffer_size": 20750,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 0,
+							"vintage_lines.lines": 601,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "src/SPRmatrix/EIGmatrix.h",
+					"settings":
+					{
+						"buffer_size": 3170,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1509,
+								1509
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 28,
+							"vintage_lines.lines": 78,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 504.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -946,7 +1685,7 @@
 		"cols":
 		[
 			0.0,
-			0.5,
+			0.494857142857,
 			1.0
 		],
 		"rows":
@@ -983,8 +1722,96 @@
 		"selected_items":
 		[
 			[
+				"eig.h",
+				"src/SPRmatrix/EIGmatrix.h"
+			],
+			[
+				"eig.cc",
+				"src/SPRmatrix/EIGmatrix.cc"
+			],
+			[
+				"sprma.h",
+				"src/SPRmatrix/SPRmatrix.h"
+			],
+			[
 				"microb",
 				"src/Microbench/Microbench.h"
+			],
+			[
+				"interfa.h",
+				"src/interface.h"
+			],
+			[
+				"brk8sol",
+				"test_models/Brk8/_brk8_solve_col.txt"
+			],
+			[
+				"note.md",
+				"gpufem_notes.md"
+			],
+			[
+				"ellmat2.cc",
+				"src/SPRmatrix/ELLmatrix2.cc"
+			],
+			[
+				"ellmat2.h",
+				"src/SPRmatrix/ELLmatrix2.h"
+			],
+			[
+				"ellmatri2.h",
+				"src/SPRmatrix/ELLmatrix2.h"
+			],
+			[
+				"uti",
+				"src/Utils/util.cc"
+			],
+			[
+				"sprmat.h",
+				"src/SPRmatrix/SPRmatrix.h"
+			],
+			[
+				"sprma",
+				"src/SPRmatrix/SPRmatrix.h"
+			],
+			[
+				"ell2.",
+				"src/SPRmatrix/ELLmatrix2.h"
+			],
+			[
+				"",
+				"src/SPRmatrix/CSRmatrix.h"
+			],
+			[
+				"bcr.h",
+				"src/SPRmatrix/BCRmatrix.h"
+			],
+			[
+				"csr.h",
+				"src/SPRmatrix/CSRmatrix.h"
+			],
+			[
+				"den.h",
+				"src/SPRmatrix/DENmatrix.h"
+			],
+			[
+				"dia.h",
+				"src/SPRmatrix/DIAmatrix.h"
+			],
+			[
+				"ellmat.h",
+				"src/SPRmatrix/ELLmatrix.h"
+			],
+			[
+				"sprmat.cc",
+				"src/SPRmatrix/SPRmatrix.cc"
+			],
+			[
+				"sprmat.c",
+				"src/SPRmatrix/SPRmatrix.cc"
+			],
+			[
+				"ell.c",
+				"src/OpenCL/clKernels/LAopsEll.cl"
 			],
 			[
 				"main",
@@ -995,16 +1822,8 @@
 				"src/Microbench/Microbench.cpp"
 			],
 			[
-				"ellmat.h",
-				"src/SPRmatrix/ELLmatrix.h"
-			],
-			[
 				"eigma",
 				"src/SPRmatrix/EIGmatrix.cc"
-			],
-			[
-				"sprma.h",
-				"src/SPRmatrix/SPRmatrix.h"
 			],
 			[
 				"interface.h",
@@ -1044,10 +1863,6 @@
 			],
 			[
 				"sprma.cc",
-				"src/SPRmatrix/SPRmatrix.cc"
-			],
-			[
-				"sprma",
 				"src/SPRmatrix/SPRmatrix.cc"
 			],
 			[

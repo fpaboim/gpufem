@@ -381,10 +381,10 @@ void Microbench::BenchCG2() {
 // BenchMV: Microbenchmark for testing performance of MV product
 ////////////////////////////////////////////////////////////////////////////////
 void Microbench::BenchMV() {
-  int initestsize = 16 * 1024;
+  int initestsize = 8 * 1024;
   int maxtestsize = 64 * 1024;
-  int ntestloops  = 4;
-  int bandsize    = 64;
+  int ntestloops  = 8;
+  int bandsize    = 128;
   SPRmatrix::SPRformat matformat = SPRmatrix::ELL;
 
   // Builds kernel and loads source so that dynamic loading does not interfere
@@ -401,8 +401,9 @@ void Microbench::BenchMV() {
     for (int i = 0; i < testsize; i++) {
       int val = i + 1;
       xvec[i] = (float)val;
-      for (int j = 0; j < bandsize; j++)
+      for (int j = 0; j < bandsize; j++) {
         dummymatrix->AddElem(i, i + j, 1.0f);
+      }
     }
 
     printf("\n==================================================\n");
@@ -410,19 +411,19 @@ void Microbench::BenchMV() {
 
     // CPU MV Microbench
     printf("==================================================\n");
-    double totaltime = 0;
+    double cputime = 0; 
     omp_set_num_threads(1);
-    totaltime = getAxyTime(dummymatrix, xvec, yvec, ntestloops);
-    printf("CPU time(%i): %.4fms \n", omp_get_max_threads(), (totaltime*1000));
-    // CPU CG Microbench
+    cputime = getAxyTime(dummymatrix, xvec, yvec, ntestloops);
+    printf("CPU time(%i): %.4fms \n", omp_get_max_threads(), (cputime * 1000));
+    // CPU 2 threads
     omp_set_num_threads(2);
-    totaltime = getAxyTime(dummymatrix, xvec, yvec, ntestloops);
-    printf("CPU  time(%i): %.4fms \n", omp_get_max_threads(), (totaltime*1000));
-    // CPU CG Microbench
+    cputime = getAxyTime(dummymatrix, xvec, yvec, ntestloops);
+    printf("CPU  time(%i): %.4fms \n", omp_get_max_threads(), (cputime * 1000));
+    // CPU 4 threads
     omp_set_num_threads(4);
-    totaltime = getAxyTime(dummymatrix, xvec, yvec, ntestloops);
-    printf("CPU time(%i): %.4fms \n", omp_get_max_threads(), (totaltime*1000));
-    double gflops = (2.0f * testsize * (double)bandsize * 1.0e-6) / (totaltime / ntestloops);
+    cputime = getAxyTime(dummymatrix, xvec, yvec, ntestloops);
+    printf("CPU time(%i): %.4fms \n", omp_get_max_threads(), (cputime * 1000));
+    double gflops = calcMFlops(testsize, bandsize, cputime);
     printf("CPU MFLOP(%i): %.4f Mflops \n", omp_get_max_threads(), gflops);
 
     // GPU CG Microbench
@@ -431,15 +432,23 @@ void Microbench::BenchMV() {
     localsize *= 2;
     BenchAxyGPU(dummymatrix, xvec, yvec, localsize, ntestloops);
     localsize *= 2;
-    stratTime tgpu = BenchAxyGPU(dummymatrix, xvec, yvec, localsize, ntestloops);
-    gflops = (2.0f * testsize * (double)bandsize * 1.0e-6) / tgpu.time;
-    std::cout << "GPU MFLOP(" << getStratString(tgpu.strat);
+    stratTime gpu = BenchAxyGPU(dummymatrix, xvec, yvec, localsize, ntestloops);
+    gflops = calcMFlops(testsize, bandsize, gpu.time);
+    std::cout << "GPU MFLOP(" << getStratString(gpu.strat);
     printf("): %.4f Mflops \n", gflops);
+
+    printf("Best GPU (%.1f%%) faster then CPU \n",
+      (100 * ((cputime / gpu.time) - 1)));
 
     free(yvec);
     free(xvec);
     delete(dummymatrix);
   }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+double Microbench::calcMFlops(int testsize, int bandsize, double time) {
+    return (2.0f * testsize * (double)bandsize * 1.0e-6) / time;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -515,7 +524,7 @@ double Microbench::getAxyTime(SPRmatrix* sprmat,
   for (int i = 0; i < nloops; i++) {
     sprmat->Axy(xvec, yvec);
   }
-  return omp_get_wtime() - tini;
+  return ((omp_get_wtime() - tini)/(double)nloops);
 }
 
 // BenchCG: Benchmark for testing performance of CG solver

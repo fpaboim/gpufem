@@ -58,7 +58,7 @@ class ELLmatrix : public SPRmatrix {
   void       AxyGPU(fem_float* x, fem_float* y, size_t local_worksize);
   void       CG(fem_float* vector_X,
                 fem_float* vector_B,
-                int    n_iterations,
+                int        n_iterations,
                 fem_float  epsilon);
   void       SolveCgGpu(fem_float* vector_X,
                         fem_float* vector_B,

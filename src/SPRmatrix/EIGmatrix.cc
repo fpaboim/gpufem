@@ -63,7 +63,10 @@ EIGmatrix::~EIGmatrix() {
 void EIGmatrix::SetElem(const int row, const int col, const fem_float val) {
   if (!InputIsOK(val, row, col))
     return;
-  m_matrix.coeffRef(row, col) = val;
+  if (m_matrix.coeff(row,col) == 0)
+    m_matrix.insert(row, col) = val;
+  else
+    m_matrix.coeffRef(row, col) = val;
 }
 
 // AddElem: adds number to sparse matrix
@@ -71,7 +74,10 @@ void EIGmatrix::SetElem(const int row, const int col, const fem_float val) {
 void EIGmatrix::AddElem(const int row, const int col, const fem_float val) {
   if (!InputIsOK(val, row, col))
     return;
-  m_matrix.coeffRef(row, col) += val;
+  if (m_matrix.coeff(row,col) == 0)
+    m_matrix.insert(row, col) = val;
+  else
+    m_matrix.coeffRef(row, col) += val;
 }
 
 // GetElem: gets number from sparse matrix
