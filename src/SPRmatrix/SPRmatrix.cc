@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <omp.h>
 
 #include "DENmatrix.h"
 #include "DIAmatrix.h"
@@ -368,6 +369,29 @@ int SPRmatrix::Cholesky(fem_float* vectorX, fem_float* VectorY, int dim,
   return 1;
 }
 
+void SPRmatrix::CG(fem_float* vecx, fem_float* vecy, int niter, fem_float eps) {
+  switch (m_devicemode) {
+    case DEV_CPU:
+      omp_set_num_threads(1);
+      CPU_CG(vecx, vecx, niter, eps, false);
+      break;
+    case DEV_OMP:
+      omp_set_num_threads(omp_get_num_procs());
+      CPU_CG(vecx, vecx, niter, eps, false);
+      break;
+    case DEV_GPU: // GPU is implementation specific, fallback to CPU Multithread
+      omp_set_num_threads(omp_get_num_procs());
+      CPU_CG(vecx, vecx, niter, eps, false);
+      break;
+    default:  // default falls back to CPU single threaded
+      omp_set_num_threads(1);
+      CPU_CG(vecx, vecx, niter, eps, false);
+      assert(false);
+      break;
+  }
+  
+}
+
 // Implementation does not use any format specific information (naive,
 // nonperformant, etc.) -> better caching can be achieved using (or implementing
 // if not present) a cpu implementation tailored for the format
@@ -423,6 +447,9 @@ int SPRmatrix::CPU_CG(fem_float* vector_X,
   if (print == true) {
     if (i == n_iterations) {
       printf("\n\n***********\nReached max num of iterations!\n***********\n");
+      printf("Vector X:\n");
+      printVectorf(vector_X, m_matdim);
+      printf("solver CG iterations:%i\n", i);
     } else {
       printf("\n\n***********\n          Solved!             \n***********\n");
       printf("Vector X:\n");

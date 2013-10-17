@@ -291,9 +291,21 @@
 	"build_system": "FEMGPU_build",
 	"command_palette":
 	{
-		"height": 160.0,
+		"height": 185.0,
 		"selected_items":
 		[
+			[
+				"latex",
+				"Set Syntax: LaTeX"
+			],
+			[
+				"tex",
+				"Set Syntax: TeX"
+			],
+			[
+				"package",
+				"Package Control: Install Package"
+			],
 			[
 				"priev",
 				"Markdown Preview: Python Markdown: Preview in Browser"
@@ -440,6 +452,7 @@
 	},
 	"file_history":
 	[
+		"/C/Users/fpaboim/Downloads/templete_latex/cilamce2011paper.tex",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/_brk8_solve_col.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/fem.cc",
@@ -566,8 +579,7 @@
 		"/C/Users/fpaboim/Downloads/mandelbrot.b",
 		"/C/Windows/System32/drivers/etc/hosts - Copy",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/brk8_3_nocol.txt",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Lua/maindlg.lua",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/Report/matlab/conjugate_grad.m"
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Lua/maindlg.lua"
 	],
 	"find":
 	{
@@ -752,8 +764,8 @@
 						"selection":
 						[
 							[
-								5096,
-								5096
+								5095,
+								5095
 							]
 						],
 						"settings":
@@ -1056,8 +1068,8 @@
 						"selection":
 						[
 							[
-								2561,
-								2561
+								2560,
+								2560
 							]
 						],
 						"settings":
@@ -1138,8 +1150,8 @@
 						"selection":
 						[
 							[
-								1022,
-								1022
+								1021,
+								1021
 							]
 						],
 						"settings":

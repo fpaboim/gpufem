@@ -51,6 +51,6 @@ void filterTests() {
 //   runtests.append(":Axy*");
 //   runtests.append(":FEManalysis*");
 //   runtests.append(":Mesh*");
-  runtests.append(":Solver*");
+  runtests.append(":*Solver*");
   testing::GTEST_FLAG(filter) = runtests;
 }

@@ -124,6 +124,9 @@ void EIGmatrix::CG(fem_float* vector_X, fem_float* vector_B, int n_iterations,
       CPU_CG(vector_X, vector_B, n_iterations, epsilon, false);
       break;
     case DEV_OMP:
+      omp_set_num_threads(omp_get_num_procs());
+      CPU_CG(vector_X, vector_B, n_iterations, epsilon, false);
+      break;
       break;
     case DEV_GPU:
       omp_set_num_threads(omp_get_num_procs());

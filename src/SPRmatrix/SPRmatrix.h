@@ -77,7 +77,7 @@ public:
   virtual void      CG(fem_float* vector_X,
                        fem_float* vector_B,
                        int n_iterations,
-                       fem_float epsilon) = 0;
+                       fem_float epsilon);
   virtual void      Teardown() = 0; // Deallocates matrix
 
 public:
