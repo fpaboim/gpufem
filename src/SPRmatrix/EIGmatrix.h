@@ -34,7 +34,6 @@
 #include "Utils/util.h"
 
 #include <Eigen/Sparse>
-//#include <Eigen/IterativeLinearSolvers>
 
 class EIGmatrix : public SPRmatrix {
  public:

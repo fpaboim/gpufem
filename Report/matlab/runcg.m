@@ -11,13 +11,13 @@ c = 0;
 x0 = [0 0]';
 x = CG(A, b, x0, err, maxiter);
 
-dim = 4;
+dim = 10;
 rand_range = [0,4];
-R = randint(dim,dim,rand_range)
+R = randint(dim,dim,rand_range);
 S = 10 * eye(dim,dim);
 K = R' * R;
-K = K + S
-eig(K)
+K = K + S;
+eig(K);
 
 %precond stuff
 diagR = diag(R);
@@ -28,7 +28,7 @@ end
 
 x0(dim) = 0;
 x2(dim) = 0;
-x2 = randint(dim, 1, rand_range)
-b = K * x2
-x = CG(K, b, x0, err, maxiter)
+x2 = randint(dim, 1, rand_range);
+b = K * x2;
+x = CG(K, b, x0, err, maxiter);
 

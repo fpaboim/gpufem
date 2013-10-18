@@ -373,19 +373,19 @@ void SPRmatrix::CG(fem_float* vecx, fem_float* vecy, int niter, fem_float eps) {
   switch (m_devicemode) {
     case DEV_CPU:
       omp_set_num_threads(1);
-      CPU_CG(vecx, vecx, niter, eps, false);
+      CPU_CG(vecx, vecy, niter, eps, false);
       break;
     case DEV_OMP:
       omp_set_num_threads(omp_get_num_procs());
-      CPU_CG(vecx, vecx, niter, eps, false);
+      CPU_CG(vecx, vecy, niter, eps, false);
       break;
     case DEV_GPU: // GPU is implementation specific, fallback to CPU Multithread
       omp_set_num_threads(omp_get_num_procs());
-      CPU_CG(vecx, vecx, niter, eps, false);
+      CPU_CG(vecx, vecy, niter, eps, false);
       break;
     default:  // default falls back to CPU single threaded
       omp_set_num_threads(1);
-      CPU_CG(vecx, vecx, niter, eps, false);
+      CPU_CG(vecx, vecy, niter, eps, false);
       assert(false);
       break;
   }
