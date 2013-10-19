@@ -63,10 +63,10 @@ EIGmatrix::~EIGmatrix() {
 void EIGmatrix::SetElem(const int row, const int col, const fem_float val) {
   if (!InputIsOK(val, row, col))
     return;
-  if (m_matrix.coeff(row,col) == 0)
-    m_matrix.insert(row, col) = val;
-  else
+  #pragma omp critical
+  {
     m_matrix.coeffRef(row, col) = val;
+  }
 }
 
 // AddElem: adds number to sparse matrix
@@ -74,10 +74,10 @@ void EIGmatrix::SetElem(const int row, const int col, const fem_float val) {
 void EIGmatrix::AddElem(const int row, const int col, const fem_float val) {
   if (!InputIsOK(val, row, col))
     return;
-  if (m_matrix.coeff(row,col) == 0)
-    m_matrix.insert(row, col) = val;
-  else
+  #pragma omp critical
+  {
     m_matrix.coeffRef(row, col) += val;
+  }
 }
 
 // GetElem: gets number from sparse matrix
@@ -113,40 +113,55 @@ void EIGmatrix::Axy(fem_float* x, fem_float* y) {
   spax_yOMP(this, x, y, m_matdim, false);
 }
 
-// Ax_y: does matrix vector multiply and stores result in y (which should be
-// allocated by calling function)
-////////////////////////////////////////////////////////////////////////////////
-void EIGmatrix::CG(fem_float* vector_X, fem_float* vector_B, int n_iterations,
-        fem_float  epsilon) {
-  switch (m_devicemode) {
-    case DEV_CPU:
-      omp_set_num_threads(1);
-      CPU_CG(vector_X, vector_B, n_iterations, epsilon, false);
-      break;
-    case DEV_OMP:
-      omp_set_num_threads(omp_get_num_procs());
-      CPU_CG(vector_X, vector_B, n_iterations, epsilon, false);
-      break;
-      break;
-    case DEV_GPU:
-      omp_set_num_threads(omp_get_num_procs());
-      SolveCgGpu(vector_X, vector_B, n_iterations, epsilon, m_ocllocalworksize);
-      break;
-    default:  // default falls back to CPU single threaded
-      omp_set_num_threads(1);
-      CPU_CG(vector_X, vector_B, n_iterations, epsilon, false);
-      assert(false);
-      break;
+void EIGmatrix::EIG_CG(fem_float* vector_X,
+                       fem_float* vector_B,
+                       int        n_iterations,
+                       fem_float  epsilon) {
+  using namespace Eigen;
+  VectorXf xf(m_matdim);
+  VectorXf bf(m_matdim);
+  for (int i = 0; i < m_matdim; i++) {
+    bf[i] = vector_B[i];
+  }
+  ConjugateGradient<SparseMatrix<float> > cg;
+  cg.compute(m_matrix);
+  cg.setMaxIterations(n_iterations);
+  cg.setTolerance(epsilon);
+  xf = cg.solve(bf);
+  for (int i = 0; i < m_matdim; i++) {
+    vector_X[i] = xf[i];
+  }
+  bool verbose = false;
+  if (verbose) {
+    std::cout << "max iterations:  " << cg.maxIterations() << std::endl;
+    std::cout << "tolerance:       " << cg.tolerance() << std::endl;
+    std::cout << "#iterations:     " << cg.iterations() << std::endl;
+    std::cout << "estimated error: " << cg.error()      << std::endl;
   }
 }
 
-// GPU_CG: Solves Ax = b for x by conjugate gradient method using GPU
+// Ax_y: does matrix vector multiply and stores result in y (which should be
+// allocated by calling function)
 ////////////////////////////////////////////////////////////////////////////////
-void EIGmatrix::SolveCgGpu(fem_float* vector_X,
-                           fem_float* vector_B,
-                           int n_iterations,
-                           fem_float epsilon,
-                           size_t local_work_size){
+void EIGmatrix::CG(fem_float* vector_X,
+                   fem_float* vector_B,
+                   int        n_iterations,
+                   fem_float  epsilon) {
+  switch (m_devicemode) {
+    case DEV_CPU:
+      EIG_CG(vector_X, vector_B, n_iterations, epsilon);
+      break;
+    case DEV_OMP:
+      EIG_CG(vector_X, vector_B, n_iterations, epsilon);
+      break;
+    case DEV_GPU:
+      EIG_CG(vector_X, vector_B, n_iterations, epsilon);
+      break;
+    default:  // default falls back to CPU single threaded
+      EIG_CG(vector_X, vector_B, n_iterations, epsilon);
+      assert(false);
+      break;
+  }
 }
 
 // Clear: resets the matrix

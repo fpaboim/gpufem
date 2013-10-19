@@ -150,6 +150,8 @@ void FemData::Init(SPRmatrix::SPRformat sprse_format,
   m_elem_connect  = elemconnect;
   m_num_nodes     = nnodes;
   m_node_coords   = nodecoords;
+  m_node_nconstr  = nsupports;
+  m_node_constr   = nodesupports;
   m_num_loads     = nnodalloads;
   m_elem_dofs     = m_model_dim * nelemnodes;
   m_num_dof       = m_model_dim * nnodes;
@@ -350,7 +352,7 @@ void FemData::CalcConstituitiveData() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Builds the force vector
+// Builds the force vector - scatters nodes do corresponding DOF in vector
 ////////////////////////////////////////////////////////////////////////////////
 void FemData::CalcForceVector(fem_float** nodal_loads_vec) {
   if (m_force_vec) free(m_force_vec);
@@ -358,12 +360,11 @@ void FemData::CalcForceVector(fem_float** nodal_loads_vec) {
   // Adds Forces to Force vector
   for (int i = 0; i < m_num_loads; ++i) {
     int dof = 0;
-    for (int j = 1; j < 4; ++j) {
+    for (int j = 1; j < (m_model_dim + 1); ++j) {
       // If load for DOF exists
       if (nodal_loads_vec[i][j] != 0) {
         // DOF index in global matrix is ( m_model_dim*(node-1)+(j-1) )
         dof = m_model_dim*((int)nodal_loads_vec[i][0] - 1)+(j - 1);
-        // Multiplies DOF of corresponding Node by Coef
         m_force_vec[dof] = nodal_loads_vec[i][j];
       }
     }

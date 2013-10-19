@@ -75,9 +75,13 @@ public:
   virtual void      Clear() = 0;
   virtual void      Axy(fem_float* x, fem_float* y) = 0;
   virtual void      CG(fem_float* vector_X,
+                       fem_float* vector_B);
+  virtual void      CG(fem_float* vector_X,
                        fem_float* vector_B,
                        int n_iterations,
                        fem_float epsilon);
+  int               CGSetIter(int iter){ m_cgiter = iter;};
+  int               CGSetTolerance(fem_float tol){ m_cgtol = tol;};
   virtual void      Teardown() = 0; // Deallocates matrix
 
 public:
@@ -135,6 +139,10 @@ protected:
   DeviceMode  m_devicemode;
   bool        m_verboseerrors;
   bool        m_prealloctrigger;
+  // cg solver should become component when there's time..
+  // default iterations set in constructor
+  fem_float   m_cgtol;
+  int         m_cgiter;
 };
 
 #endif

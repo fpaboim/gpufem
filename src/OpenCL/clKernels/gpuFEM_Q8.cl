@@ -1,9 +1,6 @@
 // Kernel code
 // Matrizes usando row-major order:
 // M(row, col) = *(Matriz + row * Matriz + col)
-#include <ellmat.h>
-
-#define fem_float float
 
 // Headers
 void getdShapeMat(uint       gp,

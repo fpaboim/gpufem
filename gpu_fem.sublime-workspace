@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"vec",
+				"vector_X"
+			],
+			[
+				"ve",
+				"vector_B"
+			],
+			[
 				"tsol",
 				"tsolvegpu2"
 			],
@@ -200,18 +208,10 @@
 	"buffers":
 	[
 		{
-			"file": "src/FEM/StiffAlgoCPU.cc",
-			"settings":
-			{
-				"buffer_size": 17867,
-				"line_ending": "Windows"
-			}
-		},
-		{
 			"file": "src/SPRmatrix/SPRmatrix.cc",
 			"settings":
 			{
-				"buffer_size": 14421,
+				"buffer_size": 15124,
 				"line_ending": "Windows"
 			}
 		},
@@ -227,7 +227,7 @@
 			"file": "src/Microbench/Microbench.cpp",
 			"settings":
 			{
-				"buffer_size": 23810,
+				"buffer_size": 23782,
 				"line_ending": "Windows"
 			}
 		},
@@ -235,33 +235,15 @@
 			"file": "src/SPRmatrix/EIGmatrix.cc",
 			"settings":
 			{
-				"buffer_size": 6396,
+				"buffer_size": 6509,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "src/Test/SolverValidation.cpp",
+			"file": "src/SPRmatrix/EIGmatrix.h",
 			"settings":
 			{
-				"buffer_size": 11580,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"contents": "Searching 2127 files for \"vecx vecx\"\n\nUnable to open /C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/proj/GPU_FEM_Sparse.opensdf\n0 matches across 0 files\n\n\nSearching 2127 files for \"\"vecx, vecx\"\n\nUnable to open /C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/proj/GPU_FEM_Sparse.opensdf\n0 matches across 0 files\n",
-			"settings":
-			{
-				"buffer_size": 348,
-				"line_ending": "Windows",
-				"name": "Find Results",
-				"scratch": true
-			}
-		},
-		{
-			"file": "src/Test/SPRmatrixTest.cpp",
-			"settings":
-			{
-				"buffer_size": 14307,
+				"buffer_size": 3062,
 				"line_ending": "Windows"
 			}
 		},
@@ -282,14 +264,6 @@
 			}
 		},
 		{
-			"file": "/C/Users/fpaboim/Desktop/visfem.md",
-			"settings":
-			{
-				"buffer_size": 180,
-				"line_ending": "Windows"
-			}
-		},
-		{
 			"file": "src/SPRmatrix/ELLmatrix.h",
 			"settings":
 			{
@@ -306,10 +280,18 @@
 			}
 		},
 		{
-			"file": "src/SPRmatrix/EIGmatrix.h",
+			"file": "src/Test/SolverValidationCPU.cpp",
 			"settings":
 			{
-				"buffer_size": 3170,
+				"buffer_size": 5595,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/Test/SolverValidationGPU.cpp",
+			"settings":
+			{
+				"buffer_size": 4626,
 				"line_ending": "Windows"
 			}
 		}
@@ -482,7 +464,11 @@
 	},
 	"file_history":
 	[
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/SolverValidation.cpp",
+		"/C/Users/fpaboim/Desktop/visfem.md",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/Test/SPRmatrixTest.cpp",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoCPU.cc",
+		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/EIGmatrix.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/libs/eigen3.2/Eigen/src/SparseCore/SparseMatrix.h",
 		"/C/Users/fpaboim/Downloads/templete_latex/cilamce2011paper.tex",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.h",
@@ -501,7 +487,6 @@
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/fem.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/DIAmatrix.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/DENmatrix.h",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/EIGmatrix.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/CSRmatrix.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/BCRmatrix.h",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/SPRmatrix/SPRmatrix.cc",
@@ -511,7 +496,6 @@
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/User/Default (Windows).sublime-keymap",
 		"/C/Users/fpaboim/AppData/Roaming/Sublime Text 2/Packages/Default/Default (Windows).sublime-keymap",
 		"/C/Users/fpaboim/.vsvimrc",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/FEM/StiffAlgoCPU.cc",
 		"/C/Users/fpaboim/.vimrc",
 		"/C/Users/fpaboim/.gvimrc",
 		"/C/Users/fpaboim/.backup/dotfiles/vimrc",
@@ -607,9 +591,7 @@
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q4/Q4_2_nocol.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Q4/Q4_3_col.txt",
 		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/src/OpenCL/clKernels/gpuCG_ELL.cl",
-		"/C/Users/fpaboim/Downloads/mandelbrot.b",
-		"/C/Windows/System32/drivers/etc/hosts - Copy",
-		"/C/Users/fpaboim/Desktop/parallel_projects/GPU_FEM/fpaboim_gpufem/test_models/Brk8/brk8_3_nocol.txt"
+		"/C/Users/fpaboim/Downloads/mandelbrot.b"
 	],
 	"find":
 	{
@@ -620,6 +602,8 @@
 		"height": 92.0,
 		"where_history":
 		[
+			"C:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\",
+			"C:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src",
 			"C:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\",
 			"C:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\",
 			"C:\\Users\\fpaboim\\Desktop\\parallel_projects\\GPU_FEM\\fpaboim_gpufem\\src\\SPRmatrix",
@@ -632,6 +616,16 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"finalized",
+			"cg",
+			"solvecg",
+			"solvecggpu",
+			"cg",
+			"AxyGPUTest",
+			"SolverValidationCPU",
+			"SolverValidation",
+			"vecx, vecx",
+			"vecx",
 			"\"vecx, vecx",
 			"vecx vecx",
 			"TEST",
@@ -749,17 +743,7 @@
 			"ELLmatrix",
 			"Ellmatrix",
 			"ellma",
-			"memalloc",
-			"coloring",
-			"Total exe",
-			"matbuff",
-			"mattbuf",
-			"prop",
-			"porps",
-			"DONE",
-			"Nu",
-			"color",
-			"Nu"
+			"memalloc"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -780,91 +764,15 @@
 	"groups":
 	[
 		{
-			"selected": 6,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "src/FEM/StiffAlgoCPU.cc",
-					"settings":
-					{
-						"buffer_size": 17867,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5094,
-								5094
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close"
-							],
-							"line_numbers": false,
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 117,
-							"vintage_lines.lines": 386,
-							"vintage_lines.mode": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1483.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
 					"file": "src/SPRmatrix/SPRmatrix.cc",
 					"settings":
 					{
-						"buffer_size": 14421,
+						"buffer_size": 15124,
 						"regions":
 						{
 						},
@@ -926,17 +834,17 @@
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
 							"vintage_lines.line": 0,
-							"vintage_lines.lines": 462,
+							"vintage_lines.lines": 485,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2970.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 1,
 					"file": "src/SPRmatrix/ELLmatrix.cc",
 					"settings":
 					{
@@ -1012,11 +920,11 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 2,
 					"file": "src/Microbench/Microbench.cpp",
 					"settings":
 					{
-						"buffer_size": 23810,
+						"buffer_size": 23782,
 						"regions":
 						{
 						},
@@ -1078,29 +986,105 @@
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
 							"vintage_lines.line": 0,
-							"vintage_lines.lines": 614,
+							"vintage_lines.lines": 613,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2196.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/SPRmatrix/EIGmatrix.cc",
+					"settings":
+					{
+						"buffer_size": 6509,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5450,
+								5450
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 155,
+							"vintage_lines.lines": 191,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2231.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 4,
-					"file": "src/SPRmatrix/EIGmatrix.cc",
+					"file": "src/SPRmatrix/EIGmatrix.h",
 					"settings":
 					{
-						"buffer_size": 6396,
+						"buffer_size": 3062,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2852,
-								2852
+								2098,
+								2098
 							]
 						],
 						"settings":
@@ -1153,243 +1137,12 @@
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 73,
-							"vintage_lines.lines": 177,
+							"vintage_lines.line": 0,
+							"vintage_lines.lines": 76,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 918.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "src/Test/SolverValidation.cpp",
-					"settings":
-					{
-						"buffer_size": 11580,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								10918,
-								10918
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close"
-							],
-							"line_numbers": true,
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 304,
-							"vintage_lines.lines": 325,
-							"vintage_lines.mode": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 5129.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"settings":
-					{
-						"buffer_size": 348,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								322,
-								322
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close"
-							],
-							"detect_indentation": false,
-							"line_numbers": false,
-							"output_tag": 2,
-							"result_base_dir": "",
-							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
-							"vintage_lines.line": 8,
-							"vintage_lines.lines": 10,
-							"vintage_lines.mode": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 126.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "src/Test/SPRmatrixTest.cpp",
-					"settings":
-					{
-						"buffer_size": 14307,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2278,
-								2278
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close"
-							],
-							"line_numbers": false,
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 55,
-							"vintage_lines.lines": 449,
-							"vintage_lines.mode": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 990.0,
+						"translation.y": 504.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1397,11 +1150,11 @@
 			]
 		},
 		{
-			"selected": 6,
+			"selected": 7,
 			"sheets":
 			[
 				{
-					"buffer": 8,
+					"buffer": 5,
 					"file": "gpufem_notes.md",
 					"settings":
 					{
@@ -1412,8 +1165,8 @@
 						"selection":
 						[
 							[
-								1020,
-								1020
+								1019,
+								1019
 							]
 						],
 						"settings":
@@ -1475,7 +1228,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 6,
 					"file": "src/OpenCL/clKernels/LAopsEll.cl",
 					"settings":
 					{
@@ -1551,81 +1304,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 10,
-					"file": "/C/Users/fpaboim/Desktop/visfem.md",
-					"settings":
-					{
-						"buffer_size": 180,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								180,
-								180
-							]
-						],
-						"settings":
-						{
-							"BracketHighlighterBusy": false,
-							"bh_regions":
-							[
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close"
-							],
-							"line_numbers": false,
-							"syntax": "Packages/Markdown/Markdown.tmLanguage",
-							"vintage_lines.line": 8,
-							"vintage_lines.lines": 8,
-							"vintage_lines.mode": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 11,
+					"buffer": 7,
 					"file": "src/SPRmatrix/ELLmatrix.h",
 					"settings":
 					{
@@ -1701,7 +1380,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 12,
+					"buffer": 8,
 					"file": "src/Microbench/Microbench.h",
 					"settings":
 					{
@@ -1777,7 +1456,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 1,
 					"file": "src/SPRmatrix/ELLmatrix.cc",
 					"settings":
 					{
@@ -1853,19 +1532,19 @@
 					"type": "text"
 				},
 				{
-					"buffer": 13,
+					"buffer": 4,
 					"file": "src/SPRmatrix/EIGmatrix.h",
 					"settings":
 					{
-						"buffer_size": 3170,
+						"buffer_size": 3062,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3170,
-								3170
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1918,12 +1597,164 @@
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true,
-							"vintage_lines.line": 28,
-							"vintage_lines.lines": 78,
+							"vintage_lines.line": 0,
+							"vintage_lines.lines": 76,
 							"vintage_lines.mode": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 504.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "src/Test/SolverValidationCPU.cpp",
+					"settings":
+					{
+						"buffer_size": 5595,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 0,
+							"vintage_lines.lines": 157,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "src/Test/SolverValidationGPU.cpp",
+					"settings":
+					{
+						"buffer_size": 4626,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2734,
+								2734
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close"
+							],
+							"line_numbers": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"vintage_lines.line": 75,
+							"vintage_lines.lines": 122,
+							"vintage_lines.mode": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 917.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1996,6 +1827,22 @@
 		"selected_items":
 		[
 			[
+				"eigma.h",
+				"src/SPRmatrix/EIGmatrix.h"
+			],
+			[
+				"solvevalg",
+				"src/Test/SolverValidationGPU.cpp"
+			],
+			[
+				"eig.h",
+				"src/SPRmatrix/EIGmatrix.h"
+			],
+			[
+				"eig.cc",
+				"src/SPRmatrix/EIGmatrix.cc"
+			],
+			[
 				"sprtest",
 				"src/Test/SPRmatrixTest.cpp"
 			],
@@ -2006,14 +1853,6 @@
 			[
 				"solverval",
 				"src/Test/SolverValidation.cpp"
-			],
-			[
-				"eig.h",
-				"src/SPRmatrix/EIGmatrix.h"
-			],
-			[
-				"eig.cc",
-				"src/SPRmatrix/EIGmatrix.cc"
 			],
 			[
 				"sprma.h",

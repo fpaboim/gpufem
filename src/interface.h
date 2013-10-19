@@ -90,8 +90,6 @@ void outfileWriteSolBatchResults(const bool isbatch,
   double tsolvegpu_blk,
   double tsolvegpu_blkur);
 
-void colorMesh(FemData* femdata, bool usennz);
-
 double solveDisplacements(FEM::DeviceMode deviceType, FemData* femdata);
 
 void printAnalysisEnd();

@@ -47,15 +47,14 @@ class EIGmatrix : public SPRmatrix {
   int          GetNNZ();
   void         SetNNZInfo(int nnz, int band);
   void         Axy(fem_float* x, fem_float* y);
+  void         EIG_CG(fem_float* vector_X,
+                      fem_float* vector_B,
+                      int n_iterations,
+                      fem_float epsilon);
   void         CG(fem_float* vector_X,
                   fem_float* vector_B,
                   int n_iterations,
                   fem_float epsilon);
-  void         SolveCgGpu(fem_float* vector_X,
-                          fem_float* vector_B,
-                          int n_iterations,
-                          fem_float epsilon,
-                          size_t local_work_size);
   void         Clear();
   void         Teardown();
 
@@ -68,7 +67,7 @@ class EIGmatrix : public SPRmatrix {
   //-------------------------------------------
   // ELLpack Matrix Format Data Structure
   // Matrix data vector
-  Eigen::SparseMatrix<fem_float, Eigen::RowMajor> m_matrix;
+  Eigen::SparseMatrix<fem_float> m_matrix;
   int        m_maxrowlen;  // maximum row length (number of compressed columns
                            // stored)
   int        m_growstep;   // step to grow compressed row length

@@ -36,7 +36,6 @@
 #include "FEM/StiffAlgoGpuOmp.h"
 #include "FEM/StiffAlgoGPU.cc"
 #include "FEM/StiffAlgoGPU.h"
-#include "FEM/femColor.h"
 #include "SPRmatrix/SPRmatrix.h"
 
 // The fixture for value parameterized testing class AxyGPUTest.
@@ -119,15 +118,7 @@ TEST_P(FemTest, macro_test_with_process_coloring_noleak) {
                 1,
                 0.5,
                 Filehandler);
-
-  // Preprocessing element coloring
-  if (true) {
-    femColor* MshColorObj = new femColor();
-    MshColorObj->makeMetisGraph(femdata, false);
-    MshColorObj->MakeGreedyColoring(femdata);
-
-    delete(MshColorObj);
-  }
+  FEM_test->SetUseColoring(true);
 
   delete(Filehandler);
   delete(FEM_test);
@@ -154,20 +145,9 @@ TEST_P(FemTest, macro_test_stiffness_coloring_noleak) {
                 0.5,
                 Filehandler);
 
-  // Preprocessing element coloring
-  if (true) {
-    femColor* MshColorObj = new femColor();
-    MshColorObj->makeMetisGraph(femdata, false);
-    MshColorObj->MakeGreedyColoring(femdata);
-
-    delete(MshColorObj);
-  }
-
   FEM_test->SetUseColoring(true);
   double tstiff = FEM_test->CalcStiffnessMat();
-  FEM_test->ApplyConstraint(FEM::PEN,
-                            Filehandler->getNumSupports(),
-                            Filehandler->getNodeSupports());
+  FEM_test->ApplyConstraint(FEM::PEN);
 
   delete(Filehandler);
   delete(FEM_test);
@@ -178,4 +158,3 @@ using ::testing::Values;
 INSTANTIATE_TEST_CASE_P(FemTest_CPU_ALGO,    FemTest, Values(FEM::CPU));
 INSTANTIATE_TEST_CASE_P(FemTest_GPU_ALGO,    FemTest, Values(FEM::GPU));
 INSTANTIATE_TEST_CASE_P(FemTest_GPUOMP_ALGO, FemTest, Values(FEM::GPUOMP));
-

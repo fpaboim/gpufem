@@ -313,39 +313,42 @@ int FileIO::extractNodalLoads(ifstream &inputStream) {
   // extracts string with number of support nodes
   getline(inputStream, s);
   istringstream(s) >> m_numnodalloads;
+  if (m_numnodalloads == 0) {
+    printf("\n** FileIO: NO FORCES APPLIED TO MODEL **\n");
+  }
+  if (m_verbose) {
+    printf("\nNumber of Nodes w/ Nodal Loads: %i\n", m_numnodalloads);
+  }
 
   // Alloc NodeId + Loads Vector
+  int floatspernode = 1 + m_modeldim;
+  int idloads_len = floatspernode * m_numnodalloads;
   m_nodalloads = (fem_float**)malloc(m_numnodalloads * sizeof(fem_float*));
   for (int i = 0; i < m_numnodalloads; i++) {
     m_nodalloads[i] = NULL;
   }
 
-  if (m_numnodalloads == 0) {
-    printf("\n** FileIO: NO FORCES APPLIED TO MODEL **\n");
-  }
-
-  if (m_verbose)
-    printf("\nNumber of Nodes w/ Nodal Loads: %i\n", m_numnodalloads);
-
   // Gets nodal load info w/ first element node then x, y, z global components
   for (int i = 0; i < m_numnodalloads; ++i) {
-    fem_float* nodalLoads = (fem_float*)malloc((m_modeldim + 1) *
-      sizeof(fem_float));
-
+    fem_float* nodalLoads = (fem_float*)malloc(floatspernode *
+                                                 sizeof(fem_float));
     // extracts nodal loads from iss string stream
     getline(inputStream, s);
     istringstream iss(s);
-    for (int j = 0 ; j < 1 + m_modeldim; ++j) {
-      float node_and_loadsxyz;
-      iss >> node_and_loadsxyz;
-      nodalLoads[j] = node_and_loadsxyz;
+    for (int j = 0 ; j < floatspernode; ++j) {
+      float extractedval;
+      iss >> extractedval;
+      nodalLoads[j] = extractedval;
     }
 
     // If in verbose mode prints data
     if (m_verbose) {
       printf("Nodal Load (Node) ID: %i\n", (int)nodalLoads[0]);
-      printf("  POS: x=%f, y=%f, z=%f\n", nodalLoads[1],
-        nodalLoads[2], nodalLoads[3]);
+      printf("  POS: x=%f, y=%f", nodalLoads[1], nodalLoads[2]);
+      if (m_modeldim == 3) {
+        printf(", z=%f", nodalLoads[3]);
+      }
+      printf("\n");
     }
 
     m_nodalloads[i] = nodalLoads;

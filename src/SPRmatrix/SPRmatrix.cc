@@ -55,6 +55,8 @@ SPRmatrix::SPRmatrix() {
   m_devicemode        = DEV_CPU;
   m_verboseerrors     = true;
   m_prealloctrigger   = false;
+  m_cgiter            = 10000;
+  m_cgtol             = 0.0001f;
 }
 
 // Destructor
@@ -369,6 +371,10 @@ int SPRmatrix::Cholesky(fem_float* vectorX, fem_float* VectorY, int dim,
   return 1;
 }
 
+void SPRmatrix::CG(fem_float* vecx, fem_float* vecy) {
+  CG(vecx, vecy, m_cgiter, m_cgtol);
+}
+
 void SPRmatrix::CG(fem_float* vecx, fem_float* vecy, int niter, fem_float eps) {
   switch (m_devicemode) {
     case DEV_CPU:
@@ -442,6 +448,13 @@ int SPRmatrix::CPU_CG(fem_float* vector_X,
     beta = delta_new / delta_old;
     // d = r + beta * d
     addSelfScaledToVectOMP(vector_d, vector_r, beta, m_matdim);
+  }
+
+  if (i == n_iterations) {
+    printf("\n\n***********\nReached max num of iterations!\n***********\n");
+//     printf("Vector X:\n");
+//     printVectorf(vector_X, m_matdim);
+    printf("solver CG iterations:%i\n", i);
   }
 
   if (print == true) {

@@ -13,7 +13,7 @@ if bnorm < tol  % if the norm is very close to zero, take the
                 % residuum will not work (division by zero).
   warning(['norm(f) is very close to zero, taking absolute residuum' ...
            ' as break condition.']);
-  normf = 1;
+  bnorm = 1;
 end
 
 while (norm(r)/bnorm > tol)   % Test break condition

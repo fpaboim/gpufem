@@ -52,7 +52,7 @@ TEST_P(SolverValidationGPU, Compare_Eigen_CG_With_EllpackGPU_Solver) {
   using namespace Eigen;
   using namespace std;
   int localsz = 4;
-  int matdim  = 320;
+  int matdim  = 80;
   int maxiter = 100;
   double tol  = 0.001;
 

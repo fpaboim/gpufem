@@ -64,8 +64,8 @@ int main(int ac, char** av) {
   cout << endl;
 
   //Microbench::BenchSearch();
-  Microbench::BenchMV();
-  Microbench::BenchCG();
+  //Microbench::BenchMV();
+  Microbench::BenchCGFiles();
 
   IupOpen(NULL, NULL);
 

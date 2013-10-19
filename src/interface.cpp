@@ -298,35 +298,6 @@ void outfileWriteSolBatchResults(FileIO* Filehandler,
   Filehandler->writeNumTab(tsolvegpu_blkur);
   Filehandler->writeNewLine();
 }
-// colorMesh: performs mesh coloring and updates femdata with info
-////////////////////////////////////////////////////////////////////////////////
-void colorMesh( FemData* femdata, bool usennz ) {
-  femColor* mshColorObj = new femColor();
-  double t1 = omp_get_wtime();
-  mshColorObj->makeMetisGraph(femdata, usennz);
-  double t2 = omp_get_wtime();
-  cout << "Connect Graph Build Time: " << (t2-t1) << endl;
-  mshColorObj->MakeGreedyColoring(femdata);
-  double t3 = omp_get_wtime();
-  int metisnnz, band;
-  if (usennz) {
-    mshColorObj->CalcNNZ(femdata, metisnnz, band);
-    femdata->GetStiffnessMatrix()->SetNNZInfo(metisnnz, band);
-    printf("Number of nonzeros: %i\n", metisnnz);
-  }
-  double t4 = omp_get_wtime();
-
-  if (false) {
-    printf("Number of colors: %i\n", mshColorObj->GetNumColors());
-    printf("Metis element (+nodal) graph time: %3.4f\n", (t2-t1));
-    printf("Greedy coloring time: %3.4f\n", (t3-t2));
-    if (usennz) {
-      printf("NNZ/Band counting time: %3.4f\n", (t4-t3));
-    }
-    printf("+ Total coloring time: %3.4f\n", (t4-t1));
-  }
-  delete(mshColorObj);
-}
 
 // solveDisplacements: Solves linear syst. Ku = f for u (displacements)
 ////////////////////////////////////////////////////////////////////////////////
@@ -402,10 +373,6 @@ int RunAnalysis(std::vector<std::string> files,
                   Emod,
                   Nucoef,
                   Filehandler);
-    // Preprocessing element coloring
-    if (usecolor) {
-      colorMesh(femdata, usennz);
-    }
     // Gets global stiffness matrix using selected device
     FEM_test->SetUseColoring(usecolor);
     FEM_test->SetDeviceMode(deviceType);
@@ -419,9 +386,8 @@ int RunAnalysis(std::vector<std::string> files,
                                        femdata->GetNumDof());
     }
     printf("..Applying Constraints:\n");
-    FEM_test->ApplyConstraint(FEM::PEN,
-                              Filehandler->getNumSupports(),
-                              Filehandler->getNodeSupports());
+    FEM_test->ApplyConstraint(FEM::PEN);
+
     // Solves linear system for displacements
     double tsolve = 0;
     if (solve) {
@@ -575,10 +541,6 @@ int RunBatches(std::vector<std::string> files,
                     Emod,
                     Nucoef,
                     Filehandler);
-      // Preprocessing element coloring
-      if (usecolor) {
-        colorMesh(femdata, usennz);
-      }
       // Gets global stiffness matrix using selected device
       FEM_test->SetUseColoring(usecolor);
       FEM_test->SetDeviceMode(FEM::CPU);
@@ -594,9 +556,7 @@ int RunBatches(std::vector<std::string> files,
                                          femdata->GetNumDof());
       }
       printf("..Applying Constraints:\n");
-      FEM_test->ApplyConstraint(FEM::PEN,
-                                Filehandler->getNumSupports(),
-                                Filehandler->getNodeSupports());
+      FEM_test->ApplyConstraint(FEM::PEN);
       // Calculation info
       float matsizeMB =
         (float) femdata->GetStiffnessMatrix()->GetMatSize() / (1024 * 1024);

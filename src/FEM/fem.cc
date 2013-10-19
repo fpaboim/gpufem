@@ -21,11 +21,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "FEM/fem.h"
-#include "FEM/StiffAlgoCPU.h"
-#include "FEM/StiffAlgoGPU.h"
-#include "FEM/StiffAlgoGpuOmp.h"
-
 #include <omp.h>
 #include <math.h>
 #include <time.h>
@@ -34,10 +29,17 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include "FEM/fem.h"
+#include "FEM/femColor.h"
+#include "FEM/StiffAlgoCPU.h"
+#include "FEM/StiffAlgoGPU.h"
+#include "FEM/StiffAlgoGpuOmp.h"
+
 #include "LAops/LAops.h"
 #include "Utils/util.h"
 #include "Utils/fileIO.h"
 #include "SPRmatrix/SPRmatrix.h"
+#include "OpenCL/Oclwrapper.h"
 
 
 // Constructor and destructor
@@ -85,16 +87,37 @@ void FEM::Init(bool assemble, DeviceMode devicemode) {
   }
 }
 
+double FEM::CalcStiffnessMat() {
+  if (GetUseColoring()) {
+    ColorMesh();
+  }
+  return m_stiffnessalgo->CalcGlobalStiffness(m_femdata);
+};
+
+double FEM::CalcStiffnessAndSolutionGPU(ConstraintMode conmode) {
+  OCL.loadKernel("EllConstr");
+  m_femdata->GetStiffnessMatrix()->SetDeviceMode(SPRmatrix::DEV_GPU);
+  CalcStiffnessMat();
+  ApplyConstraint(conmode);
+  double tsolvecpu = omp_get_wtime();
+  m_femdata->GetStiffnessMatrix()->CG(m_femdata->GetDisplVector(),
+                                      m_femdata->GetForceVector());
+  return 0;
+
+}
+
 // ApplyConstraint: Applies Constraints to Stiffness Matrix where conmode is:
 // PEN(1) - Penalty,  SUB(2) - Substitution
 ////////////////////////////////////////////////////////////////////////////////
-void FEM :: ApplyConstraint(ConstraintMode conmode, int num_supports,
-                            int** node_support) {
-  SPRmatrix* stiffmat = m_femdata->GetStiffnessMatrix();
-  int modeldim = m_femdata->GetModelDim();
-  int numdof = m_femdata->GetNumDof();
-  fem_float penaltycoef = 10000;
+void FEM::ApplyConstraint(ConstraintMode conmode) {
+  int num_supports      = m_femdata->GetNodeNumConstraints();
+  int** node_support    = m_femdata->GetNodeConstraints();
+  SPRmatrix* stiffmat   = m_femdata->GetStiffnessMatrix();
   assert(stiffmat != NULL);
+  int modeldim          = m_femdata->GetModelDim();
+  int numdof            = m_femdata->GetNumDof();
+  fem_float penaltycoef = 10000;
+
   if (conmode == PEN) {
     // Applies Constraints by Penalty Method
     // Finds largest value of global matrix diagonal
@@ -169,4 +192,12 @@ void FEM::SetDeviceMode(DeviceMode newdevicemode) {
     m_stiffnessalgo->SetMakeAssembly(assemble);
     m_stiffnessalgo->SetParallelColoring(usecoloring);
   }
+}
+
+void FEM::ColorMesh() {
+  femColor* mshColorObj = new femColor();
+  mshColorObj->makeMetisGraph(m_femdata, false);
+  double t2 = omp_get_wtime();
+  mshColorObj->MakeGreedyColoring(m_femdata);
+  delete(mshColorObj);
 }

@@ -1,7 +1,6 @@
 // Matrices using row-major order order:
 // M(row, col) = *(Matriz + row * Matriz + col)
 #include <gpuFEM_Q4.h>
-#include <ellmat.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 // OpenCL kernel for calculating all local stiffness matrices which are stored

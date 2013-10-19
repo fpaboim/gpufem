@@ -119,11 +119,12 @@ void Microbench::BenchSearch() {
 
 // BenchCG: Benchmark for testing performance of CG solver
 ////////////////////////////////////////////////////////////////////////////////
-void Microbench::BenchCG() {
+void Microbench::BenchCGFiles() {
   int ntestloops = 2;
   int localsize  = 8;
-  int iterations = 15000;
-  fem_float precision  = 0.001f;
+  int iterations = 10000;
+  bool usecolor = true;
+  fem_float precision  = 0.0001f;
   SPRmatrix::SPRformat   matformat = SPRmatrix::ELL;
   SPRmatrix::OclStrategy oclstrat  = SPRmatrix::STRAT_BLOCK;
 
@@ -132,19 +133,20 @@ void Microbench::BenchCG() {
   preloadEllKernels();
 
   std::vector<std::string> testfiles;
-  // testfiles.push_back(".//..//test_models//Q4//placa96_Q4.nf");
+  //testfiles.push_back(".//..//test_models//placa_Q4.nf");
+  testfiles.push_back(".//..//test_models//Q4//placa16_Q4.nf");
+  testfiles.push_back(".//..//test_models//Q4//placa64_Q4.nf");
+//   testfiles.push_back(".//..//test_models//Q4//placa96_Q4.nf");
+  testfiles.push_back(".//..//test_models//Q8//placa16_Q8.nf");
   testfiles.push_back(".//..//test_models//Q8//placa48_Q8.nf");
-  //  testfiles.push_back(".//..//test_models//Q8//placa64_Q8.nf");
+//   testfiles.push_back(".//..//test_models//Q8//placa64_Q8.nf");
   testfiles.push_back(".//..//test_models//Brk8//rubik8_brk8.nf");
   testfiles.push_back(".//..//test_models//Brk8//rubik12_brk8.nf");
-  testfiles.push_back(".//..//test_models//Brk8//rubik16_brk8.nf");
-  // testfiles.push_back(".//..//test_models//Brk20//rubik12_brk20.nf");
-  testfiles.push_back(".//..//test_models//Brk20//rubik20_brk20.nf");
+//   testfiles.push_back(".//..//test_models//Brk8//rubik16_brk8.nf");
+  testfiles.push_back(".//..//test_models//Brk20//rubik12_brk20.nf");
+//   testfiles.push_back(".//..//test_models//Brk20//rubik20_brk20.nf");
 
   for (size_t i = 0; i < testfiles.size(); i++) {
-    // Finite Element Test Case
-    bool usecolor = true;
-
     // Reads Files and Sets Output File
     FileIO* fileIO = new FileIO();
     int err = fileIO->ReadNF(testfiles[i]);
@@ -164,27 +166,13 @@ void Microbench::BenchCG() {
     printf("\n# MATRIX SIZE: %.2fMB\n",
       (float) femdata->GetStiffnessMatrix()->GetMatSize() / (1024 * 1024));
 
-    // Preprocessing node coloring
-    if (usecolor) {
-      femColor* mshColorObj = new femColor();
-      double t1 = omp_get_wtime();
-      mshColorObj->makeMetisGraph(femdata, false);
-      double t2 = omp_get_wtime();
-      mshColorObj->MakeGreedyColoring(femdata);
-      delete(mshColorObj);
-    }
-
-    // Gets global stiffness matrix using selected device
     FEM_test->SetUseColoring(usecolor);
     double tstiff = FEM_test->CalcStiffnessMat();
-    FEM_test->ApplyConstraint(FEM::PEN,
-                              fileIO->getNumSupports(),
-                              fileIO->getNodeSupports());
+    FEM_test->ApplyConstraint(FEM::PEN);
 
     // Solves linear system for displacements
     // CPU CG Bench
-    femdata->GetStiffnessMatrix()->SetDeviceMode(SPRmatrix::DEV_OMP);
-    omp_set_num_threads(4);
+    femdata->GetStiffnessMatrix()->SetDeviceMode(SPRmatrix::DEV_CPU);
     double tsolvecpu = omp_get_wtime();
     for (int i = 0; i < ntestloops; i++) {
       femdata->GetStiffnessMatrix()->CG(femdata->GetDisplVector(),
@@ -257,7 +245,7 @@ void Microbench::printGPUSolveTime(double tsolvegpu, double tsolvecpu, double ts
 
 // BenchCG: Benchmark for testing performance of CG solver
 ///////////////////////////////////////////////////////////////////////////////
-void Microbench::BenchCG2() {
+void Microbench::BenchCGSimple() {
   int initestsize = 4 * 1024;
   int maxtestsize = 16 * 1024;
   int ntestloops = 2;
@@ -343,25 +331,13 @@ void Microbench::BenchCG2() {
                 fileIO);
   printf("\n# MATRIX SIZE: %.2fMB\n",
     (float) femdata->GetStiffnessMatrix()->GetMatSize() / (1024 * 1024));
-  // Preprocessing node coloring
-  if (usecolor) {
-    femColor* mshColorObj = new femColor();
-    double t1 = omp_get_wtime();
-    mshColorObj->makeMetisGraph(femdata, false);
-    double t2 = omp_get_wtime();
-    std::cout << "Connect Graph Build Time: " << (t2-t1) << std::endl;
-    mshColorObj->MakeGreedyColoring(femdata);
-    delete(mshColorObj);
-  }
 
   // Gets global stiffness matrix using selected device
   FEM_test->SetUseColoring(usecolor);
   double tstiff = FEM_test->CalcStiffnessMat();
 
   printf("..Applying Constraints:\n");
-  FEM_test->ApplyConstraint(FEM::PEN,
-                            fileIO->getNumSupports(),
-                            fileIO->getNodeSupports());
+  FEM_test->ApplyConstraint(FEM::PEN);
 
   // Solves linear system for displacements
   printf("..Solving for displacements:\n");
@@ -381,8 +357,8 @@ void Microbench::BenchCG2() {
 // BenchMV: Microbenchmark for testing performance of MV product
 ////////////////////////////////////////////////////////////////////////////////
 void Microbench::BenchMV() {
-  int initestsize = 8 * 1024;
-  int maxtestsize = 64 * 1024;
+  int initestsize = 4 * 1024;
+  int maxtestsize = 32 * 1024;
   int ntestloops  = 8;
   int bandsize    = 128;
   SPRmatrix::SPRformat matformat = SPRmatrix::ELL;
@@ -546,7 +522,7 @@ Microbench::stratTime Microbench::BenchCGGPU(SPRmatrix* matrix,
                               fem_float* yvec,
                               size_t     localsize,
                               int        nloops) {
-  int niter = 5000;
+  int niter = 10000;
   fem_float precision = 0.0001f;
 
   stratTime naive, naiveur, share, block, blockur, btest;

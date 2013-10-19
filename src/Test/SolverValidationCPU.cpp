@@ -88,7 +88,7 @@ TEST_P(SolverValidationCPU, Compare_Eigen_CG_With_SuperClass_Solver) {
   using namespace std;
   CheckMemory check;
   int localsz = 4;
-  int matdim  = 100;
+  int matdim  = 6;
   int maxiter = 100;
   double tol  = 0.001;
 
@@ -111,9 +111,9 @@ TEST_P(SolverValidationCPU, Compare_Eigen_CG_With_SuperClass_Solver) {
   // fill A and b
   ConjugateGradient<SparseMatrix<float> > cg;
   cg.compute(Mf);
-  xf = cg.solve(bf);
   cg.setMaxIterations(maxiter);
   cg.setTolerance(tol);
+  xf = cg.solve(bf);
   if (verbose) {
     std::cout << "\nCGSolver:" << std::endl;
     std::cout << "max iterations:  " << cg.maxIterations() << std::endl;
@@ -121,6 +121,7 @@ TEST_P(SolverValidationCPU, Compare_Eigen_CG_With_SuperClass_Solver) {
     std::cout << "#iterations:     " << cg.iterations() << std::endl;
     std::cout << "estimated error: " << cg.error()      << std::endl;
     std::cout << "Mf: " << Mf << std::endl;
+    std::cout << "bf:\n" << bf << std::endl;
     std::cout << "xf:\n" << xf << std::endl;
   }
 

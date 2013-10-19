@@ -1,6 +1,8 @@
 #define TILE_SIZEx 4
 #define TILE_SIZEy 16
 
+#include "EllUtils.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 //  SparseMV: Ellpack version has matrix data structure with matData matrix
 //  arrays scanned column-wise and colIdx vector with corresponding cols for

@@ -42,9 +42,9 @@ eigsparse Calc_M_Mt_plus_S(eigsparse &M, eigsparse &S, int dim) {
 }
 
 inline void genSparsePosDefMatrices(Eigsparsef &sparsematf,
-                             Eigsparsed &sparsematd,
-                             SPRmatrix* mysparse,
-                             int dim) {
+                                    Eigsparsed &sparsematd,
+                                    SPRmatrix* mysparse,
+                                    int dim) {
   using namespace Eigen;
   using namespace std;
   srand((unsigned int)time(NULL));

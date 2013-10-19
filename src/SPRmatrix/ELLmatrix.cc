@@ -292,7 +292,6 @@ void ELLmatrix::CG(fem_float* vector_X,
                    fem_float epsilon) {
   switch (m_devicemode) {
     case DEV_CPU:
-      omp_set_num_threads(1);
       CPU_CG(vector_X, vector_B, n_iterations, epsilon, false);
       break;
     case DEV_OMP:
@@ -439,15 +438,14 @@ void ELLmatrix::SolveCgGpu(fem_float* vector_X,
     addSelfScaledToVectOMP(vector_D, vector_R, beta, m_matdim);
     OCL.enqueueWriteBuffer(VecD_mem, VEC_buffer_size, vector_D, true);
   }
-  if (false) {
-    if (i == n_iterations) {
-      printf("\n\n***********\nReached max num of iterations!\n***********\n");
-    } else {
-      //printf("\n\n***********\n          Solved!             \n***********\n");
-      //printf("Vector X:\n");
-      //printVectorf(vector_X, m_matdim);
-      printf("solver CG iterations:%i\n", i);
-    }
+  if (i == n_iterations) {
+    printf("\n\n***********\nReached max num of iterations!\n***********\n");
+    printf("solver CG iterations:%i\n", i);
+  } else {
+    //printf("\n\n***********\n          Solved!             \n***********\n");
+    //printf("Vector X:\n");
+    //printVectorf(vector_X, m_matdim);
+    //printf("solver CG iterations:%i\n", i);
   }
   // Teardown
   OCL.releaseMem(MatA_mem);

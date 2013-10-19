@@ -93,6 +93,8 @@ public:
   fem_float** GetElemCoord() {return m_elem_coords;};
   int         GetNumNodes() {return m_num_nodes;};
   fem_float*  GetNodeCoords() {return m_node_coords;};
+  int         GetNodeNumConstraints() {return m_node_nconstr;};
+  int**       GetNodeConstraints() {return m_node_constr;};
   int         GetNumLoads() {return m_num_loads;};
   int         GetNumDof() {return m_num_dof;};
   SPRmatrix*  GetStiffnessMatrix() {return m_k_global;};
@@ -114,6 +116,8 @@ protected:
   int         m_model_dim; // Model dimensions in use
   int         m_num_nodes; // Total number of nodes in model
   fem_float*  m_node_coords; // Node coordinates vector
+  int         m_node_nconstr; // Node coordinates vector
+  int**       m_node_constr; // Node coordinates vector
   int         m_num_dof; // Total number of nodes in model
 
   fem_float** m_const_mat; // Constitutive Matrix

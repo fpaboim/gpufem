@@ -36,8 +36,8 @@
 class Microbench {
 public:
   static void BenchSearch();
-  static void BenchCG();
-  static void BenchCG2();
+  static void BenchCGFiles();
+  static void BenchCGSimple();
   static void BenchMV();
 
 private:
