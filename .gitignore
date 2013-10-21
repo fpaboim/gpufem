@@ -1,5 +1,7 @@
 .svn/
 proj/
+libs/
+Report/
 modelo*/
 color*/
 vc9/
@@ -15,3 +17,4 @@ vc10/
 *.obj
 *.pdb
 *.dll
+*.sublime*
