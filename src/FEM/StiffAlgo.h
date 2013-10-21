@@ -67,6 +67,18 @@ protected:
     fem_float** dNdcart);
   void BuildBMatrix2(int modeldim, int nnodes, fem_float** matrixB,
     fem_float** dNdcart);
+  void AssembleK(int modeldim,
+                 int numelemnodes,
+                 int* elemconnect,
+                 int elem,
+                 SPRmatrix* stiffmat,
+                 fem_float** k_local);
+  void AssembleKcol(int modeldim,
+                    int numelemnodes,
+                    int* elemconnect,
+                    int elem,
+                    SPRmatrix* stiffmat,
+                    fem_float** k_local);
 
   bool m_assemble;  //Performs Assembly
   bool m_usecoloring;  //Uses coloring for parallel assembly

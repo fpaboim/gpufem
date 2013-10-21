@@ -73,6 +73,8 @@ private:
                            int niterations,
                            fem_float precision);
 
+  static double  getCGTime(FemData* femdata, int nloops);
+
   static stratTime BenchCGGPU(FemData*   femdata,
                            size_t     localsize,
                            int        nloops);

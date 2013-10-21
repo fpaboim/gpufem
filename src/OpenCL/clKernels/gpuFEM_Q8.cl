@@ -1,6 +1,7 @@
 // Kernel code
 // Matrizes usando row-major order:
 // M(row, col) = *(Matriz + row * Matriz + col)
+#include "EllUtils.h"
 
 // Headers
 void getdShapeMat(uint       gp,

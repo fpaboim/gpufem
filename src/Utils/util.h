@@ -22,6 +22,10 @@ void        zeroMatrix (fem_float** matrix, int m, int n);
 void        zeroMatrixV(fem_float*  matrix, int m, int n);
 fem_float*  allocVector(int n, bool initAs0);
 fem_float** allocMatrix(int m, int n, bool initAs0);
+fem_float** copyMatrixF(int m, int n, fem_float** inputmatrix);
+int**       copyMatrixI(int m, int n, int** inputmatrix);
+fem_float*  copyVectorF(int size, fem_float* inputvec);
+int*        copyVectorI(int size, int* inputvec);
 void        freeInnerVectorsF (fem_float** matrix, int m);
 void        freeInnerVectorsI (int** matrix, int m);
 

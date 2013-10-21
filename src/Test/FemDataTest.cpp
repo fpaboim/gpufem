@@ -39,6 +39,16 @@ TEST(FemDataTest, creation_and_teardown_noleak) {
 
 // Filehandler reading file and save femdata
 ////////////////////////////////////////////////////////////////////////////////
+TEST(FemDataTest, check_init_femdata_with_filehandler_noleak) {
+  CheckMemory chk;
+  FileIO* Filehandler = new FileIO();
+  FemData* Femdata = new FemData();
+  delete(Femdata);
+  delete(Filehandler);
+}
+
+// Filehandler reading file and save femdata
+////////////////////////////////////////////////////////////////////////////////
 TEST(FemDataTest, check_init_femdata_does_not_leak) {
   CheckMemory chk;
   FileIO* Filehandler = new FileIO();
@@ -46,11 +56,7 @@ TEST(FemDataTest, check_init_femdata_does_not_leak) {
 
   int err = Filehandler->ReadNF("../../test_models/_testmodels/Q4.nf");
   ASSERT_EQ(err, 1);
-  Femdata->Init(SPRmatrix::ELL,
-                2,
-                1,
-                1,
-                Filehandler);
+  Femdata->Init(SPRmatrix::ELL, 2, 100, 0.2, Filehandler);
 
   delete(Femdata);
   delete(Filehandler);

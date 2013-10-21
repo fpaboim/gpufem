@@ -38,10 +38,12 @@
 
 // Constructor and destructor
 FemData::FemData() {
-  m_model_dim   = NULL;
-  m_num_nodes   = NULL;
-  m_node_coords = NULL;
-  m_num_dof     = NULL;
+  m_model_dim    = NULL;
+  m_num_nodes    = NULL;
+  m_node_coords  = NULL;
+  m_node_constr  = NULL;
+  m_node_nconstr = NULL;
+  m_num_dof      = NULL;
 
   m_const_mat = NULL;
   m_E_mod     = NULL;
@@ -71,11 +73,24 @@ FemData::FemData() {
 FemData :: ~FemData() {
   if (m_k_global)
     delete m_k_global; m_k_global = NULL;
+  if (m_w_gaussweights_vec) {
+    free(m_w_gaussweights_vec);
+    m_w_gaussweights_vec = NULL;
+  }
+  if (m_node_constr) {
+    freeInnerVectorsI(m_node_constr, m_node_nconstr);
+    m_node_constr = NULL;
+  }
+  if (m_node_coords) {
+    free(m_node_coords);
+  }
   if (m_elem_coords) {
     freeInnerVectorsF(m_elem_coords, m_model_dim);
     m_elem_coords = NULL;
   }
-  // Gauss
+  if (m_elem_connect) {
+    free(m_elem_connect);
+  }
   if (m_x_gausspts_cpu) {
     freeInnerVectorsF(m_x_gausspts_cpu, m_num_loop_gpts);
     m_x_gausspts_cpu = NULL;
@@ -91,12 +106,10 @@ FemData :: ~FemData() {
   if (m_force_vec) {
     free(m_force_vec);
   }
-  // Const Mat
   if (m_const_mat) {
     freeInnerVectorsF(m_const_mat, (m_model_dim - 1) * 3);
     m_const_mat = NULL;
   }
-  // Displ vec
   if (m_displace_vec) {
     free(m_displace_vec);
     m_displace_vec = NULL;
@@ -146,16 +159,16 @@ void FemData::Init(SPRmatrix::SPRformat sprse_format,
   m_E_mod         = E;
   m_Nu_coef       = Nu;
   m_elem_nnodes   = nelemnodes;
-  m_elem_num      = nelem;
-  m_elem_connect  = elemconnect;
   m_num_nodes     = nnodes;
-  m_node_coords   = nodecoords;
-  m_node_nconstr  = nsupports;
-  m_node_constr   = nodesupports;
-  m_num_loads     = nnodalloads;
+  m_elem_num      = nelem;
+  m_elem_connect  = copyVectorI((nelem * nelemnodes), elemconnect);
   m_elem_dofs     = m_model_dim * nelemnodes;
-  m_num_dof       = m_model_dim * nnodes;
   m_elem_coords   = allocMatrix(m_model_dim, nelemnodes, false);
+  m_node_coords   = copyVectorF((nnodes * 3), nodecoords);
+  m_node_nconstr  = nsupports;
+  m_node_constr   = copyMatrixI(nsupports, (modeldim + 1), nodesupports);
+  m_num_loads     = nnodalloads;
+  m_num_dof       = m_model_dim * nnodes;
 
   if (m_k_global) {
     delete(m_k_global);

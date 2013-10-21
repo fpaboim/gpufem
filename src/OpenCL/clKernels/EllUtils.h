@@ -45,5 +45,33 @@ inline float EllGetVal(Ellmat* ellmat, int row, int col) {
   return 0.0f;
 }
 
+inline float LocalBufferToEllmat(Ellmat* ellmat, int row, int col) {
+  for (int i = 0; i < ellmat->rownnz[i]; i++) {
+    int tempcol = ellmat->colidx[i];
+    if (tempcol > col) {
+      return 0.0f;
+    }
+    if (tempcol == col) {
+      int rowoffset = ellmat->ellwidth * i;
+      return ellmat->elldata[rowoffset+i];
+    }
+  }
+  return 0.0f;
+}
+
+inline __global float* EllGetRef(Ellmat* ellmat, int row, int col) {
+  for (int i = 0; i < ellmat->rownnz[i]; i++) {
+    int tempcol = ellmat->colidx[i];
+    if (tempcol > col) {
+      return 0;
+    }
+    if (tempcol == col) {
+      int rowoffset = ellmat->ellwidth * i;
+      return &ellmat->elldata[rowoffset+i];
+    }
+  }
+  return 0;
+}
+
 
 #endif  // ELLUTILS_H

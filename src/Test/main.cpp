@@ -43,7 +43,7 @@ void filterTests() {
   std::string runtests = "";
 //   runtests.append(":OclTest*");
 //   runtests.append(":FemDataTest*");
-//   runtests.append(":FemTest*");
+  runtests.append(":FemTest*");
 //   runtests.append(":FileIOTest*");
 //   runtests.append(":LAopsTest*");
 //   runtests.append(":SPRSearchTest*");
@@ -51,6 +51,6 @@ void filterTests() {
 //   runtests.append(":Axy*");
 //   runtests.append(":FEManalysis*");
 //   runtests.append(":Mesh*");
-  runtests.append(":*Solver*");
+//   runtests.append(":*Solver*");
   testing::GTEST_FLAG(filter) = runtests;
 }

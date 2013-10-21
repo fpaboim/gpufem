@@ -41,6 +41,19 @@
 // The fixture for value parameterized testing class AxyGPUTest.
 ////////////////////////////////////////////////////////////////////////////////
 class FemTest : public ::testing::TestWithParam<FEM::DeviceMode> {
+ protected:
+  FemTest() {
+    m_devicemode = FEM::CPU;
+  }
+
+  virtual void SetUp() {
+    m_devicemode = GetParam();
+  }
+
+  virtual void TearDown() {
+  }
+
+  FEM::DeviceMode m_devicemode;
 };
 
 // Creation and teardown does not leak
@@ -57,8 +70,7 @@ TEST_P(FemTest, creation_and_teardown_noleak) {
 TEST_P(FemTest, creation_and_teardown_initialized_noleak) {
   CheckMemory chk;
   FEM* FEM_test = new FEM();
-  FEM::DeviceMode deviceType = GetParam();
-  FEM_test->Init(true, deviceType);
+  FEM_test->Init(true, m_devicemode);
 
   delete(FEM_test);
 }
@@ -69,87 +81,107 @@ TEST_P(FemTest, with_filehandler_initialized_noleak) {
   CheckMemory chk;
   FEM* FEM_test = new FEM();
   FileIO* Filehandler = new FileIO();
-
-  FEM::DeviceMode deviceType = GetParam();
-  FEM_test->Init(true, deviceType);
+  FEM_test->Init(true, m_devicemode);
 
   delete(Filehandler);
   delete(FEM_test);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+inline void MakeFEMExample(const char* filename,
+                           FEM::DeviceMode devmode,
+                           FEM* femtest) {
+  FileIO* Filehandler = new FileIO();
+  int err = Filehandler->ReadNF(filename);
+  ASSERT_EQ(err, 1);
+  // Sets-up finite element info
+  femtest->Init(true, devmode);
+  femtest->GetFemData()->Init(SPRmatrix::ELL, 2, 100, 0.25, Filehandler);
+  delete(Filehandler);
 }
 
 // Filehandler reading file and save femdata
 ////////////////////////////////////////////////////////////////////////////////
 TEST_P(FemTest, with_filehandler_and_femdata) {
   CheckMemory chk;
-  FileIO* Filehandler = new FileIO();
   FEM* FEM_test = new FEM();
-
-  FEM::DeviceMode deviceType = GetParam();
-  FEM_test->Init(true, deviceType);
-  int err = Filehandler->ReadNF("../../test_models/placa2_Q4.nf");
-  ASSERT_EQ(err, 1);
-  // Sets-up finite element info
-  FemData* femdata = FEM_test->GetFemData();
-  femdata->Init(SPRmatrix::ELL,
-                2,
-                1,
-                1,
-                Filehandler);
-
-  delete(Filehandler);
+  const char* filename = "../../test_models/placa2_Q4.nf";
+  MakeFEMExample(filename, m_devicemode, FEM_test);
   delete(FEM_test);
 }
 
-// Macro read, process femdata then color
-////////////////////////////////////////////////////////////////////////////////
-TEST_P(FemTest, macro_test_with_process_coloring_noleak) {
-  CheckMemory chk;
-  FileIO* Filehandler = new FileIO();
-  FEM* FEM_test = new FEM();
-
-  FEM::DeviceMode deviceType = GetParam();
-  FEM_test->Init(true, deviceType);
-  int err = Filehandler->ReadNF("../../test_models/placa2_Q4.nf");
-  ASSERT_EQ(err, 1);
-  // Sets-up finite element info
-  FemData* femdata = FEM_test->GetFemData();
-  femdata->Init(SPRmatrix::ELL,
-                2,
-                1,
-                0.5,
-                Filehandler);
-  FEM_test->SetUseColoring(true);
-
-  delete(Filehandler);
-  delete(FEM_test);
-  OCL.teardown();
-}
-
-// Macro read, process femdata then color and calculate stiffness matrix
 ////////////////////////////////////////////////////////////////////////////////
 TEST_P(FemTest, macro_test_stiffness_coloring_noleak) {
   CheckMemory chk;
-  omp_set_num_threads(8);
-  FileIO* Filehandler = new FileIO();
   FEM* FEM_test = new FEM();
-
-  FEM::DeviceMode deviceType = GetParam();
-  FEM_test->Init(true, deviceType);
-  int err = Filehandler->ReadNF("../../test_models/brk8/rubik8_brk8.nf");
-  ASSERT_EQ(err, 1);
-  // Sets-up finite element info
-  FemData* femdata = FEM_test->GetFemData();
-  femdata->Init(SPRmatrix::ELL,
-                2,
-                1,
-                0.5,
-                Filehandler);
-
+  const char* filename = "../../test_models/placa2_Q4.nf";
+  MakeFEMExample(filename, m_devicemode, FEM_test);
   FEM_test->SetUseColoring(true);
   double tstiff = FEM_test->CalcStiffnessMat();
   FEM_test->ApplyConstraint(FEM::PEN);
 
-  delete(Filehandler);
+  delete(FEM_test);
+  OCL.teardown();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+TEST_P(FemTest, macro_test_3dstiffness_diag_nonzero) {
+  CheckMemory chk;
+  FEM* FEM_test = new FEM();
+  const char* filename = "../../test_models/brick_brk20v2.nf";
+  MakeFEMExample(filename, m_devicemode, FEM_test);
+  SPRmatrix* stiffmat = FEM_test->GetFemData()->GetStiffnessMatrix();
+  stiffmat->SetOclLocalSize(4);
+  FEM_test->SetUseColoring(true);
+  double tstiff = FEM_test->CalcStiffnessMat();
+  fem_float diag;
+  for (int i = 0; i < stiffmat->GetMatDim(); i++) {
+    diag = stiffmat->GetElem(i,i);
+    ASSERT_GT(diag, 0.0f);
+  }
+  delete(FEM_test);
+  OCL.teardown();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+TEST_P(FemTest, macro_test_2dstiffness_diag_nonzero) {
+  CheckMemory chk;
+  FEM* FEM_test = new FEM();
+  const char* filename = "../../test_models/placa2_Q4.nf";
+  MakeFEMExample(filename, m_devicemode, FEM_test);
+  SPRmatrix* stiffmat = FEM_test->GetFemData()->GetStiffnessMatrix();
+  stiffmat->SetOclLocalSize(4);
+  FEM_test->SetUseColoring(false);
+
+  double tstiff = FEM_test->CalcStiffnessMat();
+  stiffmat->PrintMatrix();
+  fem_float elm00 = stiffmat->GetElem(0,0);
+  FEM_test->ApplyConstraint(FEM::PEN);
+  fem_float elm00_const = stiffmat->GetElem(0,0);
+  ASSERT_LE(elm00, elm00_const);
+
+  delete(FEM_test);
+  OCL.teardown();
+}
+
+// Compare with reference matlab implementation and check constraints
+////////////////////////////////////////////////////////////////////////////////
+TEST_P(FemTest, macro_test_stiffness_constraint) {
+  CheckMemory chk;
+  FEM* FEM_test = new FEM();
+  const char* filename = "../../test_models/placa2_Q4.nf";
+  MakeFEMExample(filename, m_devicemode, FEM_test);
+  SPRmatrix* stiffmat = FEM_test->GetFemData()->GetStiffnessMatrix();
+  stiffmat->SetOclLocalSize(4);
+
+  FEM_test->SetUseColoring(false);
+  double tstiff = FEM_test->CalcStiffnessMat();
+  stiffmat->PrintMatrix();
+  fem_float elm00 = stiffmat->GetElem(0,0);
+  FEM_test->ApplyConstraint(FEM::PEN);
+  fem_float elm00_const = stiffmat->GetElem(0,0);
+  ASSERT_LE(elm00, elm00_const);
+
   delete(FEM_test);
   OCL.teardown();
 }

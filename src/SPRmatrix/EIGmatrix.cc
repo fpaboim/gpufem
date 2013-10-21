@@ -113,6 +113,7 @@ void EIGmatrix::Axy(fem_float* x, fem_float* y) {
   spax_yOMP(this, x, y, m_matdim, false);
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void EIGmatrix::EIG_CG(fem_float* vector_X,
                        fem_float* vector_B,
                        int        n_iterations,
@@ -130,13 +131,6 @@ void EIGmatrix::EIG_CG(fem_float* vector_X,
   xf = cg.solve(bf);
   for (int i = 0; i < m_matdim; i++) {
     vector_X[i] = xf[i];
-  }
-  bool verbose = false;
-  if (verbose) {
-    std::cout << "max iterations:  " << cg.maxIterations() << std::endl;
-    std::cout << "tolerance:       " << cg.tolerance() << std::endl;
-    std::cout << "#iterations:     " << cg.iterations() << std::endl;
-    std::cout << "estimated error: " << cg.error()      << std::endl;
   }
 }
 

@@ -2,13 +2,54 @@
 #define TILE_SIZEx 4
 #define TILE_SIZEy 16
 
-__kernel void ApplyContrPen(__global  float* matData,     // INPUT MATRIX DATA
-                            __global  int*   colIdx,
-                            __global  int*   rowNnz,
-                            __private int    ELLwidth,
-                            __private int    matDim,
-                            __local   float* auxShared) { // LOCAL SHARED BUFFER
+#include "EllUtils"
 
+__kernel void ApplyContrPenNaive(__global  float* matData,
+                                 __global  int*   colIdx,
+                                 __global  int*   rowNnz,
+                                 __private int    ELLwidth,
+                                 __private int    matDim,
+                                 __local   float* auxShared) { // LOCAL SHARED BUFFER
+  if (get_global_id(0) == 0) {
+    Ellmat ellmat;
+    EllMakeMat(matData, colIdx, rowNnz, ELLwidth, matDim, ellmat);
+    float diagmax = -INFINITY;
+    for (int i = 0; i < matDim; i++) {
+      diagmax = max(diagmax, EllGetVal(ellmat, i, i));
+    }
+    for (int i = 0; i < matDim; i++) {
+      float* ref = EllGetRef(ellmat, i, i);
+      *ref *= diagmax;
+    }
+  }
+}
+
+// Only the first group does work
+__kernel void ApplyContrPenShared(__global  float* matData,
+                                  __global  int*   colIdx,
+                                  __global  int*   rowNnz,
+                                  __private int    ELLwidth,
+                                  __private int    matDim,
+                                  __local   float* auxShared) {
+  int loclen = get_local_size(0);
+  int locid  = get_local_id(0)
+  if (get_global_id(0) < loclen) {
+    int slabsize = matDim / loclen;
+    int offset = locid * slabsize;
+    float diagmax = -INFINITY;
+    for (int i = offset; i < (offset + loclen); i++) {
+      diagmax = max(diagmax, EllGetVal(matData, i, i));
+    }
+    auxShared[locid];
+    barrier(CLK_LOCAL_MEM_FENCE);
+    int stride = loclen >> 1;
+    for (int i = stride; i > 0; stride >> 1) {
+      if (locid < stride) {
+        auxShared[locid] += auxShared[locid + stride];
+      }
+    }
+    return auxShared[0];
+  }
 }
 
 // Based on AMD reduce tutorial by Bryan Catanzaro ("Optimization Case Study:

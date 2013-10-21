@@ -183,6 +183,70 @@ fem_float** allocMatrix( int m, int n, bool initAs0 ) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+fem_float** copyMatrixF(int m, int n, fem_float** inputmatrix) {
+  if (inputmatrix == NULL)
+    return NULL;
+  for (int i = 0; i < m; i++) {
+    if (inputmatrix[i] == NULL) {
+      return NULL;
+    }
+  }
+  fem_float** outmatrix;
+  outmatrix = (fem_float**)malloc(m*sizeof(fem_float*));
+  for(int i=0; i<m; i++) {
+    outmatrix[i] = (fem_float*)malloc(n*sizeof(fem_float));
+  }
+  for(int i=0; i<m; i++)
+    memcpy(outmatrix[i], inputmatrix[i], n*sizeof(fem_float));
+
+  return outmatrix;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int** copyMatrixI(int m, int n, int** inputmatrix) {
+  if (inputmatrix == NULL)
+    return NULL;
+  for (int i = 0; i < m; i++) {
+    if (inputmatrix[i] == NULL) {
+      return NULL;
+    }
+  }
+  int** outmatrix;
+  outmatrix = (int**)malloc(m*sizeof(int*));
+  for(int i=0; i<m; i++) {
+    outmatrix[i] = (int*)malloc(n*sizeof(int));
+  }
+  for(int i=0; i<m; i++)
+    memcpy(outmatrix[i], inputmatrix[i], n*sizeof(int));
+
+  return outmatrix;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+fem_float* copyVectorF(int size, fem_float* inputvec) {
+  if (inputvec == NULL)
+    return NULL;
+  fem_float* outvec;
+  size_t memsize = size * sizeof(fem_float);
+  outvec = (fem_float*)malloc(memsize);
+  memcpy(outvec, inputvec, memsize);
+
+  return outvec;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int* copyVectorI(int size, int* inputvec) {
+  if (inputvec == NULL)
+    return NULL;
+  int* outvec;
+  size_t memsize = size * sizeof(int);
+  outvec = (int*)malloc(memsize);
+  memcpy(outvec, inputvec, memsize);
+
+  return outvec;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Frees dynamically allocated matrices
 ////////////////////////////////////////////////////////////////////////////////
 void freeInnerVectorsF(fem_float** matrix, int m) {

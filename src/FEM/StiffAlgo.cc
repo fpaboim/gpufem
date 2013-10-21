@@ -297,3 +297,105 @@ void StiffAlgo::BuildBMatrix2(int modeldim,
     matrixB[5][ 3*i   ] = dNdcart[2][i]; matrixB[5][(3*i)+2] = dNdcart[0][i];
   }
 }
+
+
+// Calculates the Global Sparse Stiffness Matrix K
+////////////////////////////////////////////////////////////////////////////////
+void StiffAlgo::AssembleK(int modeldim,
+                          int numelemnodes,
+                          int* elemconnect,
+                          int elem,
+                          SPRmatrix* stiffmat,
+                          fem_float** k_local) {
+  if (modeldim == 2) {
+    for (int i = 0; i < numelemnodes; ++i) {
+      int gblDOFi = (elemconnect[numelemnodes*elem+i]-1)*modeldim;
+      for (int j = 0; j < numelemnodes; ++j) {
+        int gblDOFj = (elemconnect[numelemnodes*elem+j]-1)*modeldim;
+        stiffmat->AddElem(gblDOFi  , gblDOFj  , k_local[(modeldim*i)  ][(modeldim*j)  ]);
+        stiffmat->AddElem(gblDOFi+1, gblDOFj  , k_local[(modeldim*i)+1][(modeldim*j)  ]);
+        stiffmat->AddElem(gblDOFi  , gblDOFj+1, k_local[(modeldim*i)  ][(modeldim*j)+1]);
+        stiffmat->AddElem(gblDOFi+1, gblDOFj+1, k_local[(modeldim*i)+1][(modeldim*j)+1]);
+      }
+    }
+  } else if ( modeldim == 3 ) {
+    for (int i = 0; i < numelemnodes; i++) {
+      int gblDOFi = (elemconnect[numelemnodes*elem+i]-1)*modeldim;
+      for (int j = 0; j < numelemnodes; ++j) {
+        int gblDOFj = (elemconnect[numelemnodes*elem+j]-1)*modeldim;
+        stiffmat->AddElem(gblDOFi  , gblDOFj  , k_local[(modeldim*i)  ][(modeldim*j)  ]);
+        stiffmat->AddElem(gblDOFi+1, gblDOFj  , k_local[(modeldim*i)+1][(modeldim*j)  ]);
+        stiffmat->AddElem(gblDOFi+2, gblDOFj  , k_local[(modeldim*i)+2][(modeldim*j)  ]);
+        stiffmat->AddElem(gblDOFi  , gblDOFj+1, k_local[(modeldim*i)  ][(modeldim*j)+1]);
+        stiffmat->AddElem(gblDOFi+1, gblDOFj+1, k_local[(modeldim*i)+1][(modeldim*j)+1]);
+        stiffmat->AddElem(gblDOFi+2, gblDOFj+1, k_local[(modeldim*i)+2][(modeldim*j)+1]);
+        stiffmat->AddElem(gblDOFi  , gblDOFj+2, k_local[(modeldim*i)  ][(modeldim*j)+2]);
+        stiffmat->AddElem(gblDOFi+1, gblDOFj+2, k_local[(modeldim*i)+1][(modeldim*j)+2]);
+        stiffmat->AddElem(gblDOFi+2, gblDOFj+2, k_local[(modeldim*i)+2][(modeldim*j)+2]);
+      }
+    }
+  }
+}
+
+// Calculates the Global Sparse Stiffness Matrix K
+////////////////////////////////////////////////////////////////////////////////
+void StiffAlgo::AssembleKcol(int modeldim,
+                             int numelemnodes,
+                             int* elemconnect,
+                             int elem,
+                             SPRmatrix* stiffmat,
+                             fem_float** k_local) {
+  if (modeldim == 2) {
+    for (int i = 0; i < numelemnodes; ++i) {
+      int gblDOFi = (elemconnect[numelemnodes*elem+i]-1)*modeldim;
+      for (int j = 0; j < numelemnodes; ++j) {
+        int gblDOFj = (elemconnect[numelemnodes*elem+j]-1)*modeldim;
+        if (stiffmat->GetAllocTrigger()) {
+          #pragma omp critical (memalloc)
+          {
+            stiffmat->AddElem(gblDOFi  , gblDOFj  , k_local[(modeldim*i)  ][(modeldim*j)  ]);
+            stiffmat->AddElem(gblDOFi+1, gblDOFj  , k_local[(modeldim*i)+1][(modeldim*j)  ]);
+            stiffmat->AddElem(gblDOFi  , gblDOFj+1, k_local[(modeldim*i)  ][(modeldim*j)+1]);
+            stiffmat->AddElem(gblDOFi+1, gblDOFj+1, k_local[(modeldim*i)+1][(modeldim*j)+1]);
+          }
+        } else {
+          stiffmat->AddElem(gblDOFi  , gblDOFj  , k_local[(modeldim*i)  ][(modeldim*j)  ]);
+          stiffmat->AddElem(gblDOFi+1, gblDOFj  , k_local[(modeldim*i)+1][(modeldim*j)  ]);
+          stiffmat->AddElem(gblDOFi  , gblDOFj+1, k_local[(modeldim*i)  ][(modeldim*j)+1]);
+          stiffmat->AddElem(gblDOFi+1, gblDOFj+1, k_local[(modeldim*i)+1][(modeldim*j)+1]);
+        }
+      }
+    }
+  } else if ( modeldim == 3 ) {
+    for (int i = 0; i < numelemnodes; i++) {
+      int gblDOFi = (elemconnect[numelemnodes*elem+i]-1)*modeldim;
+      for (int j = 0; j < numelemnodes; ++j) {
+        int gblDOFj = (elemconnect[numelemnodes*elem+j]-1)*modeldim;
+        if (stiffmat->GetAllocTrigger()) {
+          #pragma omp critical (memalloc)
+          {
+            stiffmat->AddElem(gblDOFi  , gblDOFj  , k_local[(modeldim*i)  ][(modeldim*j)  ]);
+            stiffmat->AddElem(gblDOFi+1, gblDOFj  , k_local[(modeldim*i)+1][(modeldim*j)  ]);
+            stiffmat->AddElem(gblDOFi+2, gblDOFj  , k_local[(modeldim*i)+2][(modeldim*j)  ]);
+            stiffmat->AddElem(gblDOFi  , gblDOFj+1, k_local[(modeldim*i)  ][(modeldim*j)+1]);
+            stiffmat->AddElem(gblDOFi+1, gblDOFj+1, k_local[(modeldim*i)+1][(modeldim*j)+1]);
+            stiffmat->AddElem(gblDOFi+2, gblDOFj+1, k_local[(modeldim*i)+2][(modeldim*j)+1]);
+            stiffmat->AddElem(gblDOFi  , gblDOFj+2, k_local[(modeldim*i)  ][(modeldim*j)+2]);
+            stiffmat->AddElem(gblDOFi+1, gblDOFj+2, k_local[(modeldim*i)+1][(modeldim*j)+2]);
+            stiffmat->AddElem(gblDOFi+2, gblDOFj+2, k_local[(modeldim*i)+2][(modeldim*j)+2]);
+          }
+        } else {
+          stiffmat->AddElem(gblDOFi  , gblDOFj  , k_local[(modeldim*i)  ][(modeldim*j)  ]);
+          stiffmat->AddElem(gblDOFi+1, gblDOFj  , k_local[(modeldim*i)+1][(modeldim*j)  ]);
+          stiffmat->AddElem(gblDOFi+2, gblDOFj  , k_local[(modeldim*i)+2][(modeldim*j)  ]);
+          stiffmat->AddElem(gblDOFi  , gblDOFj+1, k_local[(modeldim*i)  ][(modeldim*j)+1]);
+          stiffmat->AddElem(gblDOFi+1, gblDOFj+1, k_local[(modeldim*i)+1][(modeldim*j)+1]);
+          stiffmat->AddElem(gblDOFi+2, gblDOFj+1, k_local[(modeldim*i)+2][(modeldim*j)+1]);
+          stiffmat->AddElem(gblDOFi  , gblDOFj+2, k_local[(modeldim*i)  ][(modeldim*j)+2]);
+          stiffmat->AddElem(gblDOFi+1, gblDOFj+2, k_local[(modeldim*i)+1][(modeldim*j)+2]);
+          stiffmat->AddElem(gblDOFi+2, gblDOFj+2, k_local[(modeldim*i)+2][(modeldim*j)+2]);
+        }
+      }
+    }
+  }
+}

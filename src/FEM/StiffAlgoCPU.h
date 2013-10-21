@@ -46,18 +46,6 @@ public:
 protected:
   double CalcGlobalStiffnessNaive(FemData* femdata);
   double CalcStiffnessColoring(FemData* femdata);
-  void   AssembleK(int modeldim,
-           int numelemnodes,
-           int* elemconnect,
-           int elem,
-           SPRmatrix* stiffmat,
-           fem_float** k_local);
-  void   AssembleKcol(int modeldim,
-           int numelemnodes,
-           int* elemconnect,
-           int elem,
-           SPRmatrix* stiffmat,
-           fem_float** k_local);
 };
 
 #endif  // STIFFNESS_ALGO_CPU_H_

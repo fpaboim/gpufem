@@ -28,6 +28,8 @@
 #ifndef SPRMATRIX_H
 #define SPRMATRIX_H
 
+#define MIN(x,y) (x < y ? x : y)
+
 #include "Utils/util.h"
 
 class SPRmatrix
@@ -80,8 +82,10 @@ public:
                        fem_float* vector_B,
                        int n_iterations,
                        fem_float epsilon);
-  int               CGSetIter(int iter){ m_cgiter = iter;};
-  int               CGSetTolerance(fem_float tol){ m_cgtol = tol;};
+  int               CGSetIter(int iter){ m_cgiter = iter; };
+  int               CGSetTolerance(fem_float tol){ m_cgtol = tol; };
+  int               CGGetIter(){ return m_cgiter; };
+  fem_float         CGGetTolerance(){ return m_cgtol; };
   virtual void      Teardown() = 0; // Deallocates matrix
 
 public:
@@ -119,15 +123,16 @@ public:
                       m_verboseerrors = isverbose;
                     };
   int               GetAllocTrigger(){ return m_prealloctrigger;};
+  int               GetMatDim(){ return m_matdim; };
 
 protected:
   // Format Indifferent Solvers
   int Cholesky(fem_float* vectorX, fem_float* VectorY, int dim, bool print);
   int CPU_CG(fem_float* vector_X,
-           fem_float* vector_Y,
-           int n_iterations,
-           fem_float epsilon,
-           bool print);
+             fem_float* vector_Y,
+             int n_iterations,
+             fem_float epsilon,
+             bool print);
   int InputIsOK(fem_float val, int row, int col);
   int BoundsOK(int row, int col);
 

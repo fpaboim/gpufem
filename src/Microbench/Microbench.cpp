@@ -125,7 +125,7 @@ void Microbench::BenchCGFiles() {
   int iterations = 10000;
   bool usecolor = true;
   fem_float precision  = 0.0001f;
-  SPRmatrix::SPRformat   matformat = SPRmatrix::ELL;
+  SPRmatrix::SPRformat   ellformat = SPRmatrix::ELL;
   SPRmatrix::OclStrategy oclstrat  = SPRmatrix::STRAT_BLOCK;
 
   // Builds kernel and loads source so that dynamic loading does not interfere
@@ -154,52 +154,55 @@ void Microbench::BenchCGFiles() {
       return;
     }
     // Creates new FEM analysis object and initializes it
-    FEM* FEM_test = new FEM();
-    FEM_test->Init(true, FEM::GPUOMP);
+    FEM* EllFem = new FEM();
+    EllFem->Init(true, FEM::GPUOMP);
     // Sets-up finite element info
-    FemData* femdata = FEM_test->GetFemData();
-    femdata->Init(matformat,
-                  2,
-                  10,
-                  0.25,
-                  fileIO);
+    FemData* ellfemdata = EllFem->GetFemData();
+    ellfemdata->Init(ellformat, 2, 100, 0.25, fileIO);
     printf("\n# MATRIX SIZE: %.2fMB\n",
-      (float) femdata->GetStiffnessMatrix()->GetMatSize() / (1024 * 1024));
+      (float) ellfemdata->GetStiffnessMatrix()->GetMatSize() / (1024 * 1024));
 
-    FEM_test->SetUseColoring(usecolor);
-    double tstiff = FEM_test->CalcStiffnessMat();
-    FEM_test->ApplyConstraint(FEM::PEN);
+    EllFem->SetUseColoring(usecolor);
 
-    // Solves linear system for displacements
+    double tstiffellgpu = EllFem->CalcStiffnessMat();
+    EllFem->SetDeviceMode(FEM::CPU);
+    double tstiffellcpu = EllFem->CalcStiffnessMat();
+    EllFem->SetDeviceMode(FEM::OMP);
+    double tstiffellomp = EllFem->CalcStiffnessMat();
+
+    EllFem->ApplyConstraint(FEM::PEN);
+
     // CPU CG Bench
-    femdata->GetStiffnessMatrix()->SetDeviceMode(SPRmatrix::DEV_CPU);
-    double tsolvecpu = omp_get_wtime();
-    for (int i = 0; i < ntestloops; i++) {
-      femdata->GetStiffnessMatrix()->CG(femdata->GetDisplVector(),
-                                        femdata->GetForceVector(),
-                                        iterations,
-                                        precision);
-    }
-    tsolvecpu = (omp_get_wtime() - tsolvecpu)/ntestloops;
-    stratTime tsolvegpu1 = BenchCGGPU(femdata, localsize, ntestloops);
-    stratTime tsolvegpu2 = BenchCGGPU(femdata, localsize*2, ntestloops);
-    stratTime tsolvegpu3 = BenchCGGPU(femdata, localsize*4, ntestloops);
-    stratTime tsolvegpu4 = BenchCGGPU(femdata, localsize*8, ntestloops);
-    stratTime tsolvegpu5 = BenchCGGPU(femdata, localsize*16, ntestloops);
+    ellfemdata->GetStiffnessMatrix()->SetDeviceMode(SPRmatrix::DEV_CPU);
+    double cpusoltime = getCGTime(ellfemdata, ntestloops);
+    ellfemdata->GetStiffnessMatrix()->SetDeviceMode(SPRmatrix::DEV_OMP);
+    double ompsoltime = getCGTime(ellfemdata, ntestloops);
+
+    stratTime tsolvegpu1 = BenchCGGPU(ellfemdata, localsize, ntestloops);
+    stratTime tsolvegpu2 = BenchCGGPU(ellfemdata, localsize*2, ntestloops);
+    stratTime tsolvegpu3 = BenchCGGPU(ellfemdata, localsize*4, ntestloops);
+    stratTime tsolvegpu4 = BenchCGGPU(ellfemdata, localsize*8, ntestloops);
+    stratTime tsolvegpu5 = BenchCGGPU(ellfemdata, localsize*16, ntestloops);
 
     stratTime fastest = _min(tsolvegpu1, _min(tsolvegpu2,
                           _min(tsolvegpu3, _min(tsolvegpu4, tsolvegpu5))));
 
-    printf("Solver Time CPU: %3.4f -> %.2f%% of Stiffness Time\n",
-           tsolvecpu, (tsolvecpu/tstiff) * 100);
+    double bestcpusolve = MIN(cpusoltime, ompsoltime);
+    double beststiff = MIN(tstiffellomp, MIN(tstiffellcpu, tstiffellgpu));
+    printf("Ell_Stiffness(gpu/cpu/omp): %.2f, %.2f, %.2f\n",
+           tstiffellgpu, tstiffellcpu, tstiffellomp);
+    printf("CPU_Solver(cpu,omp): %.2f, %.2f\n",
+           cpusoltime, ompsoltime);
+    printf("Best CPU Solver: %3.4f -> %.2f%% of Stiffness Time\n",
+           bestcpusolve, (bestcpusolve/beststiff) * 100);
     printf("===================== Comparison ======================\n");
-    printGPUSolveTime(tsolvegpu1.time, tsolvecpu, tstiff, localsize*1);
-    printGPUSolveTime(tsolvegpu2.time, tsolvecpu, tstiff, localsize*2);
-    printGPUSolveTime(tsolvegpu3.time, tsolvecpu, tstiff, localsize*4);
-    printGPUSolveTime(tsolvegpu4.time, tsolvecpu, tstiff, localsize*8);
-    printGPUSolveTime(tsolvegpu5.time, tsolvecpu, tstiff, localsize*16);
-    if (tsolvecpu < fastest.time) {
-      printf("Fastest Time (CPU):%3.4f\n", tsolvecpu);
+    printGPUSolveTime(tsolvegpu1.time, bestcpusolve, beststiff, localsize*1);
+    printGPUSolveTime(tsolvegpu2.time, bestcpusolve, beststiff, localsize*2);
+    printGPUSolveTime(tsolvegpu3.time, bestcpusolve, beststiff, localsize*4);
+    printGPUSolveTime(tsolvegpu4.time, bestcpusolve, beststiff, localsize*8);
+    printGPUSolveTime(tsolvegpu5.time, bestcpusolve, beststiff, localsize*16);
+    if (bestcpusolve < fastest.time) {
+      printf("Fastest Time (CPU):%3.4f\n", bestcpusolve);
     } else {
       std::string fasteststrat = getStratString(fastest.strat);
       std::cout << "Fastest Time (" << fasteststrat << "):" << fastest.time <<
@@ -503,11 +506,10 @@ double Microbench::getAxyTime(SPRmatrix* sprmat,
   return ((omp_get_wtime() - tini)/(double)nloops);
 }
 
-// BenchCG: Benchmark for testing performance of CG solver
 ////////////////////////////////////////////////////////////////////////////////
 Microbench::stratTime Microbench::BenchCGGPU(FemData* femdata,
-                              size_t   localsize,
-                              int      nloops) {
+                                             size_t   localsize,
+                                             int      nloops) {
   SPRmatrix* matrix = femdata->GetStiffnessMatrix();
   fem_float* xvect = femdata->GetDisplVector();
   fem_float* yvect = femdata->GetForceVector();
@@ -588,3 +590,12 @@ double Microbench::getCGTime(SPRmatrix* sprmat,
   return (omp_get_wtime() - tini) / nloops;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+double Microbench::getCGTime(FemData* femdata, int nloops) {
+  SPRmatrix* stiffmat = femdata->GetStiffnessMatrix();
+  fem_float* xvec     = femdata->GetDisplVector();
+  fem_float* yvec     = femdata->GetForceVector();
+  int niter           = stiffmat->CGGetIter();
+  fem_float tol       = stiffmat->CGGetTolerance();
+  return getCGTime(stiffmat, xvec, yvec, nloops, niter, tol);
+}
